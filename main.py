@@ -1,1 +1,3 @@
-print("hello world")
+impropls = "stupid"
+if imapropls is "stupid":
+    print("he should be smarter")
