@@ -22,15 +22,15 @@ playerShadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",ro
 camlist= [playerShadow.position]
 
 # Walls
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=24)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-24, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=24, z=0, rotation_y=90)
+wall1 = Entity(model="cube", scale=(50,12,0.1), color=color.red, collider = "box", x=0, z=-24)
+wall2 = Entity(model="cube", scale=(50,12,0.1), color=color.green, collider = "box", x=0, z=24)
+wall3 = Entity(model="cube", scale=(50,12,0.1), color=color.blue, collider = "box", x=-24, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,0.1), color=color.black, collider = "box", x=24, z=0, rotation_y=90)
 
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
+wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24.9)
+wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=24.9)
+wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-24.9, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=24.9, z=0, rotation_y=90)
 
 start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
@@ -117,10 +117,11 @@ def input(key):
 
     if key == 'left mouse down': #placing cameras
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + cams)
-        if hit.hit and cam == False:
-           cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
-           camlist.append(hit.world_point)
-           pass
+        if hit.hit and not cam:
+           dist = any(distance(hit.world_point, c.position) < 1 for c in cams)
+           if not dist:
+            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
+            camlist.append(hit.world_point)
 
     if key == 'p': #freecam mode
         EditorCamera(enabled=True)
