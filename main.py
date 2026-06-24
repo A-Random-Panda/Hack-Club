@@ -40,9 +40,11 @@ wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
+camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
+camoverlay.disable()
 
 saved_pos = (0.5,1,0.5)
-in_camera = False
+cam = False
 cams = []
 
 #Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
@@ -57,10 +59,9 @@ player = FPC(
 )
 player.visible = False
 count = 0
-
 def input(key): 
     global saved_pos
-    global in_camera
+    global cam
     global camlist
     """
     if key == "f": # player
@@ -70,7 +71,7 @@ def input(key):
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        in_camera = False
+        cam = False
     """
     if key == Controls.TOGGLE_CAMERA: # cam
         global count
@@ -85,7 +86,7 @@ def input(key):
         player.speed = 0
         player.jump_height=0
         player.gravity = 0
-        in_camera = True
+        cam = True
         '''
 
         if count == 0 and len(camlist) != 1: #player
@@ -95,7 +96,8 @@ def input(key):
             player.speed = 20
             player.jump_height=4
             player.gravity = 1
-            in_camera = False
+            cam = False
+            camoverlay.disable()
         elif count != 0:
             saved_pos = player_shadow.position
             player.texture ="cam"
@@ -104,14 +106,22 @@ def input(key):
             player.speed = 0
             player.jump_height=0
             player.gravity = 0
-            in_camera = True
-
+            cam = True
+            camoverlay.enable()
+            camoverlay.text= f'cam {count}'
+        
 
     if key == Controls.RESET_CAMERAS: # reset
         camlist = [player_shadow.position]
         count = 0
         for i in cams:
             destroy(i)
+        player.position = saved_pos
+        player.speed = 20
+        player.jump_height=4
+        player.gravity = 1
+        cam = False
+        camoverlay.disable()
 
     if key == Controls.PLACE_CAMERA:
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
