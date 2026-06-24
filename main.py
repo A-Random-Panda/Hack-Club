@@ -13,13 +13,19 @@ if mode == "j":
 else:
     print("your ip is ", socket.gethostbyname(socket.gethostname()))
 
-
-
 app = Ursina()
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 playerShadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
 camlist = [playerShadow.position]
+
+# Controls
+class Controls():
+    TOGGLE_CAMERA = 'c'
+    RESET_CAMERAS = 'r'
+    PLACE_CAMERA = 'left mouse down'
+    FREECAM_MODE = 'p'
+    QUIT_GAME = 'escape'
 
 # Walls
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
@@ -39,6 +45,7 @@ saved_pos = (0.5,1,0.5)
 in_camera = False
 cams = []
 
+#note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -65,7 +72,7 @@ def input(key):
         player.gravity = 1
         in_camera = False
     """
-    if key == "c": # cam
+    if key == Controls.TOGGLE_CAMERA: # cam
         global count
         count += 1
         if count == len(camlist):
@@ -100,23 +107,23 @@ def input(key):
             in_camera = True
 
 
-    if key == "r": # reset
+    if key == Controls.RESET_CAMERAS: # reset
         camlist = [playerShadow.position]
         count = 0
         for i in cams:
             destroy(i)
 
-    if key == 'left mouse down':
+    if key == Controls.PLACE_CAMERA:
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
         if hit.hit and not in_camera:
             cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
             camlist.append(hit.world_point)
             pass
 
-    if key == 'p': #freecam mode
+    if key == Controls.FREECAM_MODE: #freecam mode
         EditorCamera(enabled=True)
 
-    if key == "escape":
+    if key == Controls.QUIT_GAME:
         application.quit()
 
 def update():
