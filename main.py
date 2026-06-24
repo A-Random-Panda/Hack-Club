@@ -53,7 +53,6 @@ def input(key):
     global saved_pos
     global cam
     global camlist
-    global has_moved
     """
     if key == "f": # player
         player.texture = "Bamboo.png"
