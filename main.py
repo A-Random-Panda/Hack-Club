@@ -19,7 +19,7 @@ app = Ursina()
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 playerShadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
-camlist = [playerShadow.position]
+camlist= [playerShadow.position]
 
 # Walls
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
@@ -38,9 +38,8 @@ camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gra
 camoverlay.disable()
 
 saved_pos = (0.5,1,0.5)
-in_camera = False
+cam = False
 cams = []
-
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -52,12 +51,10 @@ player = FPC(
 )
 player.visible = False
 count = 0
-
 def input(key): 
     global saved_pos
-    global in_camera
+    global cam
     global camlist
-    global has_moved
     """
     if key == "f": # player
         player.texture = "Bamboo.png"
@@ -66,7 +63,7 @@ def input(key):
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        in_camera = False
+        cam = False
     """
     if key == "c": # cam
         global count
@@ -81,7 +78,7 @@ def input(key):
         player.speed = 0
         player.jump_height=0
         player.gravity = 0
-        in_camera = True
+        cam = True
         '''
 
         if count == 0 and len(camlist) != 1: #player
@@ -92,6 +89,7 @@ def input(key):
             player.jump_height=4
             player.gravity = 1
             cam = False
+            camoverlay.disable()
         elif count != 0:
             saved_pos = playerShadow.position
             player.texture ="cam"
@@ -101,7 +99,9 @@ def input(key):
             player.jump_height=0
             player.gravity = 0
             cam = True
-
+            camoverlay.enable()
+            camoverlay.text= f'cam {count}'
+        
 
     if key == "r": # reset
         camlist = [playerShadow.position]
@@ -115,8 +115,8 @@ def input(key):
         cam = False
         camoverlay.disable()
 
-    if key == 'left mouse down':
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
+    if key == 'left mouse down': #placing cameras
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + cams)
         if hit.hit and cam == False:
            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
            camlist.append(hit.world_point)
@@ -131,12 +131,14 @@ def input(key):
 def update():
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
-
-    if not in_camera: #Actually player movement
+    
+    
+    if cam == False: #Actually player movement
         playerShadow.enabled = True
         playerShadow.position = player.position
         
         
+
 
 
 
