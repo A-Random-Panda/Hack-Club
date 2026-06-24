@@ -34,6 +34,8 @@ wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
+camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
+camoverlay.disable()
 
 saved_pos = (0.5,1,0.5)
 cam = False
@@ -53,7 +55,6 @@ def input(key):
     global saved_pos
     global cam
     global camlist
-    global has_moved
     """
     if key == "f": # player
         player.texture = "Bamboo.png"
@@ -88,6 +89,7 @@ def input(key):
             player.jump_height=4
             player.gravity = 1
             cam = False
+            camoverlay.disable()
         elif count != 0:
             saved_pos = playerShadow.position
             player.texture ="cam"
@@ -97,16 +99,24 @@ def input(key):
             player.jump_height=0
             player.gravity = 0
             cam = True
-
+            camoverlay.enable()
+            camoverlay.text= f'cam {count}'
+        
 
     if key == "r": # reset
         camlist = [playerShadow.position]
         count = 0
         for i in cams:
             destroy(i)
+        player.position = saved_pos
+        player.speed = 20
+        player.jump_height=4
+        player.gravity = 1
+        cam = False
+        camoverlay.disable()
 
-    if key == 'left mouse down':
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
+    if key == 'left mouse down': #placing cameras
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + cams)
         if hit.hit and cam == False:
            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
            camlist.append(hit.world_point)
@@ -128,6 +138,7 @@ def update():
         playerShadow.position = player.position
         
         
+
 
 
 
