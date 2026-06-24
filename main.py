@@ -16,8 +16,8 @@ else:
 app = Ursina()
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-playerShadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
-camlist = [playerShadow.position]
+player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
+camlist = [player_shadow.position]
 
 # Controls
 class Controls():
@@ -45,7 +45,7 @@ saved_pos = (0.5,1,0.5)
 in_camera = False
 cams = []
 
-#note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
+#Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -78,7 +78,7 @@ def input(key):
         if count == len(camlist):
             count = 0
         '''
-        saved_pos = playerShadow.position
+        saved_pos = player_shadow.position
         player.texture ="cam"
         player.model = "cypher_cam"
         player.position = (5,5,5)
@@ -97,7 +97,7 @@ def input(key):
             player.gravity = 1
             in_camera = False
         elif count != 0:
-            saved_pos = playerShadow.position
+            saved_pos = player_shadow.position
             player.texture ="cam"
             player.model = "cypher_cam"
             player.position = camlist[count]
@@ -108,7 +108,7 @@ def input(key):
 
 
     if key == Controls.RESET_CAMERAS: # reset
-        camlist = [playerShadow.position]
+        camlist = [player_shadow.position]
         count = 0
         for i in cams:
             destroy(i)
@@ -131,8 +131,8 @@ def update():
         player.position = (0.5, 1.0,0.5)
 
     if not in_camera: #Actually player movement
-        playerShadow.enabled = True
-        playerShadow.position = player.position
+        player_shadow.enabled = True
+        player_shadow.position = player.position
 
 cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 
