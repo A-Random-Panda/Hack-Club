@@ -44,7 +44,7 @@ camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gra
 camoverlay.disable()
 
 saved_pos = (0.5,1,0.5)
-cam = False
+in_camera = False
 cams = []
 
 #Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
@@ -61,7 +61,7 @@ player.visible = False
 count = 0
 def input(key): 
     global saved_pos
-    global cam
+    global in_camera
     global camlist
     """
     if key == "f": # player
@@ -71,9 +71,9 @@ def input(key):
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        cam = False
+        in_camera = False
     """
-    if key == Controls.TOGGLE_CAMERA: # cam
+    if key == Controls.TOGGLE_CAMERA: # camera
         global count
         count += 1
         if count == len(camlist):
@@ -86,7 +86,7 @@ def input(key):
         player.speed = 0
         player.jump_height=0
         player.gravity = 0
-        cam = True
+        in_camera = True
         '''
 
         if count == 0 and len(camlist) != 1: #player
@@ -96,7 +96,7 @@ def input(key):
             player.speed = 20
             player.jump_height=4
             player.gravity = 1
-            cam = False
+            in_camera = False
             camoverlay.disable()
         elif count != 0:
             saved_pos = player_shadow.position
@@ -106,7 +106,7 @@ def input(key):
             player.speed = 0
             player.jump_height=0
             player.gravity = 0
-            cam = True
+            in_camera = True
             camoverlay.enable()
             camoverlay.text= f'cam {count}'
         
@@ -120,13 +120,13 @@ def input(key):
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        cam = False
+        in_camera = False
         camoverlay.disable()
 
     if key == Controls.PLACE_CAMERA:
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
         if hit.hit and not in_camera:
-            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
+            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="in_camera", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
             camlist.append(hit.world_point)
             pass
 
