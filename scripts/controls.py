@@ -46,7 +46,7 @@ _BINDINGS_DICT:dict[Controls,str] = {
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
 
-def _set_control(changed_controls:dict) -> None:
+def _load_controls(changed_controls:dict) -> None:
     '''Changes controls to be the ones specified in changed_controls'''
     #Saves automatically as string integers, so this sets them to the integers
     #This is probably bad and hacky, will look at it again later
@@ -74,7 +74,7 @@ def _get_json_path() -> _Path:
     last_slash_index = script_path.rfind("\\")
     return _Path(script_path[0:last_slash_index+1] + "controls.json")
 
-def _set_controls() -> None:
+def _load_controlss() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
 
     _control_changes_dict:dict[int, str] = {}
@@ -100,7 +100,7 @@ def _set_controls() -> None:
             _logger.info("Falling back to default controls.")
         else:
             _logger.debug("Changes imported from json as %s.", _control_changes_dict)
-            _set_control(_control_changes_dict)
+            _load_controls(_control_changes_dict)
     except _json.JSONDecodeError:
         _logger.error("Controls file is not formatted as a json.")
         _logger.info("Falling back to default controls.")
@@ -128,7 +128,7 @@ def reset_controls_to_default() -> None:
     _BINDINGS_DICT.update(_DEFAULT_CONTROLS)
     _save_controls(_BINDINGS_DICT)
 
-_set_controls()
+_load_controlss()
 
 if __name__ == "__main__":
     #For testing
