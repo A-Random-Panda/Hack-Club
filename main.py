@@ -121,15 +121,10 @@ def input(key):
                                 position = hit.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
-<<<<<<< HEAD
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
                 camera_entity_list.append(temp_cam)
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
-=======
-    #freecam mode
-    if key == get_binding(Controls.FREECAM_MODE):
->>>>>>> 65632a198552e854a9b688d0e34855f57f49b227
         EditorCamera(enabled=True)
     #Exit game
     if key == get_binding(Controls.QUIT_GAME):
