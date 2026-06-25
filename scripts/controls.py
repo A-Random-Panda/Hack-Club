@@ -46,12 +46,12 @@ _BINDINGS_DICT:dict[Controls,str] = {
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
 
-def _load_controls(changed_controls:dict) -> None:
-    '''Changes controls to be the ones specified in changed_controls'''
+def _change_controls(changed_controls:dict) -> None:
+    '''Changes controls to be the ones specified in changed_controls dictionary'''
     #Saves automatically as string integers, so this sets them to the integers
     #This is probably bad and hacky, will look at it again later
     for k in list(changed_controls.keys()):
-        #Checks if k is a string, then, if so, if it's 
+        #Checks if k is a string, then, if so, if it's an integer
         if isinstance(k, str):
             if k.isdigit():
                 changed_controls[int(k)] = changed_controls.pop(k)
@@ -74,7 +74,7 @@ def _get_json_path() -> _Path:
     last_slash_index = script_path.rfind("\\")
     return _Path(script_path[0:last_slash_index+1] + "controls.json")
 
-def _load_controlss() -> None:
+def _load_controls() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
 
     _control_changes_dict:dict[int, str] = {}
@@ -100,7 +100,7 @@ def _load_controlss() -> None:
             _logger.info("Falling back to default controls.")
         else:
             _logger.debug("Changes imported from json as %s.", _control_changes_dict)
-            _load_controls(_control_changes_dict)
+            _change_controls(_control_changes_dict)
     except _json.JSONDecodeError:
         _logger.error("Controls file is not formatted as a json.")
         _logger.info("Falling back to default controls.")
@@ -115,7 +115,7 @@ def get_binding(control:Controls) -> str:
     '''Returns the key for a control.'''
     return _BINDINGS_DICT[control]
 
-def set_control(control:Controls, key:str) -> None:
+def set_control(control:Controls, key:"str") -> None:
     '''Sets the control to be of value key, and then saves them to controls.json'''
     if control in UNCHANGABLE_CONTROLS:
         _logger.critical("HARRY YAO IS STUPID AND ALLOWED UNCHANGABLE CONTROLS TO BE CHANGED")
@@ -128,7 +128,7 @@ def reset_controls_to_default() -> None:
     _BINDINGS_DICT.update(_DEFAULT_CONTROLS)
     _save_controls(_BINDINGS_DICT)
 
-_load_controlss()
+_load_controls()
 
 if __name__ == "__main__":
     #For testing
