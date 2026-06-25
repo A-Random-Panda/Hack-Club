@@ -65,7 +65,7 @@ def _get_json_path() -> _Path:
     last_slash_index = script_path.rfind("\\")
     return _Path(script_path[0:last_slash_index+1] + "controls.json")
 
-def set_controls() -> None:
+def _set_controls() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
 
     _control_changes_dict:dict[int, str] = {}
@@ -107,7 +107,7 @@ def change_controls(control:Controls, key:"str") -> None:
     _BINDINGS_DICT[control] = key
     _save_controls(_BINDINGS_DICT)
 
-set_controls()
+_set_controls()
 
 if __name__ == "__main__":
     #For testing
