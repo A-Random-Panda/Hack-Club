@@ -1,4 +1,6 @@
-'''This file contains the default controls, and obtains the controls from controls.json
+'''
+This file contains the controls for the game
+It contains default controls, and also the ability to modify the control to ones in controls.json
 '''
 
 from pathlib import Path
