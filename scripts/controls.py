@@ -14,6 +14,7 @@ _logger:_logging.Logger = _logging.getLogger(__name__)
 #To add more controls, create a new variable, set it equal to the default control
 #And add it to dictionary with control_name:control_variable
 class Controls(int, _Enum):
+    '''Enum containing the controls for the game'''
     MOVE_FORWARDS = 0
     MOVE_BACKWARDS = 1
     MOVE_LEFT = 2
@@ -38,8 +39,9 @@ _BINDINGS_DICT:dict[Controls,str] = {
     Controls.QUIT_GAME:"escape",
 }
 
-def get_binding(Control:Controls) -> str:
-    return _BINDINGS_DICT[Control]
+def get_binding(control:Controls) -> str:
+    '''Gets the binding from a value in the controls enum.'''
+    return _BINDINGS_DICT[control]
 
 
 def _change_controls(changed_controls:dict) -> None:
@@ -63,7 +65,7 @@ def _get_json_path() -> _Path:
     last_slash_index = script_path.rfind("\\")
     return _Path(script_path[0:last_slash_index+1] + "controls.json")
 
-def set_controls() -> None:
+def _set_controls() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
 
     _control_changes_dict:dict[int, str] = {}
@@ -96,7 +98,7 @@ def set_controls() -> None:
 
 def _save_controls(control_dictionary:dict) -> None:
     '''Save controls to controls.json'''
-    with open(_get_json_path(), "w") as json_file:
+    with open(_get_json_path(), "w", encoding="utf-8") as json_file:
         _logger.info("Writing dictionary to file.")
         json_file.write(_json.dumps(control_dictionary))
 
@@ -105,10 +107,9 @@ def change_controls(control:Controls, key:"str") -> None:
     _BINDINGS_DICT[control] = key
     _save_controls(_BINDINGS_DICT)
 
-set_controls()
+_set_controls()
 
 if __name__ == "__main__":
     #For testing
-    _logger.info(f"Controls are set to {_BINDINGS_DICT}.")
+    _logger.info("Controls are set to %s.", _BINDINGS_DICT)
     _save_controls(_BINDINGS_DICT)
-
