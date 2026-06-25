@@ -67,7 +67,8 @@ def input(key):
     global saved_rot
     global current_cam
 
-    if key == get_binding(Controls.TOGGLE_CAMERA): # camera
+    #Enter cameras
+    if key == get_binding(Controls.TOGGLE_CAMERA):
         current_cam += 1
         if current_cam == len(camera_entity_list):
             current_cam = 0
@@ -96,9 +97,9 @@ def input(key):
             player.jump_height=0
             player.gravity = 0
             camoverlay.enable()
-            camoverlay.text= f'cam {current_cam}'     
-
-    if key == get_binding(Controls.RESET_CAMERAS): # reset
+            camoverlay.text= f'cam {current_cam}'
+    #Reset cameras
+    if key == get_binding(Controls.RESET_CAMERAS):
         current_cam = 0
         for i in range(1,len(camera_entity_list)):
             destroy(camera_entity_list[i])
@@ -111,7 +112,7 @@ def input(key):
         camoverlay.disable()
         camera_entity_list.clear()
         camera_entity_list.append(player)
-
+    #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
         if hit.hit and not state.in_camera:
@@ -123,10 +124,10 @@ def input(key):
                                 position = hit.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
-
-    if key == get_binding(Controls.FREECAM_MODE): #freecam mode
+    #freecam mode
+    if key == get_binding(Controls.FREECAM_MODE):
         EditorCamera(enabled=True)
-
+    #Exit game
     if key == get_binding(Controls.QUIT_GAME):
         application.quit()
 
