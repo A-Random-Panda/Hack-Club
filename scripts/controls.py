@@ -9,7 +9,9 @@ import logging
 
 logger:logging.Logger = logging.getLogger(__name__)
 
-#default controls
+#Default controls
+#To add more controls, create a new variable, set it equal to the default control
+#And add it to dictionary with control_name:control_variable
 MOVE_FORWARDS:str = 'w'
 MOVE_BACKWARDS:str = 's'
 MOVE_LEFT:str = 'a'
