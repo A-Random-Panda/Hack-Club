@@ -63,25 +63,26 @@ center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture 
 print(scene.entities, "")
 
 #Variable declarations
-camera_position_list = [player_shadow.position]
-camera_entity_list = []
+camera_entity_list = [player]
 saved_pos = (0.5,1,0.5)
+saved_rot = (0,0,0)
 in_camera = False
 current_cam = 0
 
 def input(key):
     '''Input handler'''
     global saved_pos
+    global saved_rot
     global in_camera
-    global camera_position_list
     global current_cam
+    global camera_entity_list
 
     if key == get_binding(Controls.TOGGLE_CAMERA): # camera
         current_cam += 1
-        if current_cam == len(camera_position_list):
+        if current_cam == len(camera_entity_list):
             current_cam = 0
 
-        if current_cam == 0 and len(camera_position_list) != 1: #player
+        if current_cam == 0 and len(camera_entity_list) != 1: #player
             player.texture = "Bamboo.png"
             player.model="PlayerModel.obj"
             player.position = saved_pos
@@ -92,9 +93,12 @@ def input(key):
             camoverlay.disable()
         elif current_cam != 0:
             saved_pos = player_shadow.position
+            saved_rot = player_shadow.rotation
             player.texture ="cam"
             player.model = "cypher_cam"
-            player.position = camera_position_list[current_cam]
+            player.position = camera_entity_list[current_cam].position
+            player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
+
             player.speed = 0
             player.jump_height=0
             player.gravity = 0
@@ -105,26 +109,29 @@ def input(key):
     if key == get_binding(Controls.RESET_CAMERAS): # reset
         camera_position_list = [player_shadow.position]
         current_cam = 0
-        for i in camera_entity_list:
-            destroy(i)
+        for i in range(1,len(camera_entity_list)):
+            destroy(camera_entity_list[i])
         player.position = saved_pos
+        player.rotation = saved_rot
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
         in_camera = False
         camoverlay.disable()
+        camera_entity_list.clear()
+        camera_entity_list = [player]
 
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
         if hit.hit and not in_camera:
-            camera_entity_list.append(Entity(model = 'cypher_cam',
+            dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
+            if not dist:
+                camera_entity_list.append(Entity(model = 'cypher_cam',
                                 color = color.orange,
                                 collider = 'box',
                                 position = hit.world_point,
                                 texture = "cam",
-                                rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
-            camera_position_list.append(hit.world_point)
-            pass
+                                rotation = (180,player.rotation[1],180)))
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
@@ -140,5 +147,6 @@ def update():
     if not in_camera: #Actually player movement
         player_shadow.enabled = True
         player_shadow.position = player.position
+        player_shadow.rotation = player.rotation
 
 app.run()
