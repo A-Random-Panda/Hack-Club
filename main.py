@@ -127,7 +127,6 @@ def input(key):
             dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
-                                color = color.orange,
                                 collider = 'box',
                                 position = hit.world_point,
                                 texture = "cam",
