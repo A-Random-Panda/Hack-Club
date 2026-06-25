@@ -1,3 +1,8 @@
+"""
+This is the main file that will run the game
+TODO: Make the controls use the controls from the control file
+"""
+
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController as FPC
 import asyncio
@@ -47,7 +52,7 @@ saved_pos = (0.5,1,0.5)
 in_camera = False
 cams = []
 
-#Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
+#TODO: Change this to our edited FPC class
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -59,6 +64,7 @@ player = FPC(
 )
 player.visible = False
 count = 0
+
 def input(key): 
     global saved_pos
     global in_camera
