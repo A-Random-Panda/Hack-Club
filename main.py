@@ -13,24 +13,30 @@ if mode == "j":
 else:
     print("your ip is ", socket.gethostbyname(socket.gethostname()))
 
-
-
 app = Ursina()
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-playerShadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
-camlist= [playerShadow.position]
+player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
+camlist = [player_shadow.position]
+
+# Controls
+class Controls():
+    TOGGLE_CAMERA = 'c'
+    RESET_CAMERAS = 'r'
+    PLACE_CAMERA = 'left mouse down'
+    FREECAM_MODE = 'p'
+    QUIT_GAME = 'escape'
 
 # Walls
-wall1 = Entity(model="cube", scale=(50,12,0.1), color=color.red, collider = "box", x=0, z=-24)
-wall2 = Entity(model="cube", scale=(50,12,0.1), color=color.green, collider = "box", x=0, z=24)
-wall3 = Entity(model="cube", scale=(50,12,0.1), color=color.blue, collider = "box", x=-24, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,0.1), color=color.black, collider = "box", x=24, z=0, rotation_y=90)
+wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
+wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=24)
+wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-24, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=24, z=0, rotation_y=90)
 
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24.9)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=24.9)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-24.9, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=24.9, z=0, rotation_y=90)
+wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
+wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
+wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
 
 start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
@@ -40,6 +46,8 @@ camoverlay.disable()
 saved_pos = (0.5,1,0.5)
 cam = False
 cams = []
+
+#Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -65,13 +73,13 @@ def input(key):
         player.gravity = 1
         cam = False
     """
-    if key == "c": # cam
+    if key == Controls.TOGGLE_CAMERA: # cam
         global count
         count += 1
         if count == len(camlist):
             count = 0
         '''
-        saved_pos = playerShadow.position
+        saved_pos = player_shadow.position
         player.texture ="cam"
         player.model = "cypher_cam"
         player.position = (5,5,5)
@@ -91,7 +99,7 @@ def input(key):
             cam = False
             camoverlay.disable()
         elif count != 0:
-            saved_pos = playerShadow.position
+            saved_pos = player_shadow.position
             player.texture ="cam"
             player.model = "cypher_cam"
             player.position = camlist[count]
@@ -103,8 +111,8 @@ def input(key):
             camoverlay.text= f'cam {count}'
         
 
-    if key == "r": # reset
-        camlist = [playerShadow.position]
+    if key == Controls.RESET_CAMERAS: # reset
+        camlist = [player_shadow.position]
         count = 0
         for i in cams:
             destroy(i)
@@ -115,33 +123,26 @@ def input(key):
         cam = False
         camoverlay.disable()
 
-    if key == 'left mouse down': #placing cameras
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + cams)
-        if hit.hit and not cam:
-           dist = any(distance(hit.world_point, c.position) < 1 for c in cams)
-           if not dist:
+    if key == Controls.PLACE_CAMERA:
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
+        if hit.hit and not in_camera:
             cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
             camlist.append(hit.world_point)
+            pass
 
-    if key == 'p': #freecam mode
+    if key == Controls.FREECAM_MODE: #freecam mode
         EditorCamera(enabled=True)
 
-    if key == "escape":
+    if key == Controls.QUIT_GAME:
         application.quit()
 
 def update():
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
-    
-    
-    if cam == False: #Actually player movement
-        playerShadow.enabled = True
-        playerShadow.position = player.position
-        
-        
 
-
-
+    if not in_camera: #Actually player movement
+        player_shadow.enabled = True
+        player_shadow.position = player.position
 
 cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 
