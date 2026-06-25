@@ -98,7 +98,7 @@ def set_controls() -> None:
 
 def _save_controls(control_dictionary:dict) -> None:
     '''Save controls to controls.json'''
-    with open(_get_json_path(), "w") as json_file:
+    with open(_get_json_path(), "w", encoding="utf-8") as json_file:
         _logger.info("Writing dictionary to file.")
         json_file.write(_json.dumps(control_dictionary))
 
@@ -111,5 +111,5 @@ set_controls()
 
 if __name__ == "__main__":
     #For testing
-    _logger.info(f"Controls are set to {_BINDINGS_DICT}.")
+    _logger.info("Controls are set to %s.", _BINDINGS_DICT)
     _save_controls(_BINDINGS_DICT)
