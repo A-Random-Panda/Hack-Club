@@ -4,16 +4,17 @@ It contains default controls, and also the ability to modify the control to ones
 '''
 
 from pathlib import Path as _Path
-from enum import Enum as _Enum
+from enum import IntEnum as _IntEnum
+from copy import deepcopy
 import json as _json
 import logging as _logging
 
 _logger:_logging.Logger = _logging.getLogger(__name__)
 
 #Default controls
-#To add more controls, create a new variable, set it equal to the default control
-#And add it to dictionary with control_name:control_variable
-class Controls(int, _Enum):
+#To add more controls, create a new variable in the enum 
+#And add it to dictionary with control:default_value
+class Controls(_IntEnum):
     '''Enum containing the controls for the game'''
     MOVE_FORWARDS = 0
     MOVE_BACKWARDS = 1
@@ -43,28 +44,29 @@ _BINDINGS_DICT:dict[Controls,str] = {
     Controls.QUIT_GAME:"escape",
 }
 
-def get_binding(control:Controls) -> str:
-    '''Gets the binding from a value in the controls enum.'''
-    return _BINDINGS_DICT[control]
+_DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
 
-
-def _change_controls(changed_controls:dict) -> None:
-    '''Changes controls to be the one in the dictionary'''
+def _set_control(changed_controls:dict) -> None:
+    '''Changes controls to be the ones specified in changed_controls'''
     #Saves automatically as string integers, so this sets them to the integers
     #This is probably bad and hacky, will look at it again later
     for k in list(changed_controls.keys()):
+        #Checks if k is a string, then, if so, if it's 
         if isinstance(k, str):
             if k.isdigit():
                 changed_controls[int(k)] = changed_controls.pop(k)
     _logger.debug("Control: %s", changed_controls)
+    #Iterates over dict
     for k,v in changed_controls.items():
-        if k in [x.value for x in _BINDINGS_DICT.keys()] or k in _BINDINGS_DICT:
-            if k not in UNCHANGABLE_CONTROLS:
-                _BINDINGS_DICT[k] = v
-            else:
-                _logger.warning("Unchangable control %s attempted to be changed.", k)
-        else:
+        #Check the control actually exists
+        if k not in _BINDINGS_DICT:
             _logger.warning("Found non-existant control %s.", k)
+        else:
+            #If the control is unchangable and not the default value
+            if k in UNCHANGABLE_CONTROLS and _BINDINGS_DICT[k] != v:
+                _logger.warning("Unchangable control %s attempted to be changed.", k)
+            else:
+                _BINDINGS_DICT[k] = v       
 
 def _get_json_path() -> _Path:
     '''Returns the path of the controls.json file'''
@@ -98,7 +100,7 @@ def _set_controls() -> None:
             _logger.info("Falling back to default controls.")
         else:
             _logger.debug("Changes imported from json as %s.", _control_changes_dict)
-            _change_controls(_control_changes_dict)
+            _set_control(_control_changes_dict)
     except _json.JSONDecodeError:
         _logger.error("Controls file is not formatted as a json.")
         _logger.info("Falling back to default controls.")
@@ -109,9 +111,21 @@ def _save_controls(control_dictionary:dict) -> None:
         _logger.info("Writing dictionary to file.")
         json_file.write(_json.dumps(control_dictionary))
 
-def change_controls(control:Controls, key:"str") -> None:
-    '''Changes Control to Key and saves to controls.json'''
+def get_binding(control:Controls) -> str:
+    '''Returns the key for a control.'''
+    return _BINDINGS_DICT[control]
+
+def set_control(control:Controls, key:"str") -> None:
+    '''Sets the control to be of value key, and then saves them to controls.json'''
+    if control in UNCHANGABLE_CONTROLS:
+        _logger.critical("HARRY YAO IS STUPID AND ALLOWED UNCHANGABLE CONTROLS TO BE CHANGED")
+        raise ValueError("HARRY YAO IS STUPID!")
     _BINDINGS_DICT[control] = key
+    _save_controls(_BINDINGS_DICT)
+
+def reset_controls_to_default() -> None:
+    '''Resets controls to their default state.'''
+    _BINDINGS_DICT.update(_DEFAULT_CONTROLS)
     _save_controls(_BINDINGS_DICT)
 
 _set_controls()
