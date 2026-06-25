@@ -4,10 +4,10 @@ It contains default controls, and also the ability to modify the control to ones
 '''
 
 from pathlib import Path
-import json
-import logging
+import json as _json
+import logging as _logging
 
-logger:logging.Logger = logging.getLogger(__name__)
+_logger:_logging.Logger = _logging.getLogger(__name__)
 
 #Default controls
 #To add more controls, create a new variable, set it equal to the default control
@@ -42,7 +42,7 @@ def _change_controls(changed_controls:dict) -> None:
         if k in _CONTROL_MAP:
             _CONTROL_MAP[k] = v
         else:
-            logger.warning("Found non-existant control %s.", k)
+            _logger.warning("Found non-existant control %s.", k)
 
 def _get_json_path() -> Path:
     '''Returns the path of the controls.json file'''
@@ -56,7 +56,7 @@ def set_controls() -> None:
     #Ensures there is a control file
     if not _get_json_path().is_file():
         Path(_get_json_path()).touch()
-        logger.info("Creating file %s", _get_json_path)
+        _logger.info("Creating file %s", _get_json_path)
 
     #Reads the changes
     with open(_get_json_path(), "r", encoding="utf-8") as json_file:
@@ -68,15 +68,15 @@ def set_controls() -> None:
 
     #Sets changes
     try:
-        _control_changes = json.loads(_control_changes)
+        _control_changes = _json.loads(_control_changes)
         if not _control_changes.isinstance(dict):
-            logger.error("Controls file didn't return a dictionary")
-            logger.info("Falling back to default controls.")
+            _logger.error("Controls file didn't return a dictionary")
+            _logger.info("Falling back to default controls.")
         else:
             _change_controls(_control_changes)
-    except json.JSONDecodeError:
-        logger.error("Controls file is not formatted as a json.")
-        logger.info("Falling back to default controls.")
+    except _json.JSONDecodeError:
+        _logger.error("Controls file is not formatted as a json.")
+        _logger.info("Falling back to default controls.")
 
 set_controls()
 
