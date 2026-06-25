@@ -66,7 +66,6 @@ def input(key):
     global saved_pos
     global saved_rot
     global current_cam
-    global camera_entity_list
 
     if key == get_binding(Controls.TOGGLE_CAMERA): # camera
         current_cam += 1
@@ -111,7 +110,7 @@ def input(key):
         state.in_camera = False
         camoverlay.disable()
         camera_entity_list.clear()
-        camera_entity_list = [player]
+        camera_entity_list.append(player)
 
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
