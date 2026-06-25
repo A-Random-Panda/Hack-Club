@@ -99,8 +99,8 @@ def input(key):
         elif current_cam != 0:
             saved_pos = player_shadow.position
             saved_rot = player_shadow.rotation
-            player.texture ="cam"
-            player.model = "cypher_cam"
+            player.texture ="cam.png"
+            player.model = "cypher_cam.obj"
             player.position = camera_entity_list[current_cam].position
             player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
 
