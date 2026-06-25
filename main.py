@@ -1,10 +1,10 @@
 """
 This is the main file that will run the game
-TODO: Make the controls use the controls from the control file
 """
 
 from ursina import *
-from ursina.prefabs.first_person_controller import FirstPersonController as FPC
+from scripts.editable_controls_FPC import FirstPersonController as FPC
+import scripts.controls as controls
 import asyncio
 import websockets
 import threading
@@ -30,7 +30,6 @@ player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",r
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
 camoverlay.disable()
 
-#TODO: Change this to our edited FPC class
 player = FPC(
     texture = "Bamboo.png",
     model="PlayerModel.obj",
@@ -41,15 +40,6 @@ player = FPC(
     gravity = 1
 )
 player.visible = False
-
-
-# Controls
-class Controls():
-    TOGGLE_CAMERA = 'c'
-    RESET_CAMERAS = 'r'
-    PLACE_CAMERA = 'left mouse down'
-    FREECAM_MODE = 'p'
-    QUIT_GAME = 'escape'
 
 # Walls
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
@@ -87,7 +77,7 @@ def input(key):
     global current_cam
     global camera_entity_list
 
-    if key == Controls.TOGGLE_CAMERA: # camera
+    if key == controls.TOGGLE_CAMERA: # camera
         current_cam += 1
         if current_cam == len(camera_entity_list):
             current_cam = 0
@@ -142,10 +132,10 @@ def input(key):
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
 
-    if key == Controls.FREECAM_MODE: #freecam mode
+    if key == controls.FREECAM_MODE: #freecam mode
         EditorCamera(enabled=True)
 
-    if key == Controls.QUIT_GAME:
+    if key == controls.QUIT_GAME:
         application.quit()
 
 def update():
