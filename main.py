@@ -13,12 +13,6 @@ import state
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
-mode = input("Host or join (h/j) ").strip().lower()
-if mode == "j":
-    ip = input("input host ip ").strip()
-else:
-    print("your ip is ", socket.gethostbyname(socket.gethostname()))
-
 #Create app
 app = Ursina()
 
