@@ -70,10 +70,11 @@ def input(key):
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
         current_cam += 1
+        #Camera rollover
         if current_cam == len(camera_entity_list):
             current_cam = 0
-
-        if current_cam == 0 and len(camera_entity_list) != 1: #player
+        #If the camera is on the player and there is at least one camera
+        if current_cam == 0 and len(camera_entity_list) > 1: #player
             player.position = saved_pos
             player.speed = 20
             player.jump_height=4

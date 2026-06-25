@@ -1,7 +1,7 @@
 """A modified verson of the FirstPersonController class, where the controls are changable"""
 
 from ursina import *
-from .controls import *
+from scripts.controls import *
 import state
 
 class FirstPersonController(Entity):

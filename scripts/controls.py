@@ -115,7 +115,7 @@ def get_binding(control:Controls) -> str:
     '''Returns the key for a control.'''
     return _BINDINGS_DICT[control]
 
-def set_control(control:Controls, key:"str") -> None:
+def set_control(control:Controls, key:str) -> None:
     '''Sets the control to be of value key, and then saves them to controls.json'''
     if control in UNCHANGABLE_CONTROLS:
         _logger.critical("HARRY YAO IS STUPID AND ALLOWED UNCHANGABLE CONTROLS TO BE CHANGED")
