@@ -3,8 +3,8 @@ This is the main file that will run the game
 """
 
 from ursina import *
+from scripts.controls import *
 from scripts.editable_controls_FPC import FirstPersonController as FPC
-import scripts.controls as controls
 import asyncio
 import websockets
 import threading
@@ -76,7 +76,7 @@ def input(key):
     global camera_position_list
     global current_cam
 
-    if key == controls.TOGGLE_CAMERA: # camera
+    if key == TOGGLE_CAMERA: # camera
         current_cam += 1
         if current_cam == len(camera_position_list):
             current_cam = 0
@@ -102,7 +102,7 @@ def input(key):
             camoverlay.enable()
             camoverlay.text= f'cam {current_cam}'     
 
-    if key == controls.RESET_CAMERAS: # reset
+    if key == RESET_CAMERAS: # reset
         camera_position_list = [player_shadow.position]
         current_cam = 0
         for i in camera_entity_list:
@@ -114,7 +114,7 @@ def input(key):
         in_camera = False
         camoverlay.disable()
 
-    if key == controls.PLACE_CAMERA:
+    if key == PLACE_CAMERA:
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
         if hit.hit and not in_camera:
             camera_entity_list.append(Entity(model = 'cypher_cam',
@@ -126,10 +126,10 @@ def input(key):
             camera_position_list.append(hit.world_point)
             pass
 
-    if key == controls.FREECAM_MODE: #freecam mode
+    if key == FREECAM_MODE: #freecam mode
         EditorCamera(enabled=True)
 
-    if key == controls.QUIT_GAME:
+    if key == QUIT_GAME:
         application.quit()
 
 def update():
