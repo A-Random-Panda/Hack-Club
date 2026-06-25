@@ -1,3 +1,8 @@
+"""
+This is the main file that will run the game
+TODO: Make the controls use the controls from the control file
+"""
+
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController as FPC
 import asyncio
@@ -13,11 +18,30 @@ if mode == "j":
 else:
     print("your ip is ", socket.gethostbyname(socket.gethostname()))
 
+#Create app
 app = Ursina()
+
+#Importing models
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
-camlist = [player_shadow.position]
+
+#Setup
+camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
+camoverlay.disable()
+
+#TODO: Change this to our edited FPC class
+player = FPC(
+    texture = "Bamboo.png",
+    model="PlayerModel.obj",
+    collider="box",
+    position = (0.5,1,0.5),
+    speed = 20,
+    jump_height=4,
+    gravity = 1
+)
+player.visible = False
+
 
 # Controls
 class Controls():
@@ -40,95 +64,83 @@ wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
-camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
-camoverlay.disable()
 
+#Other objects
+cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
+cube.rotation_y = 90
+cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
+center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
+print(scene.entities, "")
+
+#Variable declarations
+camera_entity_list = [player]
 saved_pos = (0.5,1,0.5)
-cam = False
-cams = []
+saved_rot = (0,0,0)
+in_camera = False
+current_cam = 0
 
-#Note that if we want to use FPC, the controls have to be WASD and spacebar, could change later if we want
-player = FPC(
-    texture = "Bamboo.png",
-    model="PlayerModel.obj",
-    collider="box",
-    position = (0.5,1,0.5),
-    speed = 20,
-    jump_height=4,
-    gravity = 1
-)
-player.visible = False
-count = 0
-def input(key): 
+def input(key):
+    '''Input handler'''
     global saved_pos
-    global cam
-    global camlist
-    """
-    if key == "f": # player
-        player.texture = "Bamboo.png"
-        player.model="PlayerModel.obj"
-        player.position = saved_pos
-        player.speed = 20
-        player.jump_height=4
-        player.gravity = 1
-        cam = False
-    """
-    if key == Controls.TOGGLE_CAMERA: # cam
-        global count
-        count += 1
-        if count == len(camlist):
-            count = 0
-        '''
-        saved_pos = player_shadow.position
-        player.texture ="cam"
-        player.model = "cypher_cam"
-        player.position = (5,5,5)
-        player.speed = 0
-        player.jump_height=0
-        player.gravity = 0
-        cam = True
-        '''
+    global saved_rot
+    global in_camera
+    global current_cam
+    global camera_entity_list
 
-        if count == 0 and len(camlist) != 1: #player
+    if key == Controls.TOGGLE_CAMERA: # camera
+        current_cam += 1
+        if current_cam == len(camera_entity_list):
+            current_cam = 0
+
+        if current_cam == 0 and len(camera_entity_list) != 1: #player
             player.texture = "Bamboo.png"
             player.model="PlayerModel.obj"
             player.position = saved_pos
             player.speed = 20
             player.jump_height=4
             player.gravity = 1
-            cam = False
+            in_camera = False
             camoverlay.disable()
-        elif count != 0:
+        elif current_cam != 0:
             saved_pos = player_shadow.position
+            saved_rot = player_shadow.rotation
             player.texture ="cam"
             player.model = "cypher_cam"
-            player.position = camlist[count]
+            player.position = camera_entity_list[current_cam].position
+            player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
+
             player.speed = 0
             player.jump_height=0
             player.gravity = 0
-            cam = True
+            in_camera = True
             camoverlay.enable()
-            camoverlay.text= f'cam {count}'
-        
+            camoverlay.text= f'cam {current_cam}'     
 
     if key == Controls.RESET_CAMERAS: # reset
-        camlist = [player_shadow.position]
-        count = 0
-        for i in cams:
-            destroy(i)
+        current_cam = 0
+        for i in range(1,len(camera_entity_list)):
+            destroy(camera_entity_list[i])
         player.position = saved_pos
+        player.rotation = saved_rot
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        cam = False
+        in_camera = False
         camoverlay.disable()
+        camera_entity_list.clear()
+        camera_entity_list = [player]
 
     if key == Controls.PLACE_CAMERA:
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
         if hit.hit and not in_camera:
-            cams.append(Entity(model = 'cypher_cam', color = color.orange, collider = 'box', position = hit.world_point,texture="cam", rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)))
-            camlist.append(hit.world_point)
-            pass
+            dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
+            if not dist:
+                camera_entity_list.append(Entity(model = 'cypher_cam',
+                                color = color.orange,
+                                collider = 'box',
+                                position = hit.world_point,
+                                texture = "cam",
+                                rotation = (180,player.rotation[1],180)))
 
     if key == Controls.FREECAM_MODE: #freecam mode
         EditorCamera(enabled=True)
@@ -137,17 +149,13 @@ def input(key):
         application.quit()
 
 def update():
+    "Frame handler"
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
 
     if not in_camera: #Actually player movement
         player_shadow.enabled = True
         player_shadow.position = player.position
+        player_shadow.rotation = player.rotation
 
-cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
-
-cube.rotation_y = 90
-cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
-center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
-print(scene.entities, "")
 app.run()
