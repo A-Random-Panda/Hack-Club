@@ -1,3 +1,3 @@
 models_compressed/
-scripts/__pycache__/
+**/__pycache__/
 controls.json

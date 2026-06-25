@@ -2,27 +2,16 @@
 This is the main file that will run the game
 """
 
+import logging
+import socket
 from ursina import *
 from scripts.controls import *
 from scripts.editable_controls_FPC import FirstPersonController as FPC
-import logging
-import asyncio
-import websockets
-import threading
-import json
-import queue
-import socket
 import state
 
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
-
-mode = input("Host or join (h/j) ").strip().lower()
-if mode == "j":
-    ip = input("input host ip ").strip()
-else:
-    print("your ip is ", socket.gethostbyname(socket.gethostname()))
 
 #Create app
 app = Ursina()
@@ -76,14 +65,15 @@ def input(key):
     global saved_pos
     global saved_rot
     global current_cam
-    global camera_entity_list
 
-    if key == get_binding(Controls.TOGGLE_CAMERA): # camera
+    #Enter cameras
+    if key == get_binding(Controls.TOGGLE_CAMERA):
         current_cam += 1
+        #Camera rollover
         if current_cam == len(camera_entity_list):
             current_cam = 0
-
-        if current_cam == 0 and len(camera_entity_list) != 1: #player
+        #If the camera is on the player and there is at least one camera
+        if current_cam == 0 and len(camera_entity_list) > 1: #player
             player.position = saved_pos
             player.speed = 20
             player.jump_height=4
@@ -105,9 +95,9 @@ def input(key):
             camera_entity_list[current_cam-1].visible = True
             state.in_camera = True
             camoverlay.enable()
-            camoverlay.text= f'cam {current_cam}'     
-
-    if key == get_binding(Controls.RESET_CAMERAS): # reset
+            camoverlay.text= f'cam {current_cam}'
+    #Reset cameras
+    if key == get_binding(Controls.RESET_CAMERAS):
         current_cam = 0
         for i in range(1,len(camera_entity_list)):
             destroy(camera_entity_list[i])
@@ -119,8 +109,8 @@ def input(key):
         state.in_camera = False
         camoverlay.disable()
         camera_entity_list.clear()
-        camera_entity_list = [player]
-
+        camera_entity_list.append(player)
+    #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
         if hit.hit and not state.in_camera:
@@ -131,12 +121,17 @@ def input(key):
                                 position = hit.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
+<<<<<<< HEAD
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
                 camera_entity_list.append(temp_cam)
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
+=======
+    #freecam mode
+    if key == get_binding(Controls.FREECAM_MODE):
+>>>>>>> 65632a198552e854a9b688d0e34855f57f49b227
         EditorCamera(enabled=True)
-
+    #Exit game
     if key == get_binding(Controls.QUIT_GAME):
         application.quit()
 
