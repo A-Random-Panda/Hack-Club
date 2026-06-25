@@ -112,7 +112,6 @@ def input(key):
             camoverlay.text= f'cam {current_cam}'     
 
     if key == get_binding(Controls.RESET_CAMERAS): # reset
-        camera_position_list = [player_shadow.position]
         current_cam = 0
         for i in range(1,len(camera_entity_list)):
             destroy(camera_entity_list[i])
@@ -127,7 +126,7 @@ def input(key):
         camera_entity_list = [player]
 
     if key == get_binding(Controls.PLACE_CAMERA):
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player])
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
         if hit.hit and not in_camera:
             dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
             if not dist:
