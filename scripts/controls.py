@@ -35,7 +35,7 @@ class _Controls():
             if k in self._CONTROL_MAP.keys():
                 self._CONTROL_MAP[k] = v
 
-CONTROLS = _Controls()
+CONTROLS:_Controls = _Controls()
 
 
 if __name__ == "__main__":
