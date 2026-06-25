@@ -48,8 +48,6 @@ class FirstPersonController(Entity):
 
 
     def update(self):
-        if state.in_camera:
-            return
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
         self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
         self.camera_pivot.rotation_x= clamp(self.camera_pivot.rotation_x, -90, 90)

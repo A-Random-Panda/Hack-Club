@@ -69,7 +69,6 @@ center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture 
 camera_entity_list = [player]
 saved_pos = (0.5,1,0.5)
 saved_rot = (0,0,0)
-in_camera = False
 current_cam = 0
 
 def input(key):
@@ -93,20 +92,18 @@ def input(key):
             player.visible = True
             camoverlay.disable()
             camera_entity_list[-1].visible = True
+            camera.parent = player.camera_pivot
         elif current_cam != 0:
-            player.camera_pivot.rotation_x = 0
-            saved_pos = player_shadow.position
-            saved_rot = player_shadow.rotation
-            player.visible = False
-            player.position = camera_entity_list[current_cam].position
-            player.y = (camera_entity_list[current_cam].y - 1.6)
-            player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
+            #player.camera_pivot.rotation_x = 0
+            #saved_pos = player_shadow.position
+            #saved_rot = player_shadow.rotation
+            #player.visible = False
+            camera.parent = camera_entity_list[current_cam].camera_pivot
+            #player.y = (camera_entity_list[current_cam].y - 1.6)
+            #player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
             camera_entity_list[current_cam].visible = False
             camera_entity_list[current_cam-1].visible = True
             state.in_camera = True
-            player.speed = 0
-            player.jump_height=0
-            player.gravity = 0
             camoverlay.enable()
             camoverlay.text= f'cam {current_cam}'     
 
@@ -129,12 +126,14 @@ def input(key):
         if hit.hit and not state.in_camera:
             dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
             if not dist:
-                camera_entity_list.append(Entity(model = 'cypher_cam',
+                temp_cam = (Entity(model = 'cypher_cam',
                                 color = color.orange,
                                 collider = 'box',
                                 position = hit.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
+                temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
+                camera_entity_list.append(temp_cam)
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
