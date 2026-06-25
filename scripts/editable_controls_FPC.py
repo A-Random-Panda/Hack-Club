@@ -3,7 +3,7 @@ TODO: Actually modify the class
 """
 
 from ursina import *
-from .controls import *
+from scripts.controls import *
 
 class FirstPersonController(Entity):
     def __init__(self, height=2, **kwargs):
