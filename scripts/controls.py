@@ -95,16 +95,21 @@ def set_controls() -> None:
         _logger.error("Controls file is not formatted as a json.")
         _logger.info("Falling back to default controls.")
 
-def save_controls(control_dictionary:dict) -> None:
+def _save_controls(control_dictionary:dict) -> None:
     '''Save controls to controls.json'''
     with open(_get_json_path(), "w") as json_file:
         _logger.info("Writing dictionary to file.")
         json_file.write(_json.dumps(control_dictionary))
+
+def change_controls(control:Controls, key:"str") -> None:
+    '''Changes Control to Key and saves to controls.json'''
+    _BINDINGS_DICT[control] = key
+    _save_controls(_BINDINGS_DICT)
 
 set_controls()
 
 if __name__ == "__main__":
     #For testing
     _logger.info(f"Controls are set to {_BINDINGS_DICT}.")
-    save_controls(_BINDINGS_DICT)
+    _save_controls(_BINDINGS_DICT)
 
