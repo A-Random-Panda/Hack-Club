@@ -1,6 +1,4 @@
-"""A modified verson of the FirstPersonController class, where the controls are changable
-TODO: Actually modify the class
-"""
+"""A modified verson of the FirstPersonController class, where the controls are changable"""
 
 from ursina import *
 from .controls import *
