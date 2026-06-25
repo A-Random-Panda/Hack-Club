@@ -8,7 +8,6 @@ from enum import Enum as _Enum
 import json as _json
 import logging as _logging
 
-_logging.basicConfig(level=_logging.WARNING)
 _logger:_logging.Logger = _logging.getLogger(__name__)
 
 #Default controls

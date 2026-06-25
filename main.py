@@ -5,12 +5,17 @@ This is the main file that will run the game
 from ursina import *
 from scripts.controls import *
 from scripts.editable_controls_FPC import FirstPersonController as FPC
+import logging
 import asyncio
 import websockets
 import threading
 import json
 import queue
 import socket
+
+#Declare logging
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 mode = input("Host or join (h/j) ").strip().lower()
 if mode == "j":
