@@ -56,14 +56,10 @@ center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture 
 
 #Variable declarations
 camera_entity_list = [player]
-saved_pos = (0.5,1,0.5)
-saved_rot = (0,0,0)
 current_cam = 0
 
 def input(key):
     '''Input handler'''
-    global saved_pos
-    global saved_rot
     global current_cam
 
     #Enter cameras
@@ -74,23 +70,12 @@ def input(key):
             current_cam = 0
         #If the camera is on the player and there is at least one camera
         if current_cam == 0 and len(camera_entity_list) > 1: #player
-            player.position = saved_pos
-            player.speed = 20
-            player.jump_height=4
-            player.gravity = 1
             state.in_camera = False
-            player.visible = True
             camoverlay.disable()
             camera_entity_list[-1].visible = True
             camera.parent = player.camera_pivot
         elif current_cam != 0:
-            #player.camera_pivot.rotation_x = 0
-            #saved_pos = player_shadow.position
-            #saved_rot = player_shadow.rotation
-            #player.visible = False
             camera.parent = camera_entity_list[current_cam].camera_pivot
-            #player.y = (camera_entity_list[current_cam].y - 1.6)
-            #player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
             camera_entity_list[current_cam].visible = False
             camera_entity_list[current_cam-1].visible = True
             state.in_camera = True
@@ -101,12 +86,11 @@ def input(key):
         current_cam = 0
         for i in range(1,len(camera_entity_list)):
             destroy(camera_entity_list[i])
-        player.position = saved_pos
-        player.rotation = saved_rot
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
         state.in_camera = False
+        camera.parent = player.camera_pivot
         camoverlay.disable()
         camera_entity_list.clear()
         camera_entity_list.append(player)

@@ -14,8 +14,6 @@ class _Player(FirstPersonController):
     '''The player class for the game'''
     in_camera:bool = False
     current_cam:int = 0
-    saved_pos:tuple[float, float, float] = (0, 0, 0)
-    saved_rot:tuple[float, float, float] = (0, 0, 0)
     perspective_list:list[object] = []
     
     def __init__(self):
