@@ -53,8 +53,8 @@ class FirstPersonController(Entity):
         self.camera_pivot.rotation_x= clamp(self.camera_pivot.rotation_x, -90, 90)
 
         self.direction = Vec3(
-            self.forward * (held_keys[MOVE_FORWARDS] - held_keys[MOVE_BACKWARDS])
-            + self.right * (held_keys[MOVE_RIGHT] - held_keys[MOVE_LEFT])
+            self.forward * (held_keys[get_binding(Controls.MOVE_FORWARDS)] - held_keys[get_binding(Controls.MOVE_BACKWARDS)])
+            + self.right * (held_keys[get_binding(Controls.MOVE_RIGHT)] - held_keys[get_binding(Controls.MOVE_LEFT)])
             ).normalized()
 
         feet_ray = raycast(self.position+Vec3(0,0.5,0), self.direction, traverse_target=self.traverse_target, ignore=self.ignore_list, distance=.5, debug=False)
@@ -96,7 +96,7 @@ class FirstPersonController(Entity):
 
 
     def input(self, key):
-        if key == JUMP:
+        if key == get_binding(Controls.JUMP):
             self.jump()
 
     def jump(self):
