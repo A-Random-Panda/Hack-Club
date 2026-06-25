@@ -12,6 +12,7 @@ import threading
 import json
 import queue
 import socket
+import state
 
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
@@ -36,8 +37,6 @@ camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gra
 camoverlay.disable()
 
 player = FPC(
-    texture = "Bamboo.png",
-    model="PlayerModel.obj",
     collider="box",
     position = (0.5,1,0.5),
     speed = 20,
@@ -65,7 +64,6 @@ cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube.rotation_y = 90
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
-print(scene.entities, "")
 
 #Variable declarations
 camera_entity_list = [player]
@@ -78,7 +76,6 @@ def input(key):
     '''Input handler'''
     global saved_pos
     global saved_rot
-    global in_camera
     global current_cam
     global camera_entity_list
 
@@ -88,26 +85,28 @@ def input(key):
             current_cam = 0
 
         if current_cam == 0 and len(camera_entity_list) != 1: #player
-            player.texture = "Bamboo.png"
-            player.model="PlayerModel.obj"
             player.position = saved_pos
             player.speed = 20
             player.jump_height=4
             player.gravity = 1
-            in_camera = False
+            state.in_camera = False
+            player.visible = True
             camoverlay.disable()
+            camera_entity_list[-1].visible = True
         elif current_cam != 0:
+            player.camera_pivot.rotation_x = 0
             saved_pos = player_shadow.position
             saved_rot = player_shadow.rotation
-            player.texture ="cam.png"
-            player.model = "cypher_cam.obj"
+            player.visible = False
             player.position = camera_entity_list[current_cam].position
+            player.y = (camera_entity_list[current_cam].y - 1.6)
             player.rotation = (0,camera_entity_list[current_cam].rotation[1]+180,0)
-
+            camera_entity_list[current_cam].visible = False
+            camera_entity_list[current_cam-1].visible = True
+            state.in_camera = True
             player.speed = 0
             player.jump_height=0
             player.gravity = 0
-            in_camera = True
             camoverlay.enable()
             camoverlay.text= f'cam {current_cam}'     
 
@@ -120,14 +119,14 @@ def input(key):
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        in_camera = False
+        state.in_camera = False
         camoverlay.disable()
         camera_entity_list.clear()
         camera_entity_list = [player]
 
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
-        if hit.hit and not in_camera:
+        if hit.hit and not state.in_camera:
             dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
             if not dist:
                 camera_entity_list.append(Entity(model = 'cypher_cam',
@@ -148,7 +147,7 @@ def update():
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
 
-    if not in_camera: #Actually player movement
+    if not state.in_camera: #Actually player movement
         player_shadow.enabled = True
         player_shadow.position = player.position
         player_shadow.rotation = player.rotation
