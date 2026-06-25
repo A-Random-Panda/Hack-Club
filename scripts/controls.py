@@ -3,7 +3,7 @@ This file contains the controls for the game
 It contains default controls, and also the ability to modify the control to ones in controls.json
 '''
 
-from pathlib import Path
+from pathlib import Path as _Path
 import json as _json
 import logging as _logging
 
@@ -44,18 +44,18 @@ def _change_controls(changed_controls:dict) -> None:
         else:
             _logger.warning("Found non-existant control %s.", k)
 
-def _get_json_path() -> Path:
+def _get_json_path() -> _Path:
     '''Returns the path of the controls.json file'''
-    script_path = str(Path(__file__).resolve().parent)
+    script_path = str(_Path(__file__).resolve().parent)
     last_slash_index = script_path.rfind("\\")
-    return Path(script_path[0:last_slash_index+1] + "controls.json")
+    return _Path(script_path[0:last_slash_index+1] + "controls.json")
 
 def set_controls() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
 
     #Ensures there is a control file
     if not _get_json_path().is_file():
-        Path(_get_json_path()).touch()
+        _Path(_get_json_path()).touch()
         _logger.info("Creating file %s", _get_json_path)
 
     #Reads the changes
