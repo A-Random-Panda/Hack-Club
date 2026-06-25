@@ -26,6 +26,10 @@ class Controls(int, _Enum):
     FREECAM_MODE = 8
     QUIT_GAME = 9
 
+UNCHANGABLE_CONTROLS = [
+    Controls.QUIT_GAME
+]
+
 _BINDINGS_DICT:dict[Controls,str] = {
     Controls.MOVE_FORWARDS:"w",
     Controls.MOVE_BACKWARDS:"s",
@@ -55,7 +59,10 @@ def _change_controls(changed_controls:dict) -> None:
     _logger.debug("Control: %s", changed_controls)
     for k,v in changed_controls.items():
         if k in [x.value for x in _BINDINGS_DICT.keys()] or k in _BINDINGS_DICT:
-            _BINDINGS_DICT[k] = v
+            if k not in UNCHANGABLE_CONTROLS:
+                _BINDINGS_DICT[k] = v
+            else:
+                _logger.warning("Unchangable control %s attempted to be changed.", k)
         else:
             _logger.warning("Found non-existant control %s.", k)
 
