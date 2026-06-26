@@ -5,8 +5,7 @@ import logging
 import socket
 from ursina import *
 from scripts.controls import *
-from scripts.editable_controls_FPC import FirstPersonController as FPC
-import state
+from scripts.player import get_player
 
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
@@ -24,13 +23,7 @@ player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",r
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
 camoverlay.disable()
 
-player = FPC(
-    collider="box",
-    position = (0.5,1,0.5),
-    speed = 20,
-    jump_height=4,
-    gravity = 1
-)
+player = get_player()
 player.visible = False
 
 # Walls
@@ -55,40 +48,37 @@ center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture 
 
 #Variable declarations
 camera_entity_list = [player]
-current_cam = 0
 
 def input(key):
     '''Input handler'''
-    global current_cam
-
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
-        current_cam += 1
+        player.current_cam += 1
         #Camera rollover
-        if current_cam == len(camera_entity_list):
-            current_cam = 0
+        if player.current_cam == len(camera_entity_list):
+            player.current_cam = 0
         #If the camera is on the player and there is at least one camera
-        if current_cam == 0 and len(camera_entity_list) > 1: #player
-            state.in_camera = False
+        if player.current_cam == 0 and len(camera_entity_list) > 1: #player
+            player.in_camera = False
             camoverlay.disable()
             camera_entity_list[-1].visible = True
             camera.parent = player.camera_pivot
-        elif current_cam != 0:
-            camera.parent = camera_entity_list[current_cam].camera_pivot
-            camera_entity_list[current_cam].visible = False
-            camera_entity_list[current_cam-1].visible = True
-            state.in_camera = True
+        elif player.current_cam != 0:
+            camera.parent = camera_entity_list[player.current_cam].camera_pivot
+            camera_entity_list[player.current_cam].visible = False
+            camera_entity_list[player.current_cam-1].visible = True
+            player.in_camera = True
             camoverlay.enable()
-            camoverlay.text= f'cam {current_cam}'
+            camoverlay.text= f'cam {player.current_cam}'
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
-        current_cam = 0
+        player.current_cam = 0
         for i in range(1,len(camera_entity_list)):
             destroy(camera_entity_list[i])
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
-        state.in_camera = False
+        player.in_camera = False
         camera.parent = player.camera_pivot
         camoverlay.disable()
         camera_entity_list.clear()
@@ -96,7 +86,7 @@ def input(key):
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
-        if hit.hit and not state.in_camera:
+        if hit.hit and not player.in_camera:
             dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
@@ -118,7 +108,7 @@ def update():
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
 
-    if not state.in_camera: #Actually player movement
+    if not player.in_camera: #Actually player movement
         player_shadow.enabled = True
         player_shadow.position = player.position
         player_shadow.rotation = player.rotation
