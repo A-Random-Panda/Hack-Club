@@ -2,7 +2,6 @@
 
 from ursina import *
 from scripts.controls import *
-from scripts.player import get_player
 
 class FirstPersonController(Entity):
     def __init__(self, height=2, **kwargs):
