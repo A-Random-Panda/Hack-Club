@@ -1,5 +1,6 @@
 '''This module contains the player class for the game'''
 from typing import Any
+from ursina import *
 from scripts.editable_controls_FPC import FirstPersonController
 
 _player_properties:dict[str,Any] = {
@@ -17,11 +18,16 @@ class _Player(FirstPersonController):
         self.in_camera:bool = False
         self.current_cam:int = 0
         self.perspective_list:list[object] = []
-    #def update(self):
-        #if self.in_camera:
-            #whatever
-        #else:
-            #return super().update()
+    def update(self):
+        if self.in_camera:
+            cam = self.perspective_list[self.current_cam]
+            cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
+            cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
+            cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
+            cam.camera_pivot.rotation_y= clamp(cam.camera_pivot.rotation_y, -60, 60)
+
+        else:
+            super().update()
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?
 _player_list:list[_Player] = []

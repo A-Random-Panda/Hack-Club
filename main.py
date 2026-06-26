@@ -47,7 +47,7 @@ cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
 
 #Variable declarations
-camera_entity_list = [player]
+player.perspective_list = [player]
 
 def input(key):
     '''Input handler'''
@@ -55,39 +55,39 @@ def input(key):
     if key == get_binding(Controls.TOGGLE_CAMERA):
         player.current_cam += 1
         #Camera rollover
-        if player.current_cam == len(camera_entity_list):
+        if player.current_cam == len(player.perspective_list):
             player.current_cam = 0
         #If the camera is on the player and there is at least one camera
-        if player.current_cam == 0 and len(camera_entity_list) > 1: #player
+        if player.current_cam == 0 and len(player.perspective_list) > 1: #player
             player.in_camera = False
             camoverlay.disable()
-            camera_entity_list[-1].visible = True
+            player.perspective_list[-1].visible = True
             camera.parent = player.camera_pivot
         elif player.current_cam != 0:
-            camera.parent = camera_entity_list[player.current_cam].camera_pivot
-            camera_entity_list[player.current_cam].visible = False
-            camera_entity_list[player.current_cam-1].visible = True
+            camera.parent = player.perspective_list[player.current_cam].camera_pivot
+            player.perspective_list[player.current_cam].visible = False
+            player.perspective_list[player.current_cam-1].visible = True
             player.in_camera = True
             camoverlay.enable()
             camoverlay.text= f'cam {player.current_cam}'
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
         player.current_cam = 0
-        for i in range(1,len(camera_entity_list)):
-            destroy(camera_entity_list[i])
+        for i in range(1,len(player.perspective_list)):
+            destroy(player.perspective_list[i])
         player.speed = 20
         player.jump_height=4
         player.gravity = 1
         player.in_camera = False
         camera.parent = player.camera_pivot
         camoverlay.disable()
-        camera_entity_list.clear()
-        camera_entity_list.append(player)
+        player.perspective_list.clear()
+        player.perspective_list.append(player)
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + camera_entity_list)
+        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
         if hit.hit and not player.in_camera:
-            dist = any(distance(hit.world_point, n.position) < 1 for n in camera_entity_list)
+            dist = any(distance(hit.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
                                 collider = 'box',
@@ -95,7 +95,7 @@ def input(key):
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
-                camera_entity_list.append(temp_cam)
+                player.perspective_list.append(temp_cam)
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
