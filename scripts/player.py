@@ -12,14 +12,21 @@ _player_properties:dict[str,Any] = {
 
 class _Player(FirstPersonController):
     '''The player class for the game'''
-    in_camera:bool = False
-    current_cam:int = 0
-    perspective_list:list[object] = []
-    
     def __init__(self):
         super().__init__(kwargs=_player_properties)
+        self.in_camera:bool = False
+        self.current_cam:int = 0
+        self.perspective_list:list[object] = []
 
-player = _Player()
+#This is probably not the best way to make a singleton esque thing, but it works okay?
+_player_list:list[_Player] = []
+def get_player() -> _Player:
+    '''Returns the player object'''
+    if len(_player_list) > 1:
+        pass
+    else:
+        _player_list.append(_Player())
+    return _player_list[0]
 
 if __name__ == "__main__":
     pass
