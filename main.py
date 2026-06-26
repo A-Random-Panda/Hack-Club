@@ -1,7 +1,7 @@
 """
 This is the main file that will run the game
 """
-
+print("aiken smells")
 import logging
 import socket
 from ursina import *
