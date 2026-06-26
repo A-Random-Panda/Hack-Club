@@ -1,7 +1,6 @@
 """
 This is the main file that will run the game
 """
-print("aiken smells")
 import logging
 import socket
 from ursina import *
@@ -123,5 +122,5 @@ def update():
         player_shadow.enabled = True
         player_shadow.position = player.position
         player_shadow.rotation = player.rotation
-
+print("this is a change")
 app.run()
