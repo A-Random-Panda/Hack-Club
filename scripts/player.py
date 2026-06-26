@@ -17,7 +17,6 @@ class _Player(FirstPersonController):
         self.in_camera:bool = False
         self.current_cam:int = 0
         self.perspective_list:list[object] = []
-        self.camera_entity_list:list[object] = []
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?
 _player_list:list[_Player] = []
