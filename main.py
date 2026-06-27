@@ -96,6 +96,8 @@ def input(key):
                                 rotation = (180,player.rotation[1],180)))
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
                 player.perspective_list.append(temp_cam)
+                temp_cam.original_rotation_y = temp_cam.rotation_y
+
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
@@ -108,9 +110,7 @@ def update():
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
 
-    if not player.in_camera: #Actually player movement
-        player_shadow.enabled = True
-        player_shadow.position = player.position
-        player_shadow.rotation = player.rotation
-print("this is a change")
+    player_shadow.enabled = True
+    player_shadow.position = player.position
+    player_shadow.rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)
 app.run()

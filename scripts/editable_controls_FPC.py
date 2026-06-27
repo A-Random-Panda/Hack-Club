@@ -48,7 +48,7 @@ class FirstPersonController(Entity):
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
         self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
         self.camera_pivot.rotation_x= clamp(self.camera_pivot.rotation_x, -90, 90)
-
+    def physics_update(self):
         self.direction = Vec3(
             self.forward * (held_keys[get_binding(Controls.MOVE_FORWARDS)] - held_keys[get_binding(Controls.MOVE_BACKWARDS)])
             + self.right * (held_keys[get_binding(Controls.MOVE_RIGHT)] - held_keys[get_binding(Controls.MOVE_LEFT)])
