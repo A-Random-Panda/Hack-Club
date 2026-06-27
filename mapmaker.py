@@ -25,7 +25,8 @@ grid = Entity(model=Grid(*GRID_SIZE), scale=50, color=color.white, rotation_x=90
 
 #test for now
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-player_shadow = Entity(model="PlayerModel", color=color.white, texture="Bamboo",rotation_x=0, y=0, enabled = True)
+player_shadow = Entity(model="PlayerModel", color=color.white, texture="Bamboo",rotation_x=0, y=0)
+player_line = Entity(model = Quad(radius=100, mode='line'), color=color.white)
 
 class CameraMode(enum.IntEnum):
     '''Describes whether the camera is in EditorCamera or FirstPersonController'''
@@ -70,9 +71,12 @@ def update():
     if fpc.y < -2:
         fpc.position = (0, 2, 0)
     if CameraControls.camera_mode == CameraMode.FIRST_PERSON:
+        player_line.disable()
         player_shadow.disable()
     elif CameraControls.camera_mode == CameraMode.EDITOR:
         player_shadow.enable()
+        player_line.enable()
+        player_line.position = editor_camera.position
         player_shadow.position = editor_camera.position
 
 app.run()
