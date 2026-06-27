@@ -14,7 +14,7 @@ from scripts.better_editor_camera import EditorCamera
 from scripts.mapmaker_constants import *
 
 #Declare logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 #Create app
@@ -23,11 +23,6 @@ app = Ursina()
 #Create grid
 grid = Entity(model=Grid(*GRID_SIZE), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 
-#test for now
-yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-player_shadow = Entity(model="PlayerModel", color=color.white, texture="Bamboo",rotation_x=0, y=0)
-player_line = Entity(model = Quad(radius=100, mode='line'), color=color.white)
-
 class CameraMode(enum.IntEnum):
     '''Describes whether the camera is in EditorCamera or FirstPersonController'''
     EDITOR = enum.auto()
@@ -35,16 +30,28 @@ class CameraMode(enum.IntEnum):
 
 class CameraControls():
     '''Variables relating to the camera'''
-    camera_mode = CameraMode.EDITOR
+    camera_mode:CameraMode = CameraMode.EDITOR
+    camera_dict:dict[CameraMode, Entity] = {}
+
+#test for now
+yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
+player_shadow = Entity(model="PlayerModel", color=color.white, texture="Bamboo",rotation_x=0, y=0)
+player_line = Entity(model = Quad(radius=100, mode='line'), color=color.white)
+last_hit_line = Entity(model=Mesh(mode="line",vertices=((0,0,0),(0,100,0)), thickness=3),
+                       enabled=False,)
+
+player_line.add_to_scene_entities = False
+player_shadow.add_to_scene_entities = False
 
 fpc = FirstPersonController(**_player_properties)
 fpc.disable()
-editor_camera = EditorCamera()
+editor_camera = EditorCamera(move_speed=EDITOR_CAMERA_SPEED)
 editor_camera.enable()
+
+CameraControls.camera_dict.update({CameraMode.EDITOR: editor_camera, CameraMode.FIRST_PERSON: fpc})
 
 def input(key):
     '''Input handler'''
-    logger.debug("key %s pressed", key)
     ##Switch camera modes
     if key == get_binding(Controls.FREECAM_MODE):
         #Need to disable the other camera mode first before the enabling the second mode
@@ -65,6 +72,10 @@ def input(key):
         
         logger.debug("Editor camera state: %s", editor_camera.enabled)
         logger.debug("fpc state: %s", fpc.enabled)
+    if key == get_binding(Controls.PLACE_CAMERA):
+        if mouse.hovered_entity:
+            hit_entity:Entity = mouse.hovered_entity
+            logger.info(mouse.world_point)
 
 def update():
     "Frame handler"
@@ -77,6 +88,7 @@ def update():
         player_shadow.enable()
         player_line.enable()
         player_line.position = editor_camera.position
-        player_shadow.position = editor_camera.position
+        player_line.rotation = editor_camera.rotation
+        player_shadow.world_position = editor_camera.world_position
 
 app.run()
