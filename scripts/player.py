@@ -25,11 +25,13 @@ class _Player(FirstPersonController):
             cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-60, cam.original_rotation_y+60)
-            super().physics_update()
+            super().gravity()
+            super().movement_in_cam()
 
         else:
             super().update()
-            super().physics_update()
+            super().gravity()
+            super().movement_not_in_cam()
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?
 _player_list:list[_Player] = []

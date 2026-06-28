@@ -98,7 +98,6 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
 
-
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
     #Exit game
@@ -107,10 +106,19 @@ def input(key):
 
 def update():
     "Frame handler"
+    if held_keys[get_binding(Controls.CAMERA_LEFT)]:
+        player_shadow.rotation_y -= 80 * time.dt
+    
+    if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
+        player_shadow.rotation_y += 80 * time.dt
+    
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
-
-    player_shadow.enabled = True
-    player_shadow.position = player.position
-    player_shadow.rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)
+    if not player.in_camera:
+        player_shadow.enabled = False
+        player_shadow.position = player.position
+        player_shadow.rotation = (player.rotation[0]+180,player.rotation[1],player.rotation[2]+180)
+    else:
+        player_shadow.enabled = True
+        player_shadow.position = player.position
 app.run()
