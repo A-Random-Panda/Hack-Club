@@ -17,7 +17,7 @@ class _Player(FirstPersonController):
         super().__init__(**_player_properties)
         self.in_camera:bool = False
         self.current_cam:int = 0
-        self.perspective_list:list[object] = []
+        self.perspective_list:list[Entity] = []
     def update(self):
         super().update()
         if self.in_camera:

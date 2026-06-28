@@ -63,6 +63,7 @@ class FirstPersonController(Entity):
             # if not on ground and not on way up in jump, fall
             self.y -= min(self.air_time, ray.distance-.05) * time.dt * 100
             self.air_time += time.dt * .25 * self.gravity
+
     def movement_not_in_cam(self):
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
         self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
