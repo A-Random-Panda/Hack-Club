@@ -2,3 +2,4 @@ models_compressed/
 **/__pycache__/
 controls.json
 maps/
+.vscode/

@@ -14,7 +14,7 @@ class EditorCamera(Entity):
         ):
         camera.editor_position = camera.position
         super().__init__(name='editor_camera', eternal=False)
-
+        print('using edited editorcamera')
         # self.gizmo = Entity(parent=self, model='sphere', color=color.orange, scale=.025, add_to_scene_entities=False, enabled=False)
 
         self.rotation_speed = rotation_speed

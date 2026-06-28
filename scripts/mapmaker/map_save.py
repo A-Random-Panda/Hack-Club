@@ -8,12 +8,12 @@ import ursina
 
 _logger:logging.Logger = logging.getLogger(__name__)
 
-def _json_dump_map(file_name:str|Path):
+def _json_dump_map(file_name:str|Path, _map):
     '''Dumps the map to file_name'''
     with open(file_name, "w", encoding="utf-8") as file:
-        file.write(json.dumps(map, default=str))
+        file.write(json.dumps(_map, default=str))
 
-def save_map(map:list[ursina.Entity.Entity]) -> None:
+def save_map(_map:list[ursina.Entity.Entity]) -> None:
     '''Saves map to file map(number).json'''
     #find path
     save_folder = Path.cwd() / "maps"
@@ -35,16 +35,16 @@ def save_map(map:list[ursina.Entity.Entity]) -> None:
     if not map_number.isdigit():
         #Fallback if it's not an integer
         _logger.error("Map file is incorrect; map will be saved as errormap.json. Please fix the file.")
-        _json_dump_map(save_folder / "errormap.json")
+        _json_dump_map(save_folder / "errormap.json", _map)
     else:
         #Writes map to file
         next_map_number = int(map_number) + 1
         _logger.info("Writing map to %s.", save_folder / ("map" + str(map_number) + ".json"))
-        _json_dump_map(save_folder / ("map" + str(map_number) + ".json"))
+        _json_dump_map(save_folder / ("map" + str(map_number) + ".json"), _map)
         _logger.info("Updating map number to %s.", next_map_number)
 
         #Updating file
-        with open(map_number_file, "r+") as file:
+        with open(map_number_file, "r+", encoding="utf-8") as file:
             lines = file.readlines()
             file.seek(0)
             lines[1] = str(next_map_number)
