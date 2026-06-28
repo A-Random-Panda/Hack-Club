@@ -19,18 +19,17 @@ class _Player(FirstPersonController):
         self.current_cam:int = 0
         self.perspective_list:list[object] = []
     def update(self):
+        super().update()
         if self.in_camera:
             cam = self.perspective_list[self.current_cam]
             cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-60, cam.original_rotation_y+60)
-            super().gravity()
             super().movement_in_cam()
 
         else:
             super().update()
-            super().gravity()
             super().movement_not_in_cam()
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?

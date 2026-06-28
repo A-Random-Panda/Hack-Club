@@ -45,10 +45,28 @@ class FirstPersonController(Entity):
 
 
     def update(self):
+        if self.gravity:
+            # gravity
+            ray = raycast(self.world_position+(0,self.height,0), self.down, traverse_target=self.traverse_target, ignore=self.ignore_list)
+
+            if ray.distance <= self.height+.1:
+                if not self.grounded:
+                    self.land()
+                self.grounded = True
+                # make sure it's not a wall and that the point is not too far up
+                if ray.world_normal.y > .7 and ray.world_point.y - self.world_y < .5: # walk up slope
+                    self.y = ray.world_point[1]
+                return
+            else:
+                self.grounded = False
+
+            # if not on ground and not on way up in jump, fall
+            self.y -= min(self.air_time, ray.distance-.05) * time.dt * 100
+            self.air_time += time.dt * .25 * self.gravity
+    def movement_not_in_cam(self):
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
         self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
         self.camera_pivot.rotation_x= clamp(self.camera_pivot.rotation_x, -90, 90)
-    def movement_not_in_cam(self):
         self.direction = Vec3(
             self.forward * (held_keys[get_binding(Controls.MOVE_FORWARDS)] - held_keys[get_binding(Controls.MOVE_BACKWARDS)])
             + self.right * (held_keys[get_binding(Controls.MOVE_RIGHT)] - held_keys[get_binding(Controls.MOVE_LEFT)])
@@ -89,27 +107,6 @@ class FirstPersonController(Entity):
             if raycast(self.position+Vec3(-.0,1,0), Vec3(0,0,-1), distance=.5, traverse_target=self.traverse_target, ignore=self.ignore_list).hit:
                 move_amount[2] = max(move_amount[2], 0)
             self.position += move_amount
-
-    def gravity(self):
-        if self.gravity:
-            # gravity
-            ray = raycast(self.world_position+(0,self.height,0), self.down, traverse_target=self.traverse_target, ignore=self.ignore_list)
-
-            if ray.distance <= self.height+.1:
-                if not self.grounded:
-                    self.land()
-                self.grounded = True
-                # make sure it's not a wall and that the point is not too far up
-                if ray.world_normal.y > .7 and ray.world_point.y - self.world_y < .5: # walk up slope
-                    self.y = ray.world_point[1]
-                return
-            else:
-                self.grounded = False
-
-            # if not on ground and not on way up in jump, fall
-            self.y -= min(self.air_time, ray.distance-.05) * time.dt * 100
-            self.air_time += time.dt * .25 * self.gravity
-
 
     def input(self, key):
         if key == get_binding(Controls.JUMP):
