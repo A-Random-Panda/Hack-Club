@@ -25,15 +25,14 @@ def game_round(value:int|float, face) -> int:
     '''
     Rounding but it decides to round up or down depending on the face (1, 0, -1)
     '''
-    logger.debug("Rounded %s with face value %s", value, face)
-    if fuzzy_greater_than_equal((value - math.floor(value)), .5):
-        if face == 1.0:
-            logger.debug("Returned %s", math.ceil(value))
-            return math.ceil(value)
-        if face == -1.0:
-            logger.debug("Returned %s", math.floor(value))
-            return math.floor(value)
-    logger.debug("Returned %s", math.copysign(math.floor(abs(value)+0.5),value)) #type: ignore
+    logger.debug("Rounded %s with face value %s face equals 1 %s, face = -1 %s", value, face, face == 1.0, face == -1.0)
+    if face == 1.0:
+        logger.debug("Returned %s, face == 1", math.ceil(value))
+        return math.ceil(value)
+    if face == -1.0:
+        logger.debug("Returned %s, face == -1", math.floor(value))
+        return math.floor(value)
+    logger.debug("Returned %s, face == rounded", math.copysign(math.floor(abs(value)+0.5),value)) #type: ignore
     return math.copysign(math.floor(abs(value) + 0.5), value) #type: ignore
 
 def fuzzy_greater_than_equal(num1:int|float, num2:int|float) -> bool:
