@@ -2,7 +2,7 @@
 
 import math
 import logging
-from scripts.editable_controls_FPC import FirstPersonController as fpc
+from scripts.editable_controls_FPC import FirstPersonController as _old_first_person_controller
 from typing import override
 
 _tolarance = 0.00001
@@ -11,7 +11,7 @@ _tolarance = 0.00001
 logger = logging.getLogger(__name__)
 
 #Harry sucks so I have to do this
-class FirstPersonController(fpc):
+class FirstPersonController(_old_first_person_controller):
     '''
     Basically the update and physics update aren't in the same function
     so I need to do this
