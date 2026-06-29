@@ -27,9 +27,7 @@ class _Player(FirstPersonController):
             cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-60, cam.original_rotation_y+60)
             super().movement_in_cam()
-
         else:
-            super().update()
             super().movement_not_in_cam()
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?

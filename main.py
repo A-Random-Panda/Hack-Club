@@ -70,6 +70,7 @@ def input(key):
             player.in_camera = True
             camoverlay.enable()
             camoverlay.text= f'cam {player.current_cam}'
+
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
         player.current_cam = 0
@@ -83,6 +84,7 @@ def input(key):
         camoverlay.disable()
         player.perspective_list.clear()
         player.perspective_list.append(player)
+
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
         hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
@@ -100,6 +102,7 @@ def input(key):
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
+
     #Exit game
     if key == get_binding(Controls.QUIT_GAME):
         application.quit()

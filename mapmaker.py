@@ -10,9 +10,9 @@ import enum
 from ursina import *
 from scripts.player import _player_properties
 from scripts.controls import Controls, get_binding
-from scripts.editable_controls_FPC import FirstPersonController as edited_fpc
 from scripts.better_editor_camera import EditorCamera
 from scripts.mapmaker.mapmaker_constants import *
+from scripts.mapmaker.mapmaker_helper import *
 from scripts.mapmaker.map_save import save_map
 
 #Declare logging
@@ -21,35 +21,6 @@ logger = logging.getLogger(__name__)
 
 #Create app
 app = Ursina()
-
-class CameraMode(enum.IntEnum):
-    '''Describes whether the camera is in EditorCamera or FirstPersonController'''
-    EDITOR = enum.auto()
-    FIRST_PERSON = enum.auto()
-
-class CameraControls():
-    '''Variables relating to the camera'''
-    camera_mode:CameraMode = CameraMode.EDITOR
-    camera_dict:dict[CameraMode, Entity] = {}
-
-
-#Harry sucks so I have to do this
-class FirstPersonController(edited_fpc):
-    '''
-    Basically the update and physics update aren't in the same function
-    so I need to do this
-    '''
-    @override
-    def update(self):
-        super().update()
-        super().physics_update()
-
-def normal_round(value:int|float) -> int:
-    '''
-    Python does banker's rounding... which really messes up this code
-    This function just implements normal rounding in one line
-    '''
-    return math.copysign(math.floor(abs(value) + 0.5), value) #type: ignore
 
 #Creatinng textures
 grid = Entity(model=Grid(*GRID_SIZE), scale=Vec3(100, 100), color=color.white, rotation_x=90, position=Vec3(.5, .5, .5), collider ="box")
@@ -73,7 +44,7 @@ editor_camera.enable()
 
 CameraControls.camera_dict.update({CameraMode.EDITOR: editor_camera, CameraMode.FIRST_PERSON: fpc})
 
-def input(key):
+def game_input_handler(key):
     '''Input handler'''
     ##Switch camera modes
     if key == get_binding(Controls.FREECAM_MODE):
@@ -103,13 +74,15 @@ def input(key):
             logger.debug("Mouse at point %s.", mouse.world_point)
             last_hit_line.position = mouse.world_point
             pos = mouse.world_point
+            normal = mouse.normal
             assert pos is not None
-            #Sets the position to the nearest whole block
-            pos.x_setter(normal_round(pos.x_getter()))
-            pos.y_setter(normal_round(pos.y_getter()))
-            pos.z_setter(normal_round(pos.z_getter()))
+            assert normal is not None
+            assert pos is not None
+            pos.x_setter(game_round(pos.x_getter(), normal.x_getter()))
+            pos.z_setter(game_round(pos.z_getter(), normal.z_getter()))
+            pos.y_setter(game_round(pos.y_getter(), normal.y_getter()))
             #Placing the entity into the world
-            logger.debug("Placing entity at %s.", pos)
+            logger.debug("Placing entity at %s. Mouse normal %s, Mouse pos %s", pos, mouse.normal, mouse.world_point)
             entitylist.append(Entity(model="cube",
                                     scale=Vec3(1,1,1),
                                     color=color.red,
@@ -141,4 +114,6 @@ def update():
         player_line.rotation = editor_camera.rotation
         player_shadow.world_position = editor_camera.world_position
 
-app.run()
+input = game_input_handler
+
+app.run() #type: ignore
