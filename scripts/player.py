@@ -3,10 +3,11 @@ from typing import Any
 from ursina import *
 from scripts.editable_controls_FPC import FirstPersonController
 
+
 _player_properties:dict[str,Any] = {
         "collider":"box",
         "position":(0.5,1,0.5),
-        "speed":20,
+        "speed":8,
         "jump_height":4,
         "gravity":1
         }
@@ -18,6 +19,8 @@ class _Player(FirstPersonController):
         self.in_camera:bool = False
         self.current_cam:int = 0
         self.perspective_list:list[Entity] = []
+        self.cd:float = 0.0
+        self.bullet_trail = Entity
     def update(self):
         super().update()
         if self.in_camera:
@@ -26,6 +29,7 @@ class _Player(FirstPersonController):
             cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-60, cam.original_rotation_y+60)
+            #
             super().movement_in_cam()
         else:
             super().movement_not_in_cam()

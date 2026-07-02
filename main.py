@@ -6,10 +6,13 @@ import socket
 from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
+import time
 
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
+player_sensitivity = 150
+gun_volume = 1.5
 
 #Create app
 app = Ursina()
@@ -19,12 +22,16 @@ grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
 
+#Initializing sounds
+shooting = Audio("sniper_shot",autoplay=False, volume= gun_volume)
+success = Audio("success",autoplay = False)
+
 #Setup
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
 camoverlay.disable()
-
 player = get_player()
 player.visible = False
+player.cd = time.perf_counter()
 
 # Walls
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
@@ -70,15 +77,20 @@ def input(key):
             player.in_camera = True
             camoverlay.enable()
             camoverlay.text= f'cam {player.current_cam}'
+    #Shooting
+    if key == get_binding(Controls.SHOOT):
+        if 5 < abs(time.perf_counter()-player.cd):
+            player.cd = time.perf_counter()
+            shooting.play()
+            player.bullet_trail = Entity(model="cube",position=(player.position[0],player.position[1]+1.5, player.position[2]), scale = 0.2, color = color.white,parent = scene)
+
+
 
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
         player.current_cam = 0
         for i in range(1,len(player.perspective_list)):
             destroy(player.perspective_list[i])
-        player.speed = 20
-        player.jump_height=4
-        player.gravity = 1
         player.in_camera = False
         camera.parent = player.camera_pivot
         camoverlay.disable()
@@ -87,13 +99,13 @@ def input(key):
 
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
-        hit = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
-        if hit.hit and not player.in_camera:
-            dist = any(distance(hit.world_point, n.position) < 1 for n in player.perspective_list)
+        infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
+        if infront.hit and not player.in_camera:
+            dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
                                 collider = 'box',
-                                position = hit.world_point,
+                                position = infront.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
@@ -110,10 +122,10 @@ def input(key):
 def update():
     "Frame handler"
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
-        player_shadow.rotation_y -= 80 * time.dt
+        player_shadow.rotation_y -= player_sensitivity * time.dt
     
     if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
-        player_shadow.rotation_y += 80 * time.dt
+        player_shadow.rotation_y += player_sensitivity * time.dt
     
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
@@ -124,4 +136,11 @@ def update():
     else:
         player_shadow.enabled = True
         player_shadow.position = player.position
+        player.rotation_y = player_shadow.rotation_y
+        #creates the bullet trail
+    if player.bullet_trail in scene.entities:
+        success.play()
+        print("hi")
+        destroy(player.bullet_trail)
+
 app.run()

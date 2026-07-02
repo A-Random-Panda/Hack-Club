@@ -28,6 +28,7 @@ class Controls(_IntEnum):
     QUIT_GAME = 9
     CAMERA_LEFT = 10
     CAMERA_RIGHT = 11
+    SHOOT = 12
 UNCHANGABLE_CONTROLS = [
     Controls.QUIT_GAME
 ]
@@ -44,7 +45,8 @@ _BINDINGS_DICT:dict[Controls,str] = {
     Controls.FREECAM_MODE:"p",
     Controls.QUIT_GAME:"escape",
     Controls.CAMERA_LEFT: "left arrow",
-    Controls.CAMERA_RIGHT: "right arrow"
+    Controls.CAMERA_RIGHT: "right arrow",
+    Controls.SHOOT: "f"
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
