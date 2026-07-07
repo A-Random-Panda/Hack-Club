@@ -79,10 +79,18 @@ def input(key):
             camoverlay.text= f'cam {player.current_cam}'
     #Shooting
     if key == get_binding(Controls.SHOOT):
-        if 5 < abs(time.perf_counter()-player.cd):
+        if 1 < abs(time.perf_counter()-player.cd):
+            hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
             player.cd = time.perf_counter()
             shooting.play()
-            player.bullet_trail = Entity(model="cube",position=(player.position[0],player.position[1]+1.5, player.position[2]), scale = 0.2, color = color.white,parent = scene)
+            player.bullet_trail = Entity(model="cube",
+                                         position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
+                                         scale = (0.2,0.2,distance(hit.world_point,player.world_position)),
+                                         color = color.white,parent = scene,
+                                         rotation = player.rotation
+                                         )
+            destroy(player.bullet_trail,delay = 0.1)
+
 
 
 
@@ -140,7 +148,6 @@ def update():
         #creates the bullet trail
     if player.bullet_trail in scene.entities:
         success.play()
-        print("hi")
-        destroy(player.bullet_trail)
+        #destroy(player.bullet_trail)
 
 app.run()
