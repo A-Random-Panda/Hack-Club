@@ -5,7 +5,7 @@ from scripts.editable_controls_FPC import FirstPersonController
 
 
 _player_properties:dict[str,Any] = {
-        "collider":"box",
+        "collider": "box",
         "position":(0.5,1,0.5),
         "speed":8,
         "jump_height":4,
@@ -20,10 +20,11 @@ class _Player(FirstPersonController):
         self.current_cam:int = 0
         self.perspective_list:list[Entity] = []
         self.cd:float = 0.0
-        self.bullet_trail = Entity
+        self.bullet_trail = None
+        self.in_menu:bool = False
     def update(self):
         super().update()
-        if self.in_camera:
+        if self.in_camera and not self.in_menu:
             cam = self.perspective_list[self.current_cam]
             cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
@@ -31,8 +32,12 @@ class _Player(FirstPersonController):
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-60, cam.original_rotation_y+60)
             #
             super().movement_in_cam()
+        elif self.in_menu: 
+            super().movement_not_in_cam()
         else:
             super().movement_not_in_cam()
+            super().mouse_movement_not_in_cam()
+            
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?
 _player_list:list[_Player] = []

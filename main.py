@@ -11,8 +11,19 @@ import time
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
+
+#Settings
 player_sensitivity = 150
 gun_volume = 1.5
+player_volume = 1.5
+def volume():
+    x = int(input("input a value from 1 - 100"))
+    if x > 100:
+        return 100
+    elif x < 1:
+        return 1
+    else:
+        return(x)
 
 #Create app
 app = Ursina()
@@ -24,7 +35,8 @@ player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",r
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= gun_volume)
-success = Audio("success",autoplay = False)
+success = Audio("success",autoplay = False, volume = player_volume)
+death = Audio("death",autoplay = False, volume = player_volume)
 
 #Setup
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
@@ -32,12 +44,15 @@ camoverlay.disable()
 player = get_player()
 player.visible = False
 player.cd = time.perf_counter()
+player.collider = MeshCollider(player, mesh = player.model)
+
+#Buttons
+quit_button = Button(model = "quad", scale = 0.2, x = 0, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
+quit_button.on_click = application.quit
+volume_button = Button(model = "quad", scale = 0.2, x = 0.2, color = color.gray, text = "volume", text_size = 0.8, text_color = color.black, enabled = False)
+control_button = Button(model = "quad", scale = 0.2, x = -0.2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
 
 # Walls
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-24)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=24)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-24, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=24, z=0, rotation_y=90)
 
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
 wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
@@ -61,6 +76,7 @@ def input(key):
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
         player.current_cam += 1
+        player.rotation[1] = 90
         #Camera rollover
         if player.current_cam == len(player.perspective_list):
             player.current_cam = 0
@@ -79,7 +95,7 @@ def input(key):
             camoverlay.text= f'cam {player.current_cam}'
     #Shooting
     if key == get_binding(Controls.SHOOT):
-        if 1 < abs(time.perf_counter()-player.cd):
+        if 5 < abs(time.perf_counter()-player.cd):
             hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
             player.cd = time.perf_counter()
             shooting.play()
@@ -87,7 +103,8 @@ def input(key):
                                          position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
                                          scale = (0.2,0.2,distance(hit.world_point,player.world_position)),
                                          color = color.white,parent = scene,
-                                         rotation = player.rotation
+                                         rotation = player.rotation,
+                                         collider = "box"
                                          )
             destroy(player.bullet_trail,delay = 0.1)
 
@@ -112,20 +129,29 @@ def input(key):
             dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
-                                collider = 'box',
                                 position = infront.world_point,
                                 texture = "cam",
                                 rotation = (180,player.rotation[1],180)))
                 temp_cam.camera_pivot = Entity(parent=temp_cam, y = 1.6)
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
+                temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
 
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
 
-    #Exit game
+    #Escape menu
     if key == get_binding(Controls.QUIT_GAME):
-        application.quit()
+        player.in_menu = not player.in_menu
+        mouse.visible = not mouse.visible
+        mouse.locked = not mouse.locked
+        player.cursor.enabled = not player.cursor.enabled
+        #Buttons
+        quit_button.enabled = not quit_button.enabled
+        volume_button.enabled = not volume_button.enabled
+        control_button.enabled = not control_button.enabled
+
+
 
 def update():
     "Frame handler"
@@ -145,9 +171,11 @@ def update():
         player_shadow.enabled = True
         player_shadow.position = player.position
         player.rotation_y = player_shadow.rotation_y
-        #creates the bullet trail
-    if player.bullet_trail in scene.entities:
-        success.play()
-        #destroy(player.bullet_trail)
+
+    if player.bullet_trail and player.bullet_trail.intersects(player).hit:
+        death.play()
+
+    #Escape menu
+
 
 app.run()

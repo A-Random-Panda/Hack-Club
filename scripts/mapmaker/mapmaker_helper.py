@@ -20,6 +20,7 @@ class FirstPersonController(_old_first_person_controller):
     def update(self):
         super().update()
         super().movement_not_in_cam()
+        super().mouse_movement_not_in_cam()
 
 def game_round(value:int|float, face) -> int:
     '''

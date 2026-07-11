@@ -46,7 +46,7 @@ _BINDINGS_DICT:dict[Controls,str] = {
     Controls.QUIT_GAME:"escape",
     Controls.CAMERA_LEFT: "left arrow",
     Controls.CAMERA_RIGHT: "right arrow",
-    Controls.SHOOT: "f"
+    Controls.SHOOT: "f",
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
