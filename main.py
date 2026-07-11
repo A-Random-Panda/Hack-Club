@@ -14,16 +14,8 @@ logger = logging.getLogger(__name__)
 
 #Settings
 player_sensitivity = 150
-gun_volume = 1.5
 player_volume = 1.5
-def volume():
-    x = int(input("input a value from 1 - 100"))
-    if x > 100:
-        return 100
-    elif x < 1:
-        return 1
-    else:
-        return(x)
+
 
 #Create app
 app = Ursina()
@@ -34,7 +26,7 @@ yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,textu
 player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
 
 #Initializing sounds
-shooting = Audio("sniper_shot",autoplay=False, volume= gun_volume)
+shooting = Audio("sniper_shot",autoplay=False, volume= 0.5)
 success = Audio("success",autoplay = False, volume = player_volume)
 death = Audio("death",autoplay = False, volume = player_volume)
 
@@ -46,13 +38,35 @@ player.visible = False
 player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
 
+#Enters / Exists UIs
+def ui_changer(boolean = False):
+    for button in button_list:
+        button.enabled = button.enabled = boolean
+def open_volume_menu(boolean = True):
+    ui_changer()
+    volume_slider.enabled = boolean
+
+#Used to change volume
+def change_volume():
+    shooting.volume = (volume_slider.value/100)
+
+#Sliders
+volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = change_volume)
+volume_slider.label.origin = (0,0)
+volume_slider.label.position = (.25, -.1)
+
+
 #Buttons
+button_list = []
 quit_button = Button(model = "quad", scale = 0.2, x = 0, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
 quit_button.on_click = application.quit
-volume_button = Button(model = "quad", scale = 0.2, x = 0.2, color = color.gray, text = "volume", text_size = 0.8, text_color = color.black, enabled = False)
-control_button = Button(model = "quad", scale = 0.2, x = -0.2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
+volume_button = Button(model = "quad", scale = 0.2, x = 0.2, color = color.gray, text = "volume controls", text_size = 0.8, text_color = color.black, enabled = False)
+volume_button.on_click = open_volume_menu
 
-# Walls
+control_button = Button(model = "quad", scale = 0.2, x = -0.2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
+button_list.extend([volume_button,quit_button,control_button])
+
+#Walls
 
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
 wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
@@ -125,7 +139,7 @@ def input(key):
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA):
         infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
-        if infront.hit and not player.in_camera:
+        if infront.hit and not player.in_camera and not player.in_menu:
             dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
@@ -143,13 +157,18 @@ def input(key):
     #Escape menu
     if key == get_binding(Controls.QUIT_GAME):
         player.in_menu = not player.in_menu
-        mouse.visible = not mouse.visible
-        mouse.locked = not mouse.locked
-        player.cursor.enabled = not player.cursor.enabled
         #Buttons
-        quit_button.enabled = not quit_button.enabled
-        volume_button.enabled = not volume_button.enabled
-        control_button.enabled = not control_button.enabled
+        if player.in_menu:
+            mouse.visible = True
+            mouse.locked = False
+            player.cursor.enabled = False
+            ui_changer(True)
+        else:
+            mouse.visible = False
+            mouse.locked = True
+            player.cursor.enabled = True
+            open_volume_menu(False)
+
 
 
 
