@@ -10,6 +10,8 @@ class FirstPersonController(Entity):
         self.speed = 5
         self.height = height
         self.camera_pivot = Entity(parent=self, y=self.height)
+        self.previous_x = self.x
+        self.previous_y = self.y
 
         camera.parent = self.camera_pivot
         camera.position = Vec3.zero
