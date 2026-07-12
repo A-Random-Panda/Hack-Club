@@ -64,7 +64,7 @@ def open_control_menu(boolean = True):
     ui_changer()
     for button in control_button_list:
         button.enabled = boolean
-
+#test
 
 #Used to change volume
 def gun_change_volume():
