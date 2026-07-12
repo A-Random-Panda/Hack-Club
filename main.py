@@ -25,11 +25,6 @@ grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
 
-#Initializing sounds
-shooting = Audio("sniper_shot",autoplay=False, volume= 0.5)
-success = Audio("success",autoplay = False, volume = player_volume)
-death = Audio("death",autoplay = False, volume = player_volume)
-
 #Setup
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
 camoverlay.disable()
@@ -37,23 +32,43 @@ player = get_player()
 player.visible = False
 player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
+player.previous_x = player.x
+player.previous_y = player.y
+
+#Initializing sounds
+shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
+shooting.parent = player
+success = Audio("success",autoplay = False, volume = player_volume, spatial = True)
+death = Audio("death",autoplay = False, volume = player_volume, spatial = True)
+death.parent = player
+foot_steps = Audio("foot_steps", autoplay = False, volume = 0.5, spatial = True)
 
 #Enters / Exists UIs
 def ui_changer(boolean = False):
     for button in button_list:
-        button.enabled = button.enabled = boolean
+        button.enabled = boolean
 def open_volume_menu(boolean = True):
     ui_changer()
-    volume_slider.enabled = boolean
+    gun_volume_slider.enabled = boolean
+    footstep_volume_slider.enabled = boolean
+
 
 #Used to change volume
-def change_volume():
-    shooting.volume = (volume_slider.value/100)
+def gun_change_volume():
+    shooting.volume = (gun_volume_slider.value/100)
+def footsteps_change_volume():
+    foot_steps.volume = (footstep_volume_slider.value/50)
 
 #Sliders
-volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = change_volume)
-volume_slider.label.origin = (0,0)
-volume_slider.label.position = (.25, -.1)
+gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = gun_change_volume)
+gun_volume_slider.label.origin = (0,0)
+gun_volume_slider.label.position = (.25, -.05)
+gun_volume_slider.position = (-.25, 0)
+
+footstep_volume_slider = ThinSlider(text='Footstep Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = footsteps_change_volume)
+footstep_volume_slider.label.origin = (0,0)
+footstep_volume_slider.label.position = (.25, -0.06)
+footstep_volume_slider.position = (-0.25, -0.2)
 
 
 #Buttons
@@ -193,6 +208,14 @@ def update():
 
     if player.bullet_trail and player.bullet_trail.intersects(player).hit:
         death.play()
+
+    #Footstep sounds
+    if player.x != player.previous_x and not foot_steps.playing and not player.y != player.previous_y:
+        foot_steps.play()
+    if player.x == player.previous_x or player.y != player.previous_y and foot_steps.playing:
+        foot_steps.stop()
+    player.previous_x = player.x
+    player.previous_y = player.y
 
     #Escape menu
 
