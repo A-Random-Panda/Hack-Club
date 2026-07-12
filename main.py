@@ -44,9 +44,10 @@ death.parent = player
 foot_steps = Audio("foot_steps", autoplay = False, volume = 0.5, spatial = True)
 
 #Function used to update variables to allow you to change controls
-def control_changer(control):
+def control_changer(control,button):
     player.control_change_button_pressed = True
     player.control_change_key = control
+    button.text = "Press a key to assign\n it to this action"
 
 
 #Enters / Exists UIs
@@ -117,7 +118,8 @@ control_button_data_list = [
 #Creates the buttons and adds them to a list and dictionary
 for name, control, x, y in control_button_data_list:
     button = Button(model = "quad", scale = 0.2, x = x, y = y, color = color.gray, text = f"{name} \n{get_binding(control)}", text_size =0.8, text_color= color.black, enabled = False)
-    button.on_click = Func(control_changer, control)
+    button.name = name
+    button.on_click = Func(control_changer, control,button)
     control_button_list.append(button)
     control_buttons_dict[control] = button
 
@@ -126,7 +128,7 @@ def reset_controls():
     reset_controls_to_default()
     update_control_text()
 
-#Reset button (manuel added)
+#Reset button (manuelly added)
 reset_controls_to_default_button = Button(model = "quad", scale = 0.2, x = -0.8, y =0.4,color=color.gray, text = "Reset Keybinds", text_size = 0.8, text_color = color.black, enabled = False)
 reset_controls_to_default_button.on_click = reset_controls
 control_button_list.append(reset_controls_to_default_button)
@@ -134,8 +136,7 @@ control_button_list.append(reset_controls_to_default_button)
 #Update the control buttons text after it changes
 def update_control_text():
     for control, button in control_buttons_dict.items():
-        name = button.text.split("\n")[0]
-        button.text = f'{name}\n{get_binding(control)}'
+        button.text = f'{button.name}\n{get_binding(control)}'
 #Walls
 
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
@@ -278,12 +279,5 @@ def update():
         set_control(player.control_change_key, player.changed_key)
         player.changed_key = None
         update_control_text()
-
-
-
-
-
-    #Escape menu
-
 
 app.run()
