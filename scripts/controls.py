@@ -13,7 +13,9 @@ _logger:_logging.Logger = _logging.getLogger(__name__)
 
 #Default controls
 #To add more controls, create a new variable in the enum 
-#And add it to dictionary with control:default_value
+#And add it to _BINDINGS_DICT with control:default_value
+#Also add it to _CONTROL_NAMES
+
 class Controls(_IntEnum):
     '''Enum containing the controls for the game'''
     MOVE_FORWARDS = 0
@@ -29,11 +31,12 @@ class Controls(_IntEnum):
     CAMERA_LEFT = 10
     CAMERA_RIGHT = 11
     SHOOT = 12
-UNCHANGABLE_CONTROLS = [
+
+_UNCHANGABLE_CONTROLS = [
     Controls.QUIT_GAME
 ]
 
-_BINDINGS_DICT:dict[Controls,str] = {
+_BINDINGS_DICT:dict[Controls, str] = {
     Controls.MOVE_FORWARDS:"w",
     Controls.MOVE_BACKWARDS:"s",
     Controls.MOVE_LEFT:"a",
@@ -47,6 +50,22 @@ _BINDINGS_DICT:dict[Controls,str] = {
     Controls.CAMERA_LEFT: "left arrow",
     Controls.CAMERA_RIGHT: "right arrow",
     Controls.SHOOT: "f",
+}
+
+_CONTROL_NAMES:dict[str, Controls] = {
+    "Move Forwards" : Controls.MOVE_FORWARDS,
+    "Move Backwards" : Controls.MOVE_BACKWARDS,
+    "Move Left" : Controls.MOVE_LEFT,
+    "Move Right" : Controls.MOVE_RIGHT,
+    "Jump" : Controls.JUMP,
+    "Toggle Camera" : Controls.TOGGLE_CAMERA,
+    "Reset Cameras" : Controls.RESET_CAMERAS,
+    "Place Camera" : Controls.PLACE_CAMERA,
+    "Freecam" : Controls.FREECAM_MODE,
+    "Quit" : Controls.QUIT_GAME,
+    "Pan left" : Controls.CAMERA_LEFT,
+    "Pan Right" : Controls.CAMERA_RIGHT,
+    "Shoot" : Controls.SHOOT
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
@@ -68,7 +87,7 @@ def _change_controls(changed_controls:dict) -> None:
             _logger.warning("Found non-existant control %s.", k)
         else:
             #If the control is unchangable and not the default value
-            if k in UNCHANGABLE_CONTROLS and _BINDINGS_DICT[k] != v:
+            if k in _UNCHANGABLE_CONTROLS and _BINDINGS_DICT[k] != v:
                 _logger.warning("Unchangable control %s attempted to be changed.", k)
             else:
                 _BINDINGS_DICT[k] = v       
@@ -120,9 +139,9 @@ def get_binding(control:Controls) -> str:
     '''Returns the key for a control.'''
     return _BINDINGS_DICT[control]
 
-def set_control(control:Controls, key:"str") -> None:
+def set_control(control:Controls, key:str) -> None:
     '''Sets the control to be of value key, and then saves them to controls.json'''
-    if control in UNCHANGABLE_CONTROLS:
+    if control in _UNCHANGABLE_CONTROLS:
         _logger.critical("HARRY YAO IS STUPID AND ALLOWED UNCHANGABLE CONTROLS TO BE CHANGED")
         raise ValueError("HARRY YAO IS STUPID!")
     _BINDINGS_DICT[control] = key
@@ -133,9 +152,15 @@ def reset_controls_to_default() -> None:
     _BINDINGS_DICT.update(_DEFAULT_CONTROLS)
     _save_controls(_BINDINGS_DICT)
 
+def get_changable_controls() -> dict[str, Controls]:
+    '''Returns a dictionary of control name : control'''
+    return {k:v for k,v in _CONTROL_NAMES.items() if v not in _UNCHANGABLE_CONTROLS}
+
+
 _load_controls()
 
 if __name__ == "__main__":
     #For testing
     _logger.info("Controls are set to %s.", _BINDINGS_DICT)
     _save_controls(_BINDINGS_DICT)
+    print(get_changable_controls())
