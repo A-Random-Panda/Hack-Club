@@ -20,8 +20,11 @@ class _Player(FirstPersonController):
         self.current_cam:int = 0
         self.perspective_list:list[Entity] = []
         self.cd:float = 0.0
-        self.bullet_trail = None
+        self.bullet_trail = None #entity
         self.in_menu:bool = False
+        self.changed_key = None #str
+        self.control_change_button_pressed:bool =  False
+        self.control_change_key = None
     def update(self):
         super().update()
         if self.in_camera and not self.in_menu:
