@@ -98,38 +98,26 @@ button_list.extend([volume_button,quit_button,control_button])
 
 #Buttons in control menu
 control_button_list = []
-forward_button = Button(model = "quad", scale = 0.2, x = 0.4, y = 0,color=color.gray, text = f"Forwards \n{get_binding(Controls.MOVE_FORWARDS)}", text_size = 0.8, text_color = color.black, enabled = False)
-forward_button.on_click = Func(control_changer, Controls.MOVE_FORWARDS)
+control_buttons_dict = {}
+control_button_data_list = [
+    ("Forwards", Controls.MOVE_FORWARDS, 0.4, 0),
+    ("Backwards", Controls.MOVE_BACKWARDS, 0.4, 0.2),
+    ("Strafe Left", Controls.MOVE_LEFT, 0.4, 0.4),
+    ("Strafe Right", Controls.MOVE_RIGHT, 0.4, -0.2),
+    ("Jump", Controls.JUMP, 0.4, -0.4),
+    ("Open Camera", Controls.TOGGLE_CAMERA, -0.4, 0),
+    ("Place Camera", Controls.PLACE_CAMERA, -0.4, -0.2),
+    ("Reset All Cameras", Controls.RESET_CAMERAS, -0.4, 0.4),
+    ("Shoot", Controls.SHOOT, -0.4, 0.2),
+    ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
+    ("Player Camera Right", Controls.CAMERA_RIGHT, -0.4, -0.6),
+]
+for name, control, x, y in control_button_data_list:
+    button = Button(model = "quad", scale = 0.2, x = x, y = y, color = color.gray, text = f"{name} \n{get_binding(control)}", text_size =0.8, text_color= color.black, enabled = False)
+    button.on_click = Func(control_changer, control)
+    control_button_list.append(button)
+    control_buttons_dict[control] = button
 
-backword_button = Button(model = "quad", scale = 0.2, x = 0.4, y = 0.2,color=color.gray, text = f"Backwords \n{get_binding(Controls.MOVE_BACKWARDS)}", text_size = 0.8, text_color = color.black, enabled = False)
-backword_button.on_click = Func(control_changer, Controls.MOVE_BACKWARDS)
-
-left_button = Button(model = "quad", scale = 0.2, x = 0.4, y = 0.4,color=color.gray, text = f"Strafe Left \n{get_binding(Controls.MOVE_LEFT)}", text_size = 0.8, text_color = color.black, enabled = False)
-left_button.on_click = Func(control_changer, Controls.MOVE_LEFT)
-
-right_button = Button(model = "quad", scale = 0.2, x = 0.4, y = -0.2,color=color.gray, text = f"Strafe Right \n{get_binding(Controls.MOVE_RIGHT)}", text_size = 0.8, text_color = color.black, enabled = False)
-right_button.on_click = Func(control_changer, Controls.MOVE_RIGHT)
-
-jump_button = Button(model = "quad", scale = 0.2, x = 0.4, y = -0.4,color=color.gray, text = f"Jump \n{get_binding(Controls.JUMP)}", text_size = 0.8, text_color = color.black, enabled = False)
-jump_button.on_click = Func(control_changer, Controls.JUMP)
-
-toggle_camera_button = Button(model = "quad", scale = 0.2, x = -0.4, y = 0,color=color.gray, text = f"Open Camera \n{get_binding(Controls.TOGGLE_CAMERA)}", text_size = 0.8, text_color = color.black, enabled = False)
-toggle_camera_button.on_click = Func(control_changer, Controls.TOGGLE_CAMERA)
-
-place_camera_button = Button(model = "quad", scale = 0.2, x = -0.4, y = -0.2,color=color.gray, text = f"Place Camera \n{get_binding(Controls.PLACE_CAMERA)}", text_size = 0.8, text_color = color.black, enabled = False)
-place_camera_button.on_click = Func(control_changer, Controls.PLACE_CAMERA)
-
-reset_camera_button = Button(model = "quad", scale = 0.2, x = -0.4, y = 0.4,color=color.gray, text = f"Reset All Cameras \n{get_binding(Controls.RESET_CAMERAS)}", text_size = 0.8, text_color = color.black, enabled = False)
-reset_camera_button.on_click = Func(control_changer, Controls.RESET_CAMERAS)
-
-shoot_button = Button(model = "quad", scale = 0.2, x = -0.4, y = 0.2,color=color.gray, text = f"Shoot \n{get_binding(Controls.SHOOT)}", text_size = 0.8, text_color = color.black, enabled = False)
-shoot_button.on_click = Func(control_changer, Controls.SHOOT)
-
-rotate_player_left_button = Button(model = "quad", scale = .2, x = -0.4, y = -0.4,color=color.gray, text = f"Player Camera Left \n{get_binding(Controls.CAMERA_LEFT)}", text_size = 0.8, text_color = color.black, enabled = False)
-rotate_player_left_button.on_click = Func(control_changer, Controls.CAMERA_LEFT)
-
-rotate_player_right_button = Button(model = "quad", scale = 0.2, x = -0.4, y =-0.6,color=color.gray, text = f"PLayer Camera Right \n{get_binding(Controls.CAMERA_RIGHT)}", text_size = 0.8, text_color = color.black, enabled = False)
-rotate_player_right_button.on_click = Func(control_changer, Controls.CAMERA_RIGHT)
 
 def reset_controls():
     reset_controls_to_default()
@@ -137,22 +125,13 @@ def reset_controls():
 
 reset_controls_to_default_button = Button(model = "quad", scale = 0.2, x = -0.8, y =0.4,color=color.gray, text = "Reset Keybinds", text_size = 0.8, text_color = color.black, enabled = False)
 reset_controls_to_default_button.on_click = reset_controls
-
-control_button_list.extend([forward_button,backword_button,left_button,right_button,jump_button,toggle_camera_button,place_camera_button,reset_camera_button,shoot_button,rotate_player_left_button,rotate_player_right_button,reset_controls_to_default_button])
+control_button_list.append(reset_controls_to_default_button)
 
 #Update the control buttons text after it changes
 def update_control_text():
-    forward_button.text = f"Forwards \n{get_binding(Controls.MOVE_FORWARDS)}"
-    backword_button.text = f"Backwords \n{get_binding(Controls.MOVE_BACKWARDS)}"
-    left_button.text = f"Strafe Left \n{get_binding(Controls.MOVE_LEFT)}"
-    right_button.text = f"Strafe Right \n{get_binding(Controls.MOVE_RIGHT)}"
-    jump_button.text = f"Jump \n{get_binding(Controls.JUMP)}"
-    toggle_camera_button.text = f"Open Camera \n{get_binding(Controls.TOGGLE_CAMERA)}"
-    place_camera_button.text = f"Place Camera \n{get_binding(Controls.PLACE_CAMERA)}"
-    reset_camera_button.text = f"Reset All Cameras \n{get_binding(Controls.RESET_CAMERAS)}"
-    shoot_button.text = f"Shoot \n{get_binding(Controls.SHOOT)}"
-    rotate_player_left_button.text = f"Player Camera Left \n{get_binding(Controls.CAMERA_LEFT)}"
-    rotate_player_right_button.text = f"PLayer Camera Right \n{get_binding(Controls.CAMERA_RIGHT)}"
+    for control, button in control_buttons_dict.items():
+        name = button.text.split("\n")[0]
+        button.text = f'{name}\n{get_binding(control)}'
 #Walls
 
 wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
@@ -254,7 +233,7 @@ def input(key):
             open_volume_menu(False)
             open_control_menu(False)
     if player.control_change_button_pressed:
-        if "mouse" not in key and "escape" not in key:
+        if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
             player.control_change_button_pressed = False
 
