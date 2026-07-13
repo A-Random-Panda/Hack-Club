@@ -108,20 +108,6 @@ button_list.extend([volume_button,quit_button,control_button])
 #Buttons in control menu
 control_button_list = []
 control_buttons_dict = {}
-#Add the name, button type and x, y cords to add to the control menu
-control_button_data_list = [
-    ("Forwards", Controls.MOVE_FORWARDS, 0.4, 0),
-    ("Backwards", Controls.MOVE_BACKWARDS, 0.4, 0.2),
-    ("Strafe Left", Controls.MOVE_LEFT, 0.4, 0.4),
-    ("Strafe Right", Controls.MOVE_RIGHT, 0.4, -0.2),
-    ("Jump", Controls.JUMP, 0.4, -0.4),
-    ("Open Camera", Controls.TOGGLE_CAMERA, -0.4, 0),
-    ("Place Camera", Controls.PLACE_CAMERA, -0.4, -0.2),
-    ("Reset All Cameras", Controls.RESET_CAMERAS, -0.4, 0.4),
-    ("Shoot", Controls.SHOOT, -0.4, 0.2),
-    ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
-    ("Player Camera Right", Controls.CAMERA_RIGHT, -0.6, -0.4)
-]
 
 #Creates the buttons and adds them to a list and dictionary
 for name, control, x, y in control_button_data_list:
