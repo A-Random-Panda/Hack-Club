@@ -18,7 +18,7 @@ player_volume = 1.5
 
 
 #Create app
-app = Ursina()
+app = Ursina(icon="assets/textures/ursina.ico")
 
 #Importing models
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
