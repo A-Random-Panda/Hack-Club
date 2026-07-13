@@ -1,0 +1,27 @@
+# 2nd person shooter project!
+This project is a 2nd person shooter. ***HARRY YAO CAN EXPLAIN THE STORY BEHIND IT***
+
+## How the project was made
+This project was made in Python3 using the [Ursina](https://www.ursinaengine.org/) library.
+
+## Running the project
+### Run from source
+1. Clone the source code
+```sh
+git clone https://github.com/A-Random-Panda/Hack-Club
+```
+2. Get the dependancies 
+```sh
+pip install -r requirements.txt
+```
+3. Run the main.py file
+```sh
+python main.py
+```
+### Windows
+1. Download the [latest windows release](https://github.com/A-Random-Panda/Hack-Club/releases) zip
+2. Unzip the file
+3. Run main.exe (Note: you may have to unblock the .exe file)
+
+### AI DISCLOSURE:
+**No AI was directly used for the project's code and assets. Some AI was used to help explain some concepts and libraries.**
