@@ -7,6 +7,6 @@ main.build/
 main.dist/
 
 #Config files
-maps/
+maps/saved maps/
 controls.json
 
