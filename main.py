@@ -34,6 +34,9 @@ player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
 player.previous_x = player.x
 player.previous_y = player.y
+cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
+text_box = Entity(scale = (0.4,0.1) ,origin = (0,0), position = (-.6,-.4), parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), enabled = True)
+menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
@@ -41,7 +44,9 @@ shooting.parent = player
 success = Audio("success",autoplay = False, volume = player_volume, spatial = True)
 death = Audio("death",autoplay = False, volume = player_volume, spatial = True)
 death.parent = player
-foot_steps = Audio("foot_steps", autoplay = False, volume = 0.5, spatial = True)
+foot_steps = Audio("foot_steps", autoplay = False, volume = 1, spatial = True)
+jumping = Audio("jumping", autoplay = False, volume = 1, spatial = True)
+sniper_reload = Audio("sniper_reload", autoplay = False, volume = 0.83, spatial = True)
 
 #Function used to update variables to allow you to change controls
 def control_changer(control,button):
@@ -51,55 +56,72 @@ def control_changer(control,button):
 
 
 #Enters / Exists UIs
+
+
 def ui_changer(boolean = False):
     for button in button_list:
         button.enabled = boolean
 
 def open_volume_menu(boolean = True):
     ui_changer()
+    menu_overlay.enabled = boolean
     gun_volume_slider.enabled = boolean
     footstep_volume_slider.enabled = boolean
 
 def open_control_menu(boolean = True):
     ui_changer()
+    menu_overlay.enabled = boolean
     for button in control_button_list:
         button.enabled = boolean
-
-
+#test
 #Used to change volume
 def gun_change_volume():
     shooting.volume = (gun_volume_slider.value/100)
+    sniper_reload.volume = (gun_volume_slider.value/60)
 def footsteps_change_volume():
     foot_steps.volume = (footstep_volume_slider.value/50)
+    jumping.volume = (footstep_volume_slider.value/50)
 
 #Sliders
-gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = gun_change_volume)
+gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, z = -2, x = -.25,y = 0, enabled = False, default = 50, on_value_changed = gun_change_volume)
 gun_volume_slider.label.origin = (0,0)
 gun_volume_slider.label.position = (.25, -.05)
-gun_volume_slider.position = (-.25, 0)
 
-footstep_volume_slider = ThinSlider(text='Footstep Volume', dynamic=True, max = 100, step = 1, enabled = False, default = 50, on_value_changed = footsteps_change_volume)
+footstep_volume_slider = ThinSlider(text='Footstep Volume', dynamic=True, max = 100, z = -2, step = 1, x =-.25, y=-.2, enabled = False, default = 50, on_value_changed = footsteps_change_volume)
 footstep_volume_slider.label.origin = (0,0)
 footstep_volume_slider.label.position = (.25, -0.06)
-footstep_volume_slider.position = (-0.25, -0.2)
 
 
 #Buttons in main menu
 button_list = []
 
-quit_button = Button(model = "quad", scale = 0.2, x = 0, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
+quit_button = Button(model = "quad", scale = 0.2, x = 0, z = -2, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
 quit_button.on_click = application.quit
 
-volume_button = Button(model = "quad", scale = 0.2, x = 0.2, color = color.gray, text = "volume controls", text_size = 0.8, text_color = color.black, enabled = False)
+volume_button = Button(model = "quad", scale = 0.2, x = 0.2, z = -2, color = color.gray, text = "volume controls", text_size = 0.8, text_color = color.black, enabled = False)
 volume_button.on_click = open_volume_menu
 
-control_button = Button(model = "quad", scale = 0.2, x = -0.2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
+control_button = Button(model = "quad", scale = 0.2, x = -0.2, z = -2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
 control_button.on_click = open_control_menu
 button_list.extend([volume_button,quit_button,control_button])
 
 #Buttons in control menu
 control_button_list = []
 control_buttons_dict = {}
+#Add the name, button type and x, y cords to add to the control menu
+control_button_data_list = [
+    ("Forwards", Controls.MOVE_FORWARDS, 0.4, 0),
+    ("Backwards", Controls.MOVE_BACKWARDS, 0.4, 0.2),
+    ("Strafe Left", Controls.MOVE_LEFT, 0.4, 0.4),
+    ("Strafe Right", Controls.MOVE_RIGHT, 0.4, -0.2),
+    ("Jump", Controls.JUMP, 0.4, -0.4),
+    ("Open Camera", Controls.TOGGLE_CAMERA, -0.4, 0),
+    ("Place Camera", Controls.PLACE_CAMERA, -0.4, -0.2),
+    ("Reset All Cameras", Controls.RESET_CAMERAS, -0.4, 0.4),
+    ("Shoot", Controls.SHOOT, -0.4, 0.2),
+    ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
+    ("Player Camera Right", Controls.CAMERA_RIGHT, -0.6, -0.4)
+]
 
 #Creates the buttons and adds them to a list and dictionary
 for name, control, x, y in control_button_data_list:
@@ -172,7 +194,9 @@ def input(key):
         if 5 < abs(time.perf_counter()-player.cd):
             hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
             player.cd = time.perf_counter()
-            shooting.play()
+            Sequence(Func(shooting.play),
+                     Wait(0.9),
+                     Func(sniper_reload.play)).start()
             player.bullet_trail = Entity(model="cube",
                                          position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
                                          scale = (0.2,0.2,distance(hit.world_point,player.world_position)),
@@ -181,6 +205,7 @@ def input(key):
                                          collider = "box"
                                          )
             destroy(player.bullet_trail,delay = 0.1)
+
 
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
@@ -220,16 +245,22 @@ def input(key):
             mouse.locked = False
             player.cursor.enabled = False
             ui_changer(True)
+            menu_overlay.enabled = True
         else:
             mouse.visible = False
             mouse.locked = True
             player.cursor.enabled = True
             open_volume_menu(False)
             open_control_menu(False)
+        
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
             player.control_change_button_pressed = False
+    #Jumping sound
+    if key == get_binding(Controls.JUMP) and player.grounded:
+        jumping.play()
+
 
 
 
@@ -243,6 +274,7 @@ def update():
     
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
+    
     if not player.in_camera:
         player_shadow.enabled = False
         player_shadow.position = player.position
@@ -258,7 +290,7 @@ def update():
     #Footstep sounds
     if player.x != player.previous_x and not foot_steps.playing and not player.y != player.previous_y:
         foot_steps.play()
-    if player.x == player.previous_x or player.y != player.previous_y and foot_steps.playing:
+    if (player.x == player.previous_x or not player.grounded) and foot_steps.playing:
         foot_steps.stop()
     player.previous_x = player.x
     player.previous_y = player.y
@@ -268,5 +300,9 @@ def update():
         set_control(player.control_change_key, player.changed_key)
         player.changed_key = None
         update_control_text()
+    timer = "Shooting cooldown " + str(round(5 - time.perf_counter() +player.cd, 1))
+
+    cooldown_text.text = timer if 5 - (time.perf_counter()-player.cd) > 0 else "READY"
+
 
 app.run()

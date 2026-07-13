@@ -65,7 +65,7 @@ _CONTROL_NAMES:dict[str, Controls] = {
     "Quit" : Controls.QUIT_GAME,
     "Pan left" : Controls.CAMERA_LEFT,
     "Pan Right" : Controls.CAMERA_RIGHT,
-    "Shoot" : Controls.SHOOT
+    "Shoot" : Controls.SHOOT,
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
