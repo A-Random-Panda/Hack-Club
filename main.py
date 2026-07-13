@@ -46,6 +46,7 @@ death = Audio("death",autoplay = False, volume = player_volume, spatial = True)
 death.parent = player
 foot_steps = Audio("foot_steps", autoplay = False, volume = 1, spatial = True)
 jumping = Audio("jumping", autoplay = False, volume = 1, spatial = True)
+sniper_reload = Audio("sniper_reload", autoplay = False, volume = 0.83, spatial = True)
 
 #Function used to update variables to allow you to change controls
 def control_changer(control,button):
@@ -76,6 +77,7 @@ def open_control_menu(boolean = True):
 #Used to change volume
 def gun_change_volume():
     shooting.volume = (gun_volume_slider.value/100)
+    sniper_reload.volume = (gun_volume_slider.value/60)
 def footsteps_change_volume():
     foot_steps.volume = (footstep_volume_slider.value/50)
     jumping.volume = (footstep_volume_slider.value/50)
@@ -189,7 +191,9 @@ def input(key):
         if 5 < abs(time.perf_counter()-player.cd):
             hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
             player.cd = time.perf_counter()
-            shooting.play()
+            Sequence(Func(shooting.play),
+                     Wait(0.9),
+                     Func(sniper_reload.play)).start()
             player.bullet_trail = Entity(model="cube",
                                          position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
                                          scale = (0.2,0.2,distance(hit.world_point,player.world_position)),
