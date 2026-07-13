@@ -70,6 +70,21 @@ _CONTROL_NAMES:dict[str, Controls] = {
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
 
+#Control name, enum, x pos, y pos
+control_button_data_list = [
+    ("Forwards", Controls.MOVE_FORWARDS, 0.4, 0),
+    ("Backwards", Controls.MOVE_BACKWARDS, 0.4, 0.2),
+    ("Strafe Left", Controls.MOVE_LEFT, 0.4, 0.4),
+    ("Strafe Right", Controls.MOVE_RIGHT, 0.4, -0.2),
+    ("Jump", Controls.JUMP, 0.4, -0.4),
+    ("Open Camera", Controls.TOGGLE_CAMERA, -0.4, 0),
+    ("Place Camera", Controls.PLACE_CAMERA, -0.4, -0.2),
+    ("Reset All Cameras", Controls.RESET_CAMERAS, -0.4, 0.4),
+    ("Shoot", Controls.SHOOT, -0.4, 0.2),
+    ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
+    ("Player Camera Right", Controls.CAMERA_RIGHT, -0.4, -0.6),
+]
+
 def _change_controls(changed_controls:dict) -> None:
     '''Changes controls to be the ones specified in changed_controls dictionary'''
     #Saves automatically as string integers, so this sets them to the integers
