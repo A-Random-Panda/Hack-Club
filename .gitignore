@@ -3,6 +3,7 @@ models_compressed/
 **/__pycache__/
 .vscode/
 .venv/
+main.build/
 
 #Config files
 maps/
