@@ -1,6 +1,5 @@
 # 2nd person shooter project!
-This project is a 2nd person shooter. ***HARRY YAO CAN EXPLAIN THE STORY BEHIND IT***
-
+This project is a 2nd person shooter. There's third person shooters and first person shooters but no second person shooters. This is a multiplayer game where the goal is to shoot the other person through cameras that you place around the map
 ## How the project was made
 This project was made in Python3 using the [Ursina](https://www.ursinaengine.org/) library.
 
