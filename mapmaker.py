@@ -38,11 +38,13 @@ player_line.add_to_scene_entities = False
 player_shadow.add_to_scene_entities = False
 
 fpc = FirstPersonController(**_player_properties)
+fpc.collider = None
 fpc.disable()
 editor_camera = EditorCamera(move_speed=EDITOR_CAMERA_SPEED)
 editor_camera.enable()
 
 CameraControls.camera_dict.update({CameraMode.EDITOR: editor_camera, CameraMode.FIRST_PERSON: fpc})
+
 
 def game_input_handler(key):
     '''Input handler'''
@@ -77,7 +79,6 @@ def game_input_handler(key):
             normal = mouse.normal
             assert pos is not None
             assert normal is not None
-            assert pos is not None
             pos.x_setter(game_round(pos.x_getter(), normal.x_getter()))
             pos.z_setter(game_round(pos.z_getter(), normal.z_getter()))
             pos.y_setter(game_round(pos.y_getter(), normal.y_getter()))
