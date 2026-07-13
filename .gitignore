@@ -4,6 +4,7 @@ models_compressed/
 .vscode/
 .venv/
 main.build/
+main.dist/
 
 #Config files
 maps/
