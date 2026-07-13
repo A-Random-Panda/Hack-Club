@@ -42,10 +42,6 @@ pip install -r requirements.txt
 .\build-linux.sh
 ```
 ### AI DISCLOSURE:
-<<<<<<< HEAD
 **No AI was directly used for the project's code and assets.**
 
 **Some AI was used to help explain some concepts and libraries and for debugging code snippits.**
-=======
-**No AI was directly used for the project's code and assets. Some AI was used to help explain some concepts and libraries.**
->>>>>>> 104a237bc74d29d28e6e08ecdbf2b738b72a3f22
