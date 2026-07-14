@@ -31,6 +31,7 @@ class Controls(_IntEnum):
     CAMERA_LEFT = 10
     CAMERA_RIGHT = 11
     SHOOT = 12
+    OPEN_SHOP = 13
 
 _UNCHANGABLE_CONTROLS = [
     Controls.QUIT_GAME
@@ -50,6 +51,7 @@ _BINDINGS_DICT:dict[Controls, str] = {
     Controls.CAMERA_LEFT: "left arrow",
     Controls.CAMERA_RIGHT: "right arrow",
     Controls.SHOOT: "f",
+    Controls.OPEN_SHOP: "b"
 }
 
 _CONTROL_NAMES:dict[str, Controls] = {
@@ -66,6 +68,7 @@ _CONTROL_NAMES:dict[str, Controls] = {
     "Pan left" : Controls.CAMERA_LEFT,
     "Pan Right" : Controls.CAMERA_RIGHT,
     "Shoot" : Controls.SHOOT,
+    "Open Shop" : Controls.OPEN_SHOP
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
@@ -83,6 +86,7 @@ control_button_data_list = [
     ("Shoot", Controls.SHOOT, -0.4, 0.2),
     ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
     ("Player Camera Right", Controls.CAMERA_RIGHT, -0.4, -0.6),
+    ("Open Shop", Controls.OPEN_SHOP, 0,0)
 ]
 
 def _change_controls(changed_controls:dict) -> None:

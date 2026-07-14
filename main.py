@@ -12,6 +12,10 @@ import time
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
+#Upgrade cost list (place holders)
+max_cam_cost = [100,500,1500,4500,7000]
+faster_reload_cost = [100,500,1500,4500,7000]
+
 #Settings
 player_sensitivity = 150
 player_volume = 1.5
@@ -37,6 +41,7 @@ player.previous_y = player.y
 cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
 text_box = Entity(scale = (0.4,0.1) ,origin = (0,0), position = (-.6,-.4), parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), enabled = True)
 menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
+current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
@@ -55,12 +60,59 @@ def control_changer(control,button):
     button.text = "Press a key to assign\n it to this action"
 
 
-#Enters / Exists UIs
+#Shop upgrade functions
+def cam_upgrade():
+    current_upgrade = player.max_cams-5
+    cost = max_cam_cost[current_upgrade]
+    if current_upgrade == len(max_cam_cost)-1 and player.cash >= cost:
+        player.cash -= cost
+        current_cash.text = f"{player.cash} cash"
+        player.max_cams += 1
+        upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
+        print(player.max_cams)
+    elif current_upgrade < len(max_cam_cost) and player.cash >= cost:
+        player.cash -= cost
+        current_cash.text = f"{player.cash} cash"
+        next_cost = max_cam_cost[current_upgrade + 1]
+        player.max_cams += 1
+        upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${next_cost}"
+        print(player.max_cams)
 
+
+def reload_upgrade():
+    current_upgrade = int((5-player.reload_time)/0.5)
+    cost = faster_reload_cost[current_upgrade]
+    if current_upgrade == len(faster_reload_cost)-1 and player.cash >= cost:
+        player.cash -= cost
+        current_cash.text = f"{player.cash} cash"
+        player.reload_time -= 0.5
+        faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
+        print(player.reload_time)
+    elif current_upgrade < len(faster_reload_cost) and player.cash >= cost:
+        player.cash -= cost
+        current_cash.text = f"{player.cash} cash"
+        next_cost = faster_reload_cost[current_upgrade + 1]
+        player.reload_time -= 0.5
+        faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n ${next_cost}"
+        print(player.reload_time)
+
+#Functions used to help Enter / Exist out of UIs
 
 def ui_changer(boolean = False):
     for button in button_list:
         button.enabled = boolean
+    for upgrades in shop_buttons_list:
+        upgrades.enabled = False
+
+def open_shop_menu(boolean = False):
+    menu_overlay.enabled = boolean
+    upgrade_cams_button.enabled = boolean
+    faster_reload_button.enabled = boolean
+    mouse.visible = boolean
+    mouse.locked = not boolean
+    player.cursor.enabled = not boolean
+    current_cash.enabled = boolean
+
 
 def open_volume_menu(boolean = True):
     ui_changer()
@@ -73,7 +125,8 @@ def open_control_menu(boolean = True):
     menu_overlay.enabled = boolean
     for button in control_button_list:
         button.enabled = boolean
-#test
+
+
 #Used to change volume
 def gun_change_volume():
     shooting.volume = (gun_volume_slider.value/100)
@@ -91,6 +144,12 @@ footstep_volume_slider = ThinSlider(text='Footstep Volume', dynamic=True, max = 
 footstep_volume_slider.label.origin = (0,0)
 footstep_volume_slider.label.position = (.25, -0.06)
 
+#Buttons in shop menu
+upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${max_cam_cost[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
+upgrade_cams_button.on_click = cam_upgrade
+faster_reload_button = Button(model = "quad", scale = 0.2, x = 0.1, z = -2, color=color.gray, text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${faster_reload_cost[0]}", text_size = 0.8, text_color = color.black, enabled = False)
+faster_reload_button.on_click = reload_upgrade
+shop_buttons_list = [upgrade_cams_button,faster_reload_button]
 
 #Buttons in main menu
 button_list = []
@@ -103,6 +162,7 @@ volume_button.on_click = open_volume_menu
 
 control_button = Button(model = "quad", scale = 0.2, x = -0.2, z = -2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
 control_button.on_click = open_control_menu
+
 button_list.extend([volume_button,quit_button,control_button])
 
 #Buttons in control menu
@@ -112,7 +172,7 @@ control_buttons_dict = {}
 #Creates the buttons and adds them to a list and dictionary
 for name, control, x, y in control_button_data_list:
     button = Button(model = "quad",
-                    scale = 0.2, x = x, y = y,color = color.gray, text = f"{name} \n{get_binding(control)}",
+                    scale = 0.2, x = x, y = y,z = -2,color = color.gray, text = f"{name} \n{get_binding(control)}",
                     text_size =0.8, text_color= color.black, enabled = False)
     button.name = name
     button.on_click = Func(control_changer, control,button)
@@ -125,7 +185,7 @@ def reset_and_update_controls():
     update_control_text()
 
 #Reset button (manuelly added)
-reset_controls_to_default_button = Button(model = "quad", scale = 0.2, x = -0.8, y =0.4,color=color.gray,
+reset_controls_to_default_button = Button(model = "quad", scale = 0.2, x = -0.8, y = 0.4,z = -2,color=color.gray,
                                         text = "Reset Keybinds", text_size = 0.8, text_color = color.black, enabled = False)
 reset_controls_to_default_button.on_click = reset_and_update_controls
 control_button_list.append(reset_controls_to_default_button)
@@ -177,11 +237,14 @@ def input(key):
             camoverlay.text= f'cam {player.current_cam}'
     #Shooting
     if key == get_binding(Controls.SHOOT):
-        if 5 < abs(time.perf_counter()-player.cd):
+        play_multi = 1 / (player.reload_time / 5)
+        if player.reload_time < abs(time.perf_counter()-player.cd):
             hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
             player.cd = time.perf_counter()
+            shooting.pitch = play_multi
+            sniper_reload.pitch = play_multi
             Sequence(Func(shooting.play),
-                     Wait(0.9),
+                     Wait(0.9 / play_multi),
                      Func(sniper_reload.play)).start()
             player.bullet_trail = Entity(model="cube",
                                          position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
@@ -205,9 +268,9 @@ def input(key):
         player.perspective_list.append(player)
 
     #Placing camera
-    if key == get_binding(Controls.PLACE_CAMERA):
+    if key == get_binding(Controls.PLACE_CAMERA) and not player.in_menu and not player.in_shop and not len(player.perspective_list) > player.max_cams:
         infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
-        if infront.hit and not player.in_camera and not player.in_menu:
+        if infront.hit and not player.in_camera:
             dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
                 temp_cam = (Entity(model = 'cypher_cam',
@@ -223,7 +286,7 @@ def input(key):
         EditorCamera(enabled=True)
 
     #Escape menu
-    if key == get_binding(Controls.QUIT_GAME):
+    if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
         player.in_menu = not player.in_menu
         #Buttons
         if player.in_menu:
@@ -238,7 +301,13 @@ def input(key):
             player.cursor.enabled = True
             open_volume_menu(False)
             open_control_menu(False)
-        
+    
+    if key == get_binding(Controls.QUIT_GAME) and player.in_shop:
+        player.in_shop = False
+        open_shop_menu(False)
+
+
+    
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
@@ -246,7 +315,14 @@ def input(key):
     #Jumping sound
     if key == get_binding(Controls.JUMP) and player.grounded:
         jumping.play()
-
+    
+    #Open shop menu
+    if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
+        player.in_shop = not player.in_shop
+        if player.in_shop:
+            open_shop_menu(True)
+        else:
+            open_shop_menu(False)
 
 
 
@@ -286,9 +362,10 @@ def update():
         set_control(player.control_change_key, player.changed_key)
         player.changed_key = None
         update_control_text()
-    timer = "Shooting cooldown " + str(round(5 - time.perf_counter() +player.cd, 1))
-
-    cooldown_text.text = timer if 5 - (time.perf_counter()-player.cd) > 0 else "READY"
+    
+    
+    timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
+    cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
 
 app.run()

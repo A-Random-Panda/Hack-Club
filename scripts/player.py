@@ -25,6 +25,10 @@ class _Player(FirstPersonController):
         self.changed_key = None #str
         self.control_change_button_pressed:bool =  False
         self.control_change_key = None
+        self.max_cams:int = 5
+        self.cash:int = 1000
+        self.reload_time:float = 5.0
+        self.in_shop:bool = False
     def update(self):
         super().update()
         if self.in_camera and not self.in_menu:
@@ -35,7 +39,7 @@ class _Player(FirstPersonController):
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-40, cam.original_rotation_y+40)
             #
             super().movement_in_cam()
-        elif self.in_menu: 
+        elif self.in_menu or self.in_shop: 
             super().movement_not_in_cam()
         else:
             super().movement_not_in_cam()
