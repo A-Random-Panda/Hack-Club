@@ -16,12 +16,13 @@ def _json_dump_map(file_name:str|Path, _map):
 def save_map(_map:list[ursina.Entity.Entity]) -> None:
     '''Saves map to file map(number).json'''
     #find path
-    save_folder = Path.cwd() / "maps"
+    save_folder = Path.cwd() / "maps" / "saved maps"
     map_number_file = Path.resolve(save_folder / "nextmapnumber.txt")
 
     #Check the number file exists
     if not map_number_file.exists():
         _logger.info("Map number file doesn't exist; creating file")
+        map_number_file.parent.mkdir(parents=True)
         with open(map_number_file, "w", encoding="utf-8") as file:
             file.write("This file decides the next file, read from the number in the next line\n1")
 
