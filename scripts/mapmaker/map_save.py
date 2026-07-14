@@ -3,8 +3,9 @@
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
-import ursina
+from ursina import *
 
 _logger:logging.Logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ def _json_dump_map(file_name:str|Path, _map):
     with open(file_name, "w", encoding="utf-8") as file:
         file.write(json.dumps(_map, default=str))
 
-def save_map(_map:list[ursina.Entity.Entity]) -> None:
+def save_map(_map:list[Entity]) -> None:
     '''Saves map to file map(number).json'''
     #find path
     save_folder = Path.cwd() / "maps" / "saved maps"
@@ -51,3 +52,31 @@ def save_map(_map:list[ursina.Entity.Entity]) -> None:
             lines[1] = str(next_map_number)
             for line in lines:
                 file.write(line)
+
+def entity_to_dictionary(obj:Entity) -> dict[str, Any]:
+    '''Turns an entity into a dictionary representation'''
+    changed_values = {}
+    for attr, default_value in Entity.default_values.items():
+        object_attribute = getattr(obj, attr)
+        if not default_value and not object_attribute:
+            #Checks if both the default and the attribute are falsy
+            pass
+        elif attr == 'name' and not object_attribute:
+            #Checks if it's the name attribute because it's false by default
+            #and the default values dictionary doesn't
+            pass
+        elif attr == 'shader' and object_attribute is Entity.default_shader:
+            #Checks if shader is the default shader
+            #(The default values dictionary just uses the names)
+            pass
+        elif object_attribute != default_value:
+            changed_values[attr] = object_attribute
+    return changed_values
+
+def dictionary_to_entity(entity_dict:dict[str, Any]):
+    '''Turns the entity dictionary back into the entity'''
+    return Entity(**entity_dict)
+
+if __name__ == "__main__":
+    print(entity_to_dictionary(Entity()), "no value")
+    print(entity_to_dictionary(Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="../../assets/textures/test123",rotation_x=0, y=0, collider = "box")), "yoru")
