@@ -7,6 +7,14 @@ from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
 import time
+from random import uniform
+#Moving block for testing
+'''
+moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
+speed123 = 5*time.dt
+multi = 1
+'''
+
 
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
@@ -63,15 +71,14 @@ def control_changer(control,button):
 #Shop upgrade functions
 def cam_upgrade():
     current_upgrade = player.max_cams-5
-    cost = max_cam_cost[current_upgrade]
-    if current_upgrade == len(max_cam_cost)-1 and player.cash >= cost:
-        player.cash -= cost
+    if current_upgrade == len(max_cam_cost)-1 and player.cash >= max_cam_cost[current_upgrade]:
+        player.cash -= max_cam_cost[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         player.max_cams += 1
         upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
         success.play()
-    elif current_upgrade < len(max_cam_cost) and player.cash >= cost:
-        player.cash -= cost
+    elif current_upgrade < len(max_cam_cost) and player.cash >= max_cam_cost[current_upgrade]:
+        player.cash -= max_cam_cost[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         next_cost = max_cam_cost[current_upgrade + 1]
         player.max_cams += 1
@@ -80,15 +87,14 @@ def cam_upgrade():
 
 def reload_upgrade():
     current_upgrade = int((5-player.reload_time)/0.5)
-    cost = faster_reload_cost[current_upgrade]
-    if current_upgrade == len(faster_reload_cost)-1 and player.cash >= cost:
-        player.cash -= cost
+    if current_upgrade == len(faster_reload_cost)-1 and player.cash >= faster_reload_cost[current_upgrade]:
+        player.cash -= faster_reload_cost[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         player.reload_time -= 0.5
         faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
         success.play()
-    elif current_upgrade < len(faster_reload_cost) and player.cash >= cost:
-        player.cash -= cost
+    elif current_upgrade < len(faster_reload_cost) and player.cash >= faster_reload_cost[current_upgrade]:
+        player.cash -= faster_reload_cost[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         next_cost = faster_reload_cost[current_upgrade + 1]
         player.reload_time -= 0.5
@@ -204,8 +210,8 @@ start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, 
 end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
 
 #Other objects
-cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
-cube.rotation_y = 90
+#cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
+#cube.rotation_y = 90
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
 
@@ -362,9 +368,21 @@ def update():
         player.changed_key = None
         update_control_text()
     
-    
+
+
     timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
-
+    #moving block for testing
+    '''
+    global speed123
+    global multi
+    speed123 = 5 * time.dt * multi 
+    moving_block.position += Vec3(speed123,0,0)
+    if moving_block.intersects():
+        multi *= -1
+    if player.bullet_trail is not None:
+        if player.bullet_trail.intersects(moving_block):
+            success.play()
+    ''' 
 app.run()

@@ -26,7 +26,7 @@ class _Player(FirstPersonController):
         self.control_change_button_pressed:bool =  False
         self.control_change_key = None
         self.max_cams:int = 5
-        self.cash:int = 1000
+        self.cash:int = 100000
         self.reload_time:float = 5.0
         self.in_shop:bool = False
     def update(self):
