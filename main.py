@@ -69,15 +69,14 @@ def cam_upgrade():
         current_cash.text = f"{player.cash} cash"
         player.max_cams += 1
         upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
-        print(player.max_cams)
+        success.play()
     elif current_upgrade < len(max_cam_cost) and player.cash >= cost:
         player.cash -= cost
         current_cash.text = f"{player.cash} cash"
         next_cost = max_cam_cost[current_upgrade + 1]
         player.max_cams += 1
         upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${next_cost}"
-        print(player.max_cams)
-
+        success.play()
 
 def reload_upgrade():
     current_upgrade = int((5-player.reload_time)/0.5)
@@ -87,14 +86,14 @@ def reload_upgrade():
         current_cash.text = f"{player.cash} cash"
         player.reload_time -= 0.5
         faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
-        print(player.reload_time)
+        success.play()
     elif current_upgrade < len(faster_reload_cost) and player.cash >= cost:
         player.cash -= cost
         current_cash.text = f"{player.cash} cash"
         next_cost = faster_reload_cost[current_upgrade + 1]
         player.reload_time -= 0.5
-        faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n ${next_cost}"
-        print(player.reload_time)
+        faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${next_cost}"
+        success.play()
 
 #Functions used to help Enter / Exist out of UIs
 
