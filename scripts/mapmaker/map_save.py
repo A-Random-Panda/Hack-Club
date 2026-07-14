@@ -53,7 +53,7 @@ def save_map(_map:list[Entity]) -> None:
             for line in lines:
                 file.write(line)
 
-def entity_to_string(obj:Entity) -> dict[str, Any]:
+def entity_to_dictionary(obj:Entity) -> dict[str, Any]:
     '''Turns an entity into a dictionary representation'''
     changed_values = {}
     for attr, default_value in Entity.default_values.items():
@@ -73,6 +73,10 @@ def entity_to_string(obj:Entity) -> dict[str, Any]:
             changed_values[attr] = object_attribute
     return changed_values
 
+def dictionary_to_entity(entity_dict:dict[str, Any]):
+    '''Turns the entity dictionary back into the entity'''
+    return Entity(**entity_dict)
+
 if __name__ == "__main__":
-    print(entity_to_string(Entity()), "no value")
-    print(entity_to_string(Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="../../assets/textures/test123",rotation_x=0, y=0, collider = "box")), "yoru")
+    print(entity_to_dictionary(Entity()), "no value")
+    print(entity_to_dictionary(Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="../../assets/textures/test123",rotation_x=0, y=0, collider = "box")), "yoru")
