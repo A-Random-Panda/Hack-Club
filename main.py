@@ -10,7 +10,7 @@ from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
 from scripts.death import DeathManager
-
+from scripts.minimap import UpdateMinimap
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -249,6 +249,7 @@ def cam_switching():
 #Variable declarations
 player.perspective_list = [player]
 death_manager = DeathManager(player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow,cam_switching)
+update_player_icon = UpdateMinimap(player_icon,player,55)
 
 def input(key):
     global test
@@ -401,8 +402,7 @@ def update():
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
     #update minimap and player position
-    player_icon.x = position_to_icon()[0]
-    player_icon.y = position_to_icon()[1]
+    update_player_icon.minimap_update()
     player_icon.rotation_z = player.rotation_y + 90
 
     #moving block for testing
