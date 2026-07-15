@@ -2,8 +2,10 @@ import time
 from scripts.player import _Player
 from ursina import Entity, Text, Audio
 
+RESPAWN_TIME = 5
+
 class DeathManager():
-    def ___init__(self, player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow, cam_switching):
+    def __init__(self, player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow, cam_switching):
         self.player:_Player = player
         self.menu_overlay:Entity = menu_overlay
         self.stop_audio:Audio = stop_audio
@@ -23,7 +25,7 @@ class DeathManager():
         print("dead")
     def while_dead(self):
         print("still dead")
-        timer = "Respawning in " + str(round(5 - time.perf_counter() + self.player.death_timer, 1))
+        timer = "Respawning in " + str(round(RESPAWN_TIME - time.perf_counter() + self.player.death_timer, 1))
         self.respawn_text.text = timer
         self.respawn_text.enabled = True
         self.player_shadow.enabled = False

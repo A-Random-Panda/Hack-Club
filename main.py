@@ -9,7 +9,9 @@ from ursina import *
 
 from scripts.controls import *
 from scripts.player import get_player
-from scripts.death import *
+from scripts.death import DeathManager
+
+
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -62,17 +64,16 @@ menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color 
 current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
 respawn_text = Text("test", origin = (0,0),position = (0,0,-2), scale = 3, color=color.red,enabled = False)
 #mini map
-mini_map = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
-player_icon = Entity(parent = mini_map, texture = "red_dot", scale = 0.05, model = "quad", z =-0.5, color=color.red)
+minimap = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
+player_icon = Entity(parent = minimap, texture = "red_dot", scale = 0.05, model = "quad", z =-0.5, color=color.red)
 vision_cone_icon = Entity(scale = (4,0.2), parent=player_icon, model = "quad", z = -1, color = color.red, origin = (0.7,0), a = 0.4 )
-sqaure_icon = Entity(parent = mini_map, scale = 0.05, model = "quad", z =-0.5)
+sqaure_icon = Entity(parent = minimap, scale = 0.05, model = "quad", z =-0.5)
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
 shooting.parent = player
 success = Audio("success",autoplay = False, volume = player_volume, spatial = True)
-death = Audio("death",autoplay = False, volume = player_volume, spatial = True)
-death.parent = player
+death_sound = Audio("death",autoplay = False, volume = player_volume, spatial = True, parent = player)
 foot_steps = Audio("foot_steps", autoplay = False, volume = 1, spatial = True)
 jumping = Audio("jumping", autoplay = False, volume = 1, spatial = True)
 sniper_reload = Audio("sniper_reload", autoplay = False, volume = 0.83, spatial = True)
@@ -222,6 +223,7 @@ reset_controls_to_default_button = Button(model = "quad", scale = 0.2, x = -0.8,
 reset_controls_to_default_button.on_click = reset_and_update_controls
 control_button_list.append(reset_controls_to_default_button)
 
+
 #Update the control buttons text after it changes
 def update_control_text():
     for control, button in control_buttons_dict.items():
@@ -246,6 +248,7 @@ def cam_switching():
 
 #Variable declarations
 player.perspective_list = [player]
+death_manager = DeathManager(player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow,cam_switching)
 
 def input(key):
     global test
@@ -334,7 +337,7 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = mini_map, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                cam_icon = Entity(parent = minimap, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
@@ -420,35 +423,14 @@ def update():
 
     #Runs once when you die
     if test:
-    #if player.bullet_trail and player.bullet_trail.intersects(player).hit: #uncomment when multiplayer is added
-        stop_audio()
-        death.play()
-        player.enabled = False
-        player.dead = True
-        player.death_timer = time.perf_counter()
-        print("dead")
         test = False
-        player.input_enabled = False
-        menu_overlay.enabled = True
-        respawn_text.enabled = True
-    
+        death_manager.kill()
     #Continuiesly runs when you are dead
     if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
-        print("still dead")
-        timer = "Respawning in " + str(round(5 - time.perf_counter() + player.death_timer, 1))
-        respawn_text.text = timer
-        respawn_text.enabled = True
-        player_shadow.enabled = False
+        death_manager.while_dead()
     #Runs once when you respawn
     elif player.dead:
-        player.dead = False
-        print("alive")
-        player.input_enabled = True
-        player.enabled = True
-        respawn_text.enabled = False
-        menu_overlay.enabled = False
-        cam_switching()
-        player.position = (0.5, 1.0,0.5)
+        death_manager.respawned()
 
 
     #use this for taking a overview screenshot
