@@ -5,6 +5,7 @@ This project was made in Python3 using the [Ursina](https://www.ursinaengine.org
 
 ## Running the project
 ### Run from source
+***Requirement: Python 3.12+***
 1. Clone the source code
 ```sh
 git clone https://github.com/A-Random-Panda/Hack-Club
@@ -24,6 +25,7 @@ python main.py
 3. Run main.exe (Note: you may have to unblock the .exe file)
 
 ## Build instructions
+***Requirement: Python 3.12+***
 1. Clone the source code
 ```sh
 git clone https://github.com/A-Random-Panda/Hack-Club
@@ -32,7 +34,7 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 ```sh
 pip install -r requirements.txt
 ```
-3. Run the build script.
+3. Run the build script depending on os:
 - Windows
 ```
 .\build-windows.ps1
