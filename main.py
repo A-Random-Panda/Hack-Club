@@ -32,10 +32,21 @@ player_volume = 1.5
 #Create app
 app = Ursina(icon="assets/textures/ursina.ico")
 
-#Importing models
+#Objects on the map
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
+cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
+cube.rotation_y = 90
+cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
+center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
+
+#Walls
+wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
+wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
+wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
+
 
 #Setup
 camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
@@ -50,6 +61,10 @@ cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.
 text_box = Entity(scale = (0.4,0.1) ,origin = (0,0), position = (-.6,-.4), parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), enabled = True)
 menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
+
+#mini map
+mini_map = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
+player_icon = Entity(parent = mini_map, texture = "person_icon", scale = 0.05, model = "quad", z =-0.5)
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
@@ -199,21 +214,7 @@ control_button_list.append(reset_controls_to_default_button)
 def update_control_text():
     for control, button in control_buttons_dict.items():
         button.text = f'{button.name}\n{get_binding(control)}'
-#Walls
 
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
-
-start=Entity(model="cube", scale=(2,1,2), color=color.red, collider="box", x=0, z=0)
-end=Entity(model="cube", scale=(2,1,2), color=color.green, collider="box", x=0, z=20)
-
-#Other objects
-#cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
-#cube.rotation_y = 90
-cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
-center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
 
 #Variable declarations
 player.perspective_list = [player]
@@ -266,6 +267,8 @@ def input(key):
         player.current_cam = 0
         for i in range(1,len(player.perspective_list)):
             destroy(player.perspective_list[i])
+        for icons in player.cam_icon_list:
+            destroy(icons)
         player.in_camera = False
         camera.parent = player.camera_pivot
         camoverlay.disable()
@@ -286,7 +289,9 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-
+                cam_icon = Entity(parent = mini_map, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                player.cam_icon_list.append(cam_icon)
+        
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
 
@@ -373,6 +378,10 @@ def update():
     timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
+    #update minimap and player position
+    player_icon.x = player.position.x/55
+    player_icon.y = player.position.z/55
+
     #moving block for testing
     '''
     global speed123
@@ -385,4 +394,10 @@ def update():
         if player.bullet_trail.intersects(moving_block):
             success.play()
     ''' 
+
+    #use this for taking a overview screenshot
+    '''
+    camera.position = (0, 100, 0)
+    camera.rotation = (90, 0, 0)
+    '''
 app.run()
