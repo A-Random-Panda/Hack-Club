@@ -31,7 +31,7 @@ app = Ursina(borderless=False)
 class LatestLogHandler(logging.Handler):
     '''Handler that puts the latest log into a variable'''
     MAX_LOGS:int = 30
-    latest_logs:deque[str] = deque(["Default message"])
+    latest_logs:deque[str] = deque()
 
     @classmethod
     def save_log(cls, formatted_record: str) -> None:
