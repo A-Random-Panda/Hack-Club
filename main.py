@@ -2,9 +2,11 @@
 This is the main file that will run the game
 """
 import logging
-import socket
 import time
+import subprocess
+
 from ursina import *
+
 from scripts.controls import *
 from scripts.player import get_player
 from scripts.death import *
