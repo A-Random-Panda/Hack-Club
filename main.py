@@ -64,7 +64,7 @@ current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2
 
 #mini map
 mini_map = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
-player_icon = Entity(parent = mini_map, texture = "person", scale = 0.05, model = "quad", z =-0.5)
+player_icon = Entity(parent = mini_map, texture = "person_icon", scale = 0.05, model = "quad", z =-0.5)
 
 #Initializing sounds
 shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
@@ -267,6 +267,8 @@ def input(key):
         player.current_cam = 0
         for i in range(1,len(player.perspective_list)):
             destroy(player.perspective_list[i])
+        for icons in player.cam_icon_list:
+            destroy(icons)
         player.in_camera = False
         camera.parent = player.camera_pivot
         camoverlay.disable()
@@ -287,7 +289,9 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-
+                cam_icon = Entity(parent = mini_map, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                player.cam_icon_list.append(cam_icon)
+        
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
 
@@ -375,8 +379,8 @@ def update():
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
     #update minimap and player position
-    player_icon.x = player.position.x/50
-    player_icon.y = player.position.z/50
+    player_icon.x = player.position.x/55
+    player_icon.y = player.position.z/55
 
     #moving block for testing
     '''

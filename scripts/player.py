@@ -19,6 +19,7 @@ class _Player(FirstPersonController):
         self.in_camera:bool = False
         self.current_cam:int = 0
         self.perspective_list:list[Entity] = []
+        self.cam_icon_list:list[Entity] = []
         self.cd:float = 0.0
         self.bullet_trail = None #entity
         self.in_menu:bool = False
