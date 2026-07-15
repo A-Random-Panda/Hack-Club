@@ -92,9 +92,6 @@ def control_changer(control,button):
     player.control_change_key = control
     button.text = "Press a key to assign\n it to this action"
 
-def position_to_icon():
-    return player.position.x/55, player.position.z/55
-
 
 #Shop upgrade functions
 def cam_upgrade():
@@ -250,6 +247,7 @@ def cam_switching():
 player.perspective_list = [player]
 death_manager = DeathManager(player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(player_icon,player,55)
+update_moving_sqaure_icon = UpdateMinimap(sqaure_icon,moving_block,55)
 
 def input(key):
     global test
@@ -417,8 +415,7 @@ def update():
         if player.bullet_trail is not None:
             if player.bullet_trail.intersects(moving_block):
                 success.play()
-        sqaure_icon.x = moving_block.x/55
-        sqaure_icon.y = moving_block.y/55
+        update_moving_sqaure_icon.minimap_update()
     
 
     #Runs once when you die
