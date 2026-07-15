@@ -7,7 +7,7 @@ if  [ $INPUT = "y" ]; then
     if  [ $INPUT = "y" ]; then
         pip -install -r requirements-build.txt
     fi
-    python -m nuitka --standalone --include-data-dir=assets=assets --deployment --python-flag=isolated,no_asserts,no_docstrings,no_warnings --main=main.py --main=server.py
+    python -m nuitka --standalone --include-data-dir=assets=assets --deployment --python-flag=no_site,no_asserts,no_docstrings,no_warnings --main=main.py
     read -n 1 -s -r -p "Press any key to continue"
 else
     echo "Project will not be built."
