@@ -14,7 +14,6 @@ speed123 = 5*time.dt
 multi = 1
 enable_moving_block = True
 test = False
-
 #Declare logging
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
@@ -247,6 +246,7 @@ def cam_switching():
 player.perspective_list = [player]
 
 def input(key):
+    global test
     '''Input handler'''
      #Escape menu
     if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
@@ -350,12 +350,13 @@ def input(key):
             open_shop_menu(True)
         else:
             open_shop_menu(False)
-    global test
+
     if key ==  "t":
         test = True
 
 
 def update():
+    global test
     "Frame handler"
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
         player_shadow.rotation_y -= player_sensitivity * time.dt
@@ -416,7 +417,6 @@ def update():
     
 
     #Runs once when you die
-    global test
     if test:
     #if player.bullet_trail and player.bullet_trail.intersects(player).hit: #uncomment when multiplayer is added
         stop_audio()
