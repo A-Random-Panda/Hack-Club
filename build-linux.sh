@@ -3,7 +3,11 @@
 read -r -p "Do you want to build the project: (y/n)"
 
 if  [ $INPUT = "y" ]; then
-    python -m nuitka --standalone --include-data-dir=assets=assets main.py
+    read -r -p "Do you want to get the python dependancies? (y/n)"
+    if  [ $INPUT = "y" ]; then
+        pip -install -r requirements-build.txt
+    fi
+    python -m nuitka --standalone --include-data-dir=assets=assets --deployment --python-flag=isolated,no_asserts,no_docstrings,no_warnings --main=main.py --main=server.py
     read -n 1 -s -r -p "Press any key to continue"
 else
     echo "Project will not be built."

@@ -1,7 +1,11 @@
 $reply = Read-Host "Do you want to build the project (y/n)"
 
 if ($reply -eq "y") {
-    python -m nuitka --standalone --windows-console-mode=disable --include-data-dir=assets=assets main.py
+    $reply = Read-Host "Do you want to get the python dependancies? (y/n)"
+    if ($reply -eq "y") {
+        pip -install -r requirements-build.txt
+    }
+    python -m nuitka --standalone --windows-console-mode=disable --include-data-dir=assets=assets --deployment --python-flag=isolated,no_asserts,no_docstrings,no_warnings --main=main.py --main=server.py
     pause
 } else {
     echo "Project will not be built."
