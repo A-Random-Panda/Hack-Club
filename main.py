@@ -2,7 +2,6 @@
 This is the main file that will run the game
 """
 import logging
-import socket
 import time
 import subprocess
 
