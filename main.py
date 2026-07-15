@@ -3,11 +3,11 @@ This is the main file that will run the game
 """
 import logging
 import socket
+import time
 from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
-import time
-from random import uniform
+from scripts.death import *
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
