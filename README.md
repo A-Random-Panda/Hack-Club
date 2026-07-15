@@ -30,11 +30,8 @@ python main.py
 ```sh
 git clone https://github.com/A-Random-Panda/Hack-Club
 ```
-2. Get the build dependencies
-```sh
-pip install -r requirements.txt
-```
-3. Run the build script depending on os:
+2. Run the build script depending on os:
+**Note you may need Visual Studio on the build machine**
 - Windows
 ```
 .\build-windows.ps1
