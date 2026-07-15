@@ -124,7 +124,7 @@ def _load_controls() -> None:
 
     #Ensures there is a control file
     if not _get_json_path().is_file():
-        _Path(_get_json_path()).touch()
+        reset_controls_to_default()
         _logger.info("Creating file %s", _get_json_path)
 
     #Reads the changes
@@ -162,7 +162,7 @@ def set_control(control:Controls, key:str) -> None:
     '''Sets the control to be of value key, and then saves them to controls.json'''
     if control in _UNCHANGABLE_CONTROLS:
         _logger.critical("HARRY YAO IS STUPID AND ALLOWED UNCHANGABLE CONTROLS TO BE CHANGED")
-        raise ValueError("HARRY YAO IS STUPID!")
+        raise ValueError("HARRY YAO IS STUPID! (unchangable control attempted to be changed)")
     _BINDINGS_DICT[control] = key
     _save_controls(_BINDINGS_DICT)
 
