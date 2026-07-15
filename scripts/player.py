@@ -30,6 +30,9 @@ class _Player(FirstPersonController):
         self.cash:int = 100000
         self.reload_time:float = 5.0
         self.in_shop:bool = False
+        self.dead:bool = False
+        self.death_timer:float = 0.0
+        self.input_enabled:bool = True
     def update(self):
         super().update()
         if self.in_camera and not self.in_menu:
