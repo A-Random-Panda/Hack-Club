@@ -20,7 +20,6 @@ class DeathManager():
         self.player.dead = True
         self.player.death_timer = time.perf_counter()
         self.player.input_enabled = False
-        self.menu_overlay.enabled = True
         self.respawn_text.enabled = True
         print("dead")
     def while_dead(self):
@@ -29,6 +28,7 @@ class DeathManager():
         self.respawn_text.text = timer
         self.respawn_text.enabled = True
         self.player_shadow.enabled = False
+        self.menu_overlay.enabled = True
     def respawned(self):
         self.player.dead = False
         print("alive")
