@@ -1,6 +1,9 @@
 from ursina import *
-from scripts.player import _Player
 import time
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from scripts.player import _Player
+
 #function for shooting
 def shoot(player:_Player, reload:Audio, shooting:Audio):
     play_multi = 1 / (player.reload_time / 5)

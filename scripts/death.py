@@ -1,8 +1,12 @@
 import time
-from scripts.player import _Player
-from ursina import Entity, Text, Audio
-from scripts.audio_controller import AudioController
-from scripts.ui import UIController
+from ursina import Entity
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from scripts.player import _Player
+    from scripts.audio_controller import AudioController
+    from scripts.ui import UIController
+
+
 
 RESPAWN_TIME = 5
 RESPAWN_POSITION = (0.5, 1.0,0.5)
@@ -39,3 +43,4 @@ class DeathManager():
         self.ui.menu_overlay.enabled = False
         self.cam_switching()
         self.player.position = RESPAWN_POSITION
+        self.ui.close_all_uis()

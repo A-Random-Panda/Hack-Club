@@ -6,7 +6,7 @@ class UpdateMinimap():
         self.real_entity:Entity = real_entity
         self.map_size:int = map_size
         #icons on the minimap
-    def minimap_update(self):
+    def minimap_update(self) -> None:
         self.map_icon.x = self.real_entity.x / self.map_size
         self.map_icon.y = self.real_entity.z / self.map_size
 class MinimapIcons:

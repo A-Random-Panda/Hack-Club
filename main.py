@@ -15,6 +15,7 @@ from scripts.combat import shoot, reload_timer
 from scripts.audio_controller import AudioController
 from scripts.settings import *
 from scripts.ui import UIController
+from scripts.shop import ShopUpgrades
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -53,56 +54,24 @@ player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
 player.previous_x = player.x
 player.previous_y = player.y
-uicontroller = UIController(player,mouse)
+ui_controller = UIController(player,mouse)
+audio_controller = AudioController(player)
+shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 
-
-
-#Shop upgrade functions
-def cam_upgrade():
-    current_upgrade = player.max_cams-5
-    if current_upgrade == len(MAX_CAM_COST)-1 and player.cash >= MAX_CAM_COST[current_upgrade]:
-        player.cash -= MAX_CAM_COST[current_upgrade]
-        uicontroller.current_cash.text = f"{player.cash} cash"
-        player.max_cams += 1
-        uicontroller.upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
-        audio_controller.success.play()
-    elif current_upgrade < len(MAX_CAM_COST) and player.cash >= MAX_CAM_COST[current_upgrade]:
-        player.cash -= MAX_CAM_COST[current_upgrade]
-        uicontroller.current_cash.text = f"{player.cash} cash"
-        next_cost = MAX_CAM_COST[current_upgrade + 1]
-        player.max_cams += 1
-        uicontroller.upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${next_cost}"
-        audio_controller.success.play()
-
-def reload_upgrade():
-    current_upgrade = int((5-player.reload_time)/0.5)
-    if current_upgrade == len(FASTER_RELOAD_COST)-1 and player.cash >= FASTER_RELOAD_COST[current_upgrade]:
-        player.cash -= FASTER_RELOAD_COST[current_upgrade]
-        uicontroller.current_cash.text = f"{player.cash} cash"
-        player.reload_time -= 0.5
-        uicontroller.faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
-        audio_controller.success.play()
-    elif current_upgrade < len(FASTER_RELOAD_COST) and player.cash >= FASTER_RELOAD_COST[current_upgrade]:
-        player.cash -= FASTER_RELOAD_COST[current_upgrade]
-        uicontroller.current_cash.text = f"{player.cash} cash"
-        next_cost = FASTER_RELOAD_COST[current_upgrade + 1]
-        player.reload_time -= 0.5
-        uicontroller.faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${next_cost}"
-        audio_controller.success.play()
 
 
 #Buttons in shop menu
-uicontroller.upgrade_cams_button.on_click = cam_upgrade
-uicontroller.faster_reload_button.on_click = reload_upgrade
+ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
+ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 
 #Buttons in main menu
-uicontroller.quit_button.on_click = application.quit
-uicontroller.volume_button.on_click = uicontroller.open_volume_menu
-uicontroller.control_button.on_click = uicontroller.open_control_menu
+ui_controller.quit_button.on_click = application.quit
+ui_controller.volume_button.on_click = ui_controller.open_volume_menu
+ui_controller.control_button.on_click = ui_controller.open_control_menu
 
 
 #Control change buttons
-uicontroller.reset_controls_to_default_button.on_click = uicontroller.reset_and_update_controls
+ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
 
 
 def cam_switching():
@@ -111,7 +80,7 @@ def cam_switching():
         #If the camera is on the player and there is at least one camera
     if player.current_cam == 0 and len(player.perspective_list) > 1: #player
         player.in_camera = False
-        uicontroller.camoverlay.disable()
+        ui_controller.camoverlay.disable()
         player.perspective_list[-1].visible = True
         camera.parent = player.camera_pivot
     elif player.current_cam != 0:
@@ -119,27 +88,26 @@ def cam_switching():
         player.perspective_list[player.current_cam].visible = False
         player.perspective_list[player.current_cam-1].visible = True
         player.in_camera = True
-        uicontroller.camoverlay.enable()
-        uicontroller.camoverlay.text= f'cam {player.current_cam}'
+        ui_controller.camoverlay.enable()
+        ui_controller.camoverlay.text= f'cam {player.current_cam}'
 
 #Variable declarations
 player.perspective_list = [player]
 minimap_icons = MinimapIcons()
-audio_controller = AudioController(player)
-death_manager = DeathManager(player, audio_controller, uicontroller, player_shadow,cam_switching)
+death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
 update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
 
 #Functions to change the volume
 def gun_change_volume():
-    audio_controller.set_gun_volume(uicontroller.gun_volume_slider.value)
+    audio_controller.set_gun_volume(ui_controller.gun_volume_slider.value)
 
 def player_change_volume():
-    audio_controller.set_player_volume(uicontroller.player_volume_slider.value)
+    audio_controller.set_player_volume(ui_controller.player_volume_slider.value)
 
 #Sound sliders
-uicontroller.gun_volume_slider.on_value_changed = gun_change_volume
-uicontroller.player_volume_slider.on_value_changed = player_change_volume
+ui_controller.gun_volume_slider.on_value_changed = gun_change_volume
+ui_controller.player_volume_slider.on_value_changed = player_change_volume
 
 #Detect key inputs
 def input(key):
@@ -150,21 +118,17 @@ def input(key):
         player.in_menu = not player.in_menu
         #Buttons
         if player.in_menu:
-            mouse.visible = True
-            mouse.locked = False
-            player.cursor.enabled = False
-            uicontroller.ui_changer(True)
-            uicontroller.menu_overlay.enabled = True
+            ui_controller.mouse_in_menu(True)
+            ui_controller.ui_changer(True)
+            ui_controller.menu_overlay.enabled = True
         else:
-            mouse.visible = False
-            mouse.locked = True
-            player.cursor.enabled = True
-            uicontroller.open_volume_menu(False)
-            uicontroller.open_control_menu(False)
+            ui_controller.mouse_in_menu(False)
+            ui_controller.open_volume_menu(False)
+            ui_controller.open_control_menu(False)
     
     if key == get_binding(Controls.QUIT_GAME) and player.in_shop:
         player.in_shop = False
-        uicontroller.open_shop_menu(False)
+        ui_controller.open_shop_menu(False)
 
     
     if player.control_change_button_pressed:
@@ -195,7 +159,7 @@ def input(key):
             destroy(icons)
         player.in_camera = False
         camera.parent = player.camera_pivot
-        uicontroller.camoverlay.disable()
+        ui_controller.camoverlay.disable()
         player.perspective_list.clear()
         player.perspective_list.append(player)
 
@@ -228,9 +192,9 @@ def input(key):
     if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
         player.in_shop = not player.in_shop
         if player.in_shop:
-            uicontroller.open_shop_menu(True)
+            ui_controller.open_shop_menu(True)
         else:
-            uicontroller.open_shop_menu(False)
+            ui_controller.open_shop_menu(False)
 
     if key ==  "t":
         test = True
@@ -269,10 +233,10 @@ def update():
     if player.changed_key is not None:
         set_control(player.control_change_key, player.changed_key)
         player.changed_key = None
-        uicontroller.update_control_text()
+        ui_controller.update_control_text()
     
 
-    reload_timer(player,uicontroller.cooldown_text)
+    reload_timer(player,ui_controller.cooldown_text)
 
 
     #update minimap and player position
