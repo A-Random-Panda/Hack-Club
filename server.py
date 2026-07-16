@@ -22,12 +22,12 @@ Attempt to:
 
 import argparse
 import logging
-from typing import override
-from collections import deque
 
 from pygame.time import Clock
 from ursina import *
 from ursina.networking import *
+
+from scripts.server.log_to_variable_handler import LatestLogHandler
 
 #Constants
 DATA_RATE = 64 #Times data is sent to the client per second
@@ -47,27 +47,6 @@ clock = Clock()
 app = Ursina(vsync=False)
 
 #Declare logging
-class LatestLogHandler(logging.Handler):
-    '''Handler that puts the latest log into a variable'''
-    MAX_LOGS:int = 30
-    latest_logs:deque[str] = deque()
-
-    @classmethod
-    def save_log(cls, formatted_record: str) -> None:
-        '''Saves the log of the message'''
-        if len(cls.latest_logs) >= cls.MAX_LOGS:
-            cls.latest_logs.popleft()
-        cls.latest_logs.append(formatted_record)
-
-    @classmethod
-    def get_logs(cls) -> str:
-        '''Returns the last MAX_LOGS logs'''
-        return "\n".join(cls.latest_logs)
-
-    @override
-    def emit(self, record: logging.LogRecord) -> None:
-        self.save_log(self.format(record))
-
 handler = LatestLogHandler()
 
 formatter = logging.Formatter(
@@ -88,10 +67,22 @@ connection_count:int = 0
 #Text displayed
 status_text:Text = Text(text=START_TEXT, origin=(0, 0))
 
-def receive_state(peer:Connection):
+def receive_state(client:Connection):
     '''
     Receive the gamestate of the connection
     '''
+    #Get events
+    #Get player position/velocity
+    pass
+
+def send_state(client:Connection):
+    '''
+    Sends the gamestate to the client
+    '''
+    #I think I should only have to send for stuff like camera once?
+    #But always send movement info
+    #So this should be implemented with like an event system with kwargs probably
+    pass
 
 def start_server(hostname, port):
     '''The function that starts the server'''
@@ -113,6 +104,9 @@ while 1:
     #Main loop
     app.step()
     clock.tick(DATA_RATE)
+
+    #This probably should depend on how many players the game is meant for
+    #For now I'll assume 2, and just update the code later.
 
 if __name__ == "__main__":
     start_server(args.hostname, args.port)
