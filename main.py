@@ -10,7 +10,7 @@ from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
 from scripts.death import DeathManager
-from scripts.minimap import UpdateMinimap
+from scripts.minimap import UpdateMinimap, MinimapIcons
 from scripts.combat import shoot, reload_timer
 from scripts.audio_controller import AudioController
 
@@ -65,11 +65,6 @@ text_box = Entity(scale = (0.4,0.1) ,origin = (0,0), position = (-.6,-.4), paren
 menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
 respawn_text = Text("test", origin = (0,0),position = (0,0,-2), scale = 3, color=color.red,enabled = False)
-#mini map
-minimap = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
-player_icon = Entity(parent = minimap, texture = "red_dot", scale = 0.05, model = "quad", z =-0.5, color=color.red)
-vision_cone_icon = Entity(scale = (4,0.2), parent=player_icon, model = "quad", z = -1, color = color.red, origin = (0.7,0), a = 0.4 )
-sqaure_icon = Entity(parent = minimap, scale = 0.05, model = "quad", z =-0.5)
     
 #Function used to update variables to allow you to change controls
 def control_changer(control,button):
@@ -111,6 +106,10 @@ def reload_upgrade():
         faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${next_cost}"
         audio_controller.success.play()
 
+
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
 #Functions used to help Enter / Exist out of UIs
 
 def ui_changer(boolean = False):
@@ -141,8 +140,14 @@ def open_control_menu(boolean = True):
     for button in control_button_list:
         button.enabled = boolean
 
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
 
 
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
 
 #Buttons in shop menu
 upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
@@ -196,6 +201,10 @@ def update_control_text():
     for control, button in control_buttons_dict.items():
         button.text = f'{button.name}\n{get_binding(control)}'
 
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
+#HERERERERERERERERERERERERERERE
+
 def cam_switching():
     if player.current_cam == len(player.perspective_list):
             player.current_cam = 0
@@ -215,10 +224,11 @@ def cam_switching():
 
 #Variable declarations
 player.perspective_list = [player]
+minimap_icons = MinimapIcons()
 audio_controller = AudioController(player)
 death_manager = DeathManager(player, menu_overlay, audio_controller, respawn_text, player_shadow,cam_switching)
-update_player_icon = UpdateMinimap(player_icon,player,55)
-update_moving_sqaure_icon = UpdateMinimap(sqaure_icon,moving_block,55)
+update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
+update_moving_sqaure_icon = UpdateMinimap(minimap_icons.sqaure_icon,moving_block,55)
 
 #Functions to change the volume
 def gun_change_volume():
@@ -281,12 +291,12 @@ def input(key):
         player.in_shop = False
         open_shop_menu(False)
 
-
     
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
             player.control_change_button_pressed = False
+    
 
     if not player.input_enabled:
         return
@@ -328,7 +338,7 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
@@ -392,7 +402,7 @@ def update():
 
     #update minimap and player position
     update_player_icon.minimap_update()
-    player_icon.rotation_z = player.rotation_y + 90
+    minimap_icons.player_icon.rotation_z = player.rotation_y + 90
 
     #moving block for testing
     
