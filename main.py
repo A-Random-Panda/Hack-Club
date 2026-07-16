@@ -12,6 +12,7 @@ from scripts.player import get_player
 from scripts.death import DeathManager
 from scripts.minimap import UpdateMinimap
 from scripts.combat import shoot, reload_timer
+from scripts.audio_controller import AudioController
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -69,23 +70,7 @@ minimap = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_
 player_icon = Entity(parent = minimap, texture = "red_dot", scale = 0.05, model = "quad", z =-0.5, color=color.red)
 vision_cone_icon = Entity(scale = (4,0.2), parent=player_icon, model = "quad", z = -1, color = color.red, origin = (0.7,0), a = 0.4 )
 sqaure_icon = Entity(parent = minimap, scale = 0.05, model = "quad", z =-0.5)
-
-#Initializing sounds
-shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True, parent = player)
-success = Audio("success",autoplay = False, volume = player_volume, spatial = True)
-death_sound = Audio("death",autoplay = False, volume = player_volume, spatial = True, parent = player)
-foot_steps = Audio("foot_steps", autoplay = False, volume = 1, spatial = True)
-jumping = Audio("jumping", autoplay = False, volume = 1, spatial = True)
-sniper_reload = Audio("sniper_reload", autoplay = False, volume = 0.83, spatial = True)
-
-#Stop all sounds
-def stop_audio():
-    for audio in scene.entities:
-            if isinstance(audio, Audio):
-                audio.stop()
     
-    
-
 #Function used to update variables to allow you to change controls
 def control_changer(control,button):
     player.control_change_button_pressed = True
@@ -101,14 +86,14 @@ def cam_upgrade():
         current_cash.text = f"{player.cash} cash"
         player.max_cams += 1
         upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
-        success.play()
+        audio_controller.success.play()
     elif current_upgrade < len(MAX_CAM_COST) and player.cash >= MAX_CAM_COST[current_upgrade]:
         player.cash -= MAX_CAM_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         next_cost = MAX_CAM_COST[current_upgrade + 1]
         player.max_cams += 1
         upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${next_cost}"
-        success.play()
+        audio_controller.success.play()
 
 def reload_upgrade():
     current_upgrade = int((5-player.reload_time)/0.5)
@@ -117,14 +102,14 @@ def reload_upgrade():
         current_cash.text = f"{player.cash} cash"
         player.reload_time -= 0.5
         faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
-        success.play()
+        audio_controller.success.play()
     elif current_upgrade < len(FASTER_RELOAD_COST) and player.cash >= FASTER_RELOAD_COST[current_upgrade]:
         player.cash -= FASTER_RELOAD_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         next_cost = FASTER_RELOAD_COST[current_upgrade + 1]
         player.reload_time -= 0.5
         faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${next_cost}"
-        success.play()
+        audio_controller.success.play()
 
 #Functions used to help Enter / Exist out of UIs
 
@@ -148,7 +133,7 @@ def open_volume_menu(boolean = True):
     ui_changer()
     menu_overlay.enabled = boolean
     gun_volume_slider.enabled = boolean
-    footstep_volume_slider.enabled = boolean
+    player_volume_slider.enabled = boolean
 
 def open_control_menu(boolean = True):
     ui_changer()
@@ -157,22 +142,7 @@ def open_control_menu(boolean = True):
         button.enabled = boolean
 
 
-#Used to change volume
-def gun_change_volume():
-    shooting.volume = (gun_volume_slider.value/100)
-    sniper_reload.volume = (gun_volume_slider.value/60)
-def footsteps_change_volume():
-    foot_steps.volume = (footstep_volume_slider.value/50)
-    jumping.volume = (footstep_volume_slider.value/50)
 
-#Sliders
-gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True, max = 100, step = 1, z = -2, x = -.25,y = 0, enabled = False, default = 50, on_value_changed = gun_change_volume)
-gun_volume_slider.label.origin = (0,0)
-gun_volume_slider.label.position = (.25, -.05)
-
-footstep_volume_slider = ThinSlider(text='Footstep Volume', dynamic=True, max = 100, z = -2, step = 1, x =-.25, y=-.2, enabled = False, default = 50, on_value_changed = footsteps_change_volume)
-footstep_volume_slider.label.origin = (0,0)
-footstep_volume_slider.label.position = (.25, -0.06)
 
 #Buttons in shop menu
 upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
@@ -245,10 +215,48 @@ def cam_switching():
 
 #Variable declarations
 player.perspective_list = [player]
-death_manager = DeathManager(player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow,cam_switching)
+audio_controller = AudioController(player)
+death_manager = DeathManager(player, menu_overlay, audio_controller, respawn_text, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(player_icon,player,55)
 update_moving_sqaure_icon = UpdateMinimap(sqaure_icon,moving_block,55)
 
+#Functions to change the volume
+def gun_change_volume():
+    audio_controller.set_gun_volume(gun_volume_slider.value)
+
+def player_change_volume():
+    audio_controller.set_player_volume(player_volume_slider.value)
+
+#Sliders
+#All gun related sounds
+gun_volume_slider = ThinSlider(text='Gun Volume',
+                               dynamic=True, 
+                               max = 100, 
+                               step = 1, 
+                               z = -2, 
+                               x = -.25,
+                               y = 0, 
+                               enabled = False, 
+                               default = 50, 
+                               on_value_changed = gun_change_volume)
+gun_volume_slider.label.origin = (0,0)
+gun_volume_slider.label.position = (.25, -.05)
+
+#All player sounds
+player_volume_slider = ThinSlider(text='Footstep Volume', 
+                                    dynamic=True, 
+                                    max = 100, 
+                                    z = -2, 
+                                    step = 1, 
+                                    x =-.25, 
+                                    y=-.2, 
+                                    enabled = False, 
+                                    default = 50, 
+                                    on_value_changed = player_change_volume)
+player_volume_slider.label.origin = (0,0)
+player_volume_slider.label.position = (.25, -0.06)
+
+#Detect key inputs
 def input(key):
     global test
     '''Input handler'''
@@ -290,7 +298,7 @@ def input(key):
         cam_switching()
     #Shooting
     if key == get_binding(Controls.SHOOT):
-        shoot(player,sniper_reload,shooting)
+        shoot(player,audio_controller.reload,audio_controller.shooting)
 
 
     #Reset cameras
@@ -329,7 +337,7 @@ def input(key):
    
     #Jumping sound
     if key == get_binding(Controls.JUMP) and player.grounded:
-        jumping.play()
+        audio_controller.jump.play()
     
     #Open shop menu
     if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
@@ -365,10 +373,10 @@ def update():
         player.rotation_y = player_shadow.rotation_y
 
     #Footstep sounds
-    if player.x != player.previous_x and not foot_steps.playing and not player.y != player.previous_y:
-        foot_steps.play()
-    if (player.x == player.previous_x or not player.grounded) and foot_steps.playing:
-        foot_steps.stop()
+    if player.x != player.previous_x and not audio_controller.footsteps.playing and not player.y != player.previous_y:
+        audio_controller.footsteps.play()
+    if (player.x == player.previous_x or not player.grounded) and audio_controller.footsteps.playing:
+        audio_controller.footsteps.stop()
     player.previous_x = player.x
     player.previous_y = player.y
     
@@ -397,7 +405,7 @@ def update():
             multi *= -1
         if player.bullet_trail is not None:
             if player.bullet_trail.intersects(moving_block):
-                success.play()
+                audio_controller.success.play()
         update_moving_sqaure_icon.minimap_update()
     
 
