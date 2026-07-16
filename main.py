@@ -10,7 +10,8 @@ from ursina import *
 from scripts.controls import *
 from scripts.player import get_player
 from scripts.death import DeathManager
-
+from scripts.minimap import UpdateMinimap
+from scripts.combat import shoot, reload_timer
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -23,8 +24,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 #Upgrade cost list (place holders)
-max_cam_cost = [100,500,1500,4500,7000]
-faster_reload_cost = [100,500,1500,4500,7000]
+MAX_CAM_COST = [100,500,1500,4500,7000]
+FASTER_RELOAD_COST = [100,500,1500,4500,7000]
 
 #Settings
 player_sensitivity = 150
@@ -50,7 +51,7 @@ wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 
 #Setup
-camoverlay = Text (parent= camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
+camoverlay = Text (parent = camera.ui,scale=2,position=(-0.7,0.4),color=color.gray)
 camoverlay.disable()
 player = get_player()
 player.visible = False
@@ -70,8 +71,7 @@ vision_cone_icon = Entity(scale = (4,0.2), parent=player_icon, model = "quad", z
 sqaure_icon = Entity(parent = minimap, scale = 0.05, model = "quad", z =-0.5)
 
 #Initializing sounds
-shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True)
-shooting.parent = player
+shooting = Audio("sniper_shot",autoplay=False, volume= 0.5, spatial = True, parent = player)
 success = Audio("success",autoplay = False, volume = player_volume, spatial = True)
 death_sound = Audio("death",autoplay = False, volume = player_volume, spatial = True, parent = player)
 foot_steps = Audio("foot_steps", autoplay = False, volume = 1, spatial = True)
@@ -92,39 +92,36 @@ def control_changer(control,button):
     player.control_change_key = control
     button.text = "Press a key to assign\n it to this action"
 
-def position_to_icon():
-    return player.position.x/55, player.position.z/55
-
 
 #Shop upgrade functions
 def cam_upgrade():
     current_upgrade = player.max_cams-5
-    if current_upgrade == len(max_cam_cost)-1 and player.cash >= max_cam_cost[current_upgrade]:
-        player.cash -= max_cam_cost[current_upgrade]
+    if current_upgrade == len(MAX_CAM_COST)-1 and player.cash >= MAX_CAM_COST[current_upgrade]:
+        player.cash -= MAX_CAM_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         player.max_cams += 1
         upgrade_cams_button.text = f"current cams: {player.max_cams} \n MAXED OUT"
         success.play()
-    elif current_upgrade < len(max_cam_cost) and player.cash >= max_cam_cost[current_upgrade]:
-        player.cash -= max_cam_cost[current_upgrade]
+    elif current_upgrade < len(MAX_CAM_COST) and player.cash >= MAX_CAM_COST[current_upgrade]:
+        player.cash -= MAX_CAM_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
-        next_cost = max_cam_cost[current_upgrade + 1]
+        next_cost = MAX_CAM_COST[current_upgrade + 1]
         player.max_cams += 1
         upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${next_cost}"
         success.play()
 
 def reload_upgrade():
     current_upgrade = int((5-player.reload_time)/0.5)
-    if current_upgrade == len(faster_reload_cost)-1 and player.cash >= faster_reload_cost[current_upgrade]:
-        player.cash -= faster_reload_cost[current_upgrade]
+    if current_upgrade == len(FASTER_RELOAD_COST)-1 and player.cash >= FASTER_RELOAD_COST[current_upgrade]:
+        player.cash -= FASTER_RELOAD_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
         player.reload_time -= 0.5
         faster_reload_button.text = f"reload time: {player.reload_time} \n MAXED OUT"
         success.play()
-    elif current_upgrade < len(faster_reload_cost) and player.cash >= faster_reload_cost[current_upgrade]:
-        player.cash -= faster_reload_cost[current_upgrade]
+    elif current_upgrade < len(FASTER_RELOAD_COST) and player.cash >= FASTER_RELOAD_COST[current_upgrade]:
+        player.cash -= FASTER_RELOAD_COST[current_upgrade]
         current_cash.text = f"{player.cash} cash"
-        next_cost = faster_reload_cost[current_upgrade + 1]
+        next_cost = FASTER_RELOAD_COST[current_upgrade + 1]
         player.reload_time -= 0.5
         faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${next_cost}"
         success.play()
@@ -178,9 +175,9 @@ footstep_volume_slider.label.origin = (0,0)
 footstep_volume_slider.label.position = (.25, -0.06)
 
 #Buttons in shop menu
-upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${max_cam_cost[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
+upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
 upgrade_cams_button.on_click = cam_upgrade
-faster_reload_button = Button(model = "quad", scale = 0.2, x = 0.1, z = -2, color=color.gray, text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${faster_reload_cost[0]}", text_size = 0.8, text_color = color.black, enabled = False)
+faster_reload_button = Button(model = "quad", scale = 0.2, x = 0.1, z = -2, color=color.gray, text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${FASTER_RELOAD_COST[0]}", text_size = 0.8, text_color = color.black, enabled = False)
 faster_reload_button.on_click = reload_upgrade
 shop_buttons_list = [upgrade_cams_button,faster_reload_button]
 
@@ -249,6 +246,8 @@ def cam_switching():
 #Variable declarations
 player.perspective_list = [player]
 death_manager = DeathManager(player, menu_overlay, stop_audio, death_sound, respawn_text, player_shadow,cam_switching)
+update_player_icon = UpdateMinimap(player_icon,player,55)
+update_moving_sqaure_icon = UpdateMinimap(sqaure_icon,moving_block,55)
 
 def input(key):
     global test
@@ -291,23 +290,7 @@ def input(key):
         cam_switching()
     #Shooting
     if key == get_binding(Controls.SHOOT):
-        play_multi = 1 / (player.reload_time / 5)
-        if player.reload_time < abs(time.perf_counter()-player.cd):
-            hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
-            player.cd = time.perf_counter()
-            shooting.pitch = play_multi
-            sniper_reload.pitch = play_multi
-            Sequence(Func(shooting.play),
-                     Wait(0.9 / play_multi),
-                     Func(sniper_reload.play)).start()
-            player.bullet_trail = Entity(model="cube",
-                                         position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
-                                         scale = (0.2,0.2,distance(hit.world_point,player.world_position)),
-                                         color = color.white,parent = scene,
-                                         rotation = player.rotation,
-                                         collider = "box"
-                                         )
-            destroy(player.bullet_trail,delay = 0.1)
+        shoot(player,sniper_reload,shooting)
 
 
     #Reset cameras
@@ -396,13 +379,11 @@ def update():
         update_control_text()
     
 
+    reload_timer(player,cooldown_text)
 
-    timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
-    cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
     #update minimap and player position
-    player_icon.x = position_to_icon()[0]
-    player_icon.y = position_to_icon()[1]
+    update_player_icon.minimap_update()
     player_icon.rotation_z = player.rotation_y + 90
 
     #moving block for testing
@@ -417,8 +398,7 @@ def update():
         if player.bullet_trail is not None:
             if player.bullet_trail.intersects(moving_block):
                 success.play()
-        sqaure_icon.x = moving_block.x/55
-        sqaure_icon.y = moving_block.y/55
+        update_moving_sqaure_icon.minimap_update()
     
 
     #Runs once when you die
