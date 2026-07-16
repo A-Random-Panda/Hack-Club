@@ -126,7 +126,7 @@ def cam_switching():
 player.perspective_list = [player]
 minimap_icons = MinimapIcons()
 audio_controller = AudioController(player)
-death_manager = DeathManager(player, uicontroller.menu_overlay, audio_controller, uicontroller.respawn_text, player_shadow,cam_switching) #just import uicontroller
+death_manager = DeathManager(player, audio_controller, uicontroller, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
 update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
 
