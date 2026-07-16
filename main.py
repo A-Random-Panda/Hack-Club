@@ -21,7 +21,7 @@ multi = 1
 enable_moving_block = True
 test = False
 #Declare logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 #Upgrade cost list (place holders)
