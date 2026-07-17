@@ -45,6 +45,8 @@ wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box",
 wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
 wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
 wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
+wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=14, z=0, rotation_y=90)
+
 
 
 #Setup
@@ -197,7 +199,8 @@ def input(key):
             ui_controller.open_shop_menu(False)
 
     if key ==  "t":
-        test = True
+        print("space")
+        #test = True
 
 def update():
     global test
@@ -244,7 +247,7 @@ def update():
     minimap_icons.vision_cone_icon1.rotation_z = minimap_icons.player_icon.rotation_z - 135
     minimap_icons.vision_cone_icon.rotation_z = minimap_icons.player_icon.rotation_z - 55
     minimap_icons.vision_cone()
-
+    minimap_icons.in_sight(moving_block, camera)
 
     #moving block for testing
     
