@@ -93,7 +93,7 @@ def cam_switching():
 
 #Variable declarations
 player.perspective_list = [player]
-minimap_icons = MinimapIcons()
+minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
 update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
@@ -199,7 +199,6 @@ def input(key):
     if key ==  "t":
         test = True
 
-
 def update():
     global test
     "Frame handler"
@@ -242,6 +241,10 @@ def update():
     #update minimap and player position
     update_player_icon.minimap_update()
     minimap_icons.player_icon.rotation_z = player.rotation_y + 90
+    minimap_icons.vision_cone_icon1.rotation_z = minimap_icons.player_icon.rotation_z - 135
+    minimap_icons.vision_cone_icon.rotation_z = minimap_icons.player_icon.rotation_z - 55
+    minimap_icons.vision_cone()
+
 
     #moving block for testing
     
@@ -256,6 +259,7 @@ def update():
             if player.bullet_trail.intersects(moving_block):
                 audio_controller.success.play()
         update_moving_square_icon.minimap_update()
+
     
 
     #Runs once when you die
@@ -275,4 +279,5 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
+
 app.run()
