@@ -46,6 +46,9 @@ clock = Clock()
 #Declare Ursina app
 app = Ursina(vsync=False)
 
+#Declare server variables
+server_peer:RPCPeer = RPCPeer()
+
 #Declare logging
 handler = LatestLogHandler()
 
@@ -60,22 +63,39 @@ logging.basicConfig(level=logging.INFO)
 logger:logging.Logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 
-#Declare server and server variables
-server:RPCPeer = RPCPeer()
-connection_count:int = 0
-
 #Text displayed
-status_text:Text = Text(text=START_TEXT, origin=(0, 0))
+status_text:Text = Text(text=START_TEXT, origin=(-0.5, 0.5), position=(-.5, .5))
+count_text:Text = Text(text='', position=(.5, .5))
 
-def receive_state(client:Connection):
+@rpc(server_peer)
+def get_state(connection, time_received, position:int = 42, **kwargs:dict):
     '''
     Receive the gamestate of the connection
     '''
+    for k,v in kwargs.items():
+        if k == "position":
+            logger.debug("position %s gotten!", v)
+    logger.info(position)
+
     #Get events
     #Get player position/velocity
-    pass
 
-def send_state(client:Connection):
+@rpc(server_peer)
+def on_connect(connection, time_connected):
+    '''
+    On connect to server
+    '''
+    logger.info("%s connected to the server!", connection)
+
+@rpc(server_peer)
+def on_disconnect(connection, time_disconnected):
+    '''
+    On disconnect from server
+    '''
+    logger.info("%s disconnected from the server!", connection)
+
+
+def send_state(client:Connection, **kwargs):
     '''
     Sends the gamestate to the client
     '''
@@ -87,18 +107,25 @@ def send_state(client:Connection):
 def start_server(hostname, port):
     '''The function that starts the server'''
     logger.info("Starting server on port %d.", port)
-    server.start(hostname, port, is_host=True)
+    server_peer.start(hostname, port, is_host=True)
 
 def update():
     '''Main handler'''
-    if not server.is_running():
+    server_peer.update()
+    if not server_peer.is_running():
         status_text.text = START_TEXT
     else:
         status_text.text = f"latest logs:\n{LatestLogHandler.get_logs()}"
+        count_text.text = f"connection count {server_peer.connection_count()}"
 
 def input(key):
     if key == "q":
         logger.warning("Test warning")
+
+if __name__ == "__main__":
+    start_server(args.hostname, args.port)
+else:
+    logger.fatal("Server was not properly run; please run the server directly!.")
 
 while 1:
     #Main loop
@@ -107,8 +134,3 @@ while 1:
 
     #This probably should depend on how many players the game is meant for
     #For now I'll assume 2, and just update the code later.
-
-if __name__ == "__main__":
-    start_server(args.hostname, args.port)
-else:
-    logger.fatal("Server was not properly run; please run the server directly!.")
