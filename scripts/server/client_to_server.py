@@ -5,9 +5,14 @@ player = get_player()
 def send_info():
     cam_position_list = []
     cam_rotation_list = []
+    for cam in player.perspective_list:
+        cam_position_list.append(cam.world_position)
+        cam_rotation_list.append(cam.rotation)
 
     if player.bullet_trail is not None and player.bullet_trail:
-        return (str(player.perspective_list),
+        return (str(len(player.perspective_list)),
+            str(cam_position_list),
+            str(cam_rotation_list),           
             str(player.bullet_trail),
             str(player.bullet_trail.world_position),
             str(player.reload_time),
@@ -16,7 +21,9 @@ def send_info():
             str(player.rotation)
             )
     else:
-        return (str(player.perspective_list),
+        return (str(len(player.perspective_list)),
+            str(cam_position_list),
+            str(cam_rotation_list),
             str("DNE"),
             str("DNE"),
             str(player.reload_time),
@@ -27,7 +34,7 @@ def send_info():
 print(send_info())
 
 def info_key():
-    return  ("player cams: list[entity]",
+    return  ("amount of player cams",
                "player cams position: list[vec3]", 
                "player cams rotation: list[vec3]", 
                "bullet trail: entity",
