@@ -18,6 +18,7 @@ from scripts.in_game.ui import UIController
 from scripts.in_game.shop import ShopUpgrades
 from scripts.server.client_to_server import send_info, info_key
 from scripts.in_game.game_objective import KOTH
+from scripts.in_game.main_menu import MainMenu
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -51,6 +52,7 @@ wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 #Setup
 player = get_player()
+player.in_main_menu = True
 player.visible = False
 player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
@@ -59,20 +61,8 @@ player.previous_y = player.y
 ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
-koth1 = KOTH(player,10,10,10)
+koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 
-#Buttons in shop menu
-ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
-ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
-
-#Buttons in main menu
-ui_controller.quit_button.on_click = application.quit
-ui_controller.volume_button.on_click = ui_controller.open_volume_menu
-ui_controller.control_button.on_click = ui_controller.open_control_menu
-
-
-#Control change buttons
-ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
 def cam_switching():
     if player.current_cam == len(player.perspective_list):
         player.current_cam = 0
@@ -96,6 +86,23 @@ minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
 update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
+main_menu = MainMenu(player,audio_controller,ui_controller)
+main_menu.open_main_menu()
+
+#Buttons in shop menu
+ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
+ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
+
+#Buttons in escape menu
+ui_controller.quit_button.on_click = application.quit
+ui_controller.volume_button.on_click = ui_controller.open_volume_menu
+ui_controller.control_button.on_click = ui_controller.open_control_menu
+
+#Buttons in main menu
+ui_controller.open_game_button.on_click = main_menu.player_main_menu
+
+#Control change buttons
+ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
 
 #Functions to change the volume
 def gun_change_volume():
@@ -113,6 +120,8 @@ def input(key):
     global test
     '''Input handler'''
      #Escape menu
+    if player.in_main_menu:
+        return
     if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
         player.in_menu = not player.in_menu
         #Buttons
@@ -147,7 +156,7 @@ def input(key):
     #Shooting
     if key == get_binding(Controls.SHOOT):
         shoot(player,audio_controller.reload,audio_controller.shooting)
-        print(send_info())
+        print(send_info(player))
         print(info_key())
 
 
@@ -197,17 +206,28 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
+
+
     if key ==  "t":
-        print(send_info())
+        print(send_info(player))
         print(info_key())
-        koth1.location_z = 5
-        koth1.location_x = 5
-        
+        koth1.location_z = -10
+        koth1.objective_length = 3
+        koth1.update_zone()
+
 
 
 def update():
     global test
+
+    if player.in_main_menu:
+        return
     "Frame handler"
+    if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
+        ui_controller.open_leaderboard(True)
+    else:
+        ui_controller.open_leaderboard(False)
+
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
         player_shadow.rotation_y -= player_sensitivity * time.dt
 

@@ -19,6 +19,13 @@ class UIController:
         self.cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
         self.camoverlay = Text (parent = camera.ui,scale=2,position=(-0.7,0.4),color=color.gray, enabled = False)
 
+        self.leaderboard_text = Text("0 username", origin = (0,0), position = (0,0), scale = 3, color=color.white, enabled= False, z = -2)
+        self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
+
+        #Main menu
+        self.background = Entity(model="quad", scale = (2,2),color = color.black, enabled = False, parent=camera.ui, z = -3)
+        self.open_game_button = Button(model = "quad", scale = 0.2, origin=(0,0), color=color.white, text = f"start game", z = -4, text_color=color.black)
+
 
 
         #Buttons Inside the shop
@@ -125,10 +132,16 @@ class UIController:
         self.mouse.locked = not boolean
         self.player.cursor.enabled = not boolean
     
-    def reset_and_update_controls(self):
+    def open_leaderboard(self,boolean) -> None:
+        self.leaderboard_text.enabled = boolean
+        self.leaderboard_overlay.enabled = boolean
+
+
+    def reset_and_update_controls(self) -> None:
         reset_controls_to_default()
         self.update_control_text()
-    def close_all_uis(self):
+    
+    def close_all_uis(self) -> None:
         self.open_control_menu(False)
         self.open_shop_menu(False)
         self.open_volume_menu(False)
