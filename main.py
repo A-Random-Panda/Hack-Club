@@ -26,7 +26,7 @@ multi = 1
 enable_moving_block = True
 test = False
 #Declare logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format="(%(asctime)s) %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 #Create app
@@ -147,6 +147,8 @@ def input(key):
     #Shooting
     if key == get_binding(Controls.SHOOT):
         shoot(player,audio_controller.reload,audio_controller.shooting)
+        print(send_info())
+        print(info_key())
 
 
     #Reset cameras
@@ -196,20 +198,21 @@ def input(key):
             ui_controller.open_shop_menu(False)
 
     if key ==  "t":
-        print("space")
+        print(send_info())
+        print(info_key())
 
 def update():
     global test
     "Frame handler"
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
         player_shadow.rotation_y -= player_sensitivity * time.dt
-    
+
     if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
         player_shadow.rotation_y += player_sensitivity * time.dt
-    
+
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
-    
+
     if not player.in_camera:
         player_shadow.enabled = False
         player_shadow.position = player.position
@@ -226,13 +229,12 @@ def update():
         audio_controller.footsteps.stop()
     player.previous_x = player.x
     player.previous_y = player.y
-    
+
     #Changes controls
     if player.changed_key is not None:
         set_control(player.control_change_key, player.changed_key)
         player.changed_key = None
         ui_controller.update_control_text()
-    
 
     reload_timer(player,ui_controller.cooldown_text)
 
