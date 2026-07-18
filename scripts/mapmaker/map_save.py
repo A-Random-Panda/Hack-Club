@@ -1,13 +1,13 @@
 '''This contains the map saving sequence for the map maker'''
-
-import json
-import logging
+from typing import Any, TYPE_CHECKING
 from pathlib import Path
-from typing import Any
-
+from logging import getLogger
+import json
 from ursina import *
+if TYPE_CHECKING:
+    from logging import Logger
 
-_logger:logging.Logger = logging.getLogger(__name__)
+_logger:"Logger" = getLogger(__name__)
 
 def _json_dump_map(file_name:str|Path, _map):
     '''Dumps the map to file_name'''
