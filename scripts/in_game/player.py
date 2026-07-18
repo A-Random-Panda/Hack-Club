@@ -1,5 +1,5 @@
 '''This module contains the player class for the game'''
-from typing import Any
+from typing import Any, override
 from ursina import *
 from scripts.in_game.editable_controls_FPC import FirstPersonController
 
@@ -14,6 +14,11 @@ _player_properties:dict[str,Any] = {
 
 class _Player(FirstPersonController):
     '''The player class for the game'''
+    _instance = None
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls) #pylint: disable=no-value-for-parameter
+        return cls._instance
     def __init__(self):
         super().__init__(**_player_properties)
         self.in_camera:bool = False
@@ -21,9 +26,9 @@ class _Player(FirstPersonController):
         self.perspective_list:list[Entity] = []
         self.cam_icon_list:list[Entity] = []
         self.cd:float = 0.0
-        self.bullet_trail:Entity = None #entity
+        self.bullet_trail:Entity|None = None
         self.in_menu:bool = False
-        self.changed_key = None #str
+        self.changed_key:str|None = None
         self.control_change_button_pressed:bool =  False
         self.control_change_key = None
         self.max_cams:int = 5
@@ -35,6 +40,7 @@ class _Player(FirstPersonController):
         self.input_enabled:bool = True
         self.in_zone:bool = False
         self.points:int = 0
+    @override
     def update(self):
         super().update()
         if self.in_menu or self.in_shop: 
@@ -54,15 +60,11 @@ class _Player(FirstPersonController):
             super().mouse_movement()
             
 
-#This is probably not the best way to make a singleton esque thing, but it works okay?
-_player_list:list[_Player] = []
 def get_player() -> _Player:
-    '''Returns the player object'''
-    if len(_player_list) > 1:
-        pass
-    else:
-        _player_list.append(_Player())
-    return _player_list[0]
-
+    '''
+    Returns the player object.
+    This is unnecessary because the player is a singleton, but it exists for legacy reasons
+    '''
+    return _Player()
 if __name__ == "__main__":
-    pass
+    print(_Player() == _Player())
