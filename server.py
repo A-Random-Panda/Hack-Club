@@ -22,7 +22,8 @@ Attempt to:
 
 import argparse
 import logging
-from sys import exit
+from typing import Any
+from sys import exit #pylint: disable=redefined-builtin
 
 from pygame.time import Clock
 from ursina import *
@@ -36,9 +37,18 @@ START_TEXT:str = "The server is not on" #This should never show
 
 #Declare command line arguments
 parser = argparse.ArgumentParser(description="The script to start the game server.")
-parser.add_argument("-host", "--hostname", type=str, default="localhost", help="The hostname for the server.")
-parser.add_argument("-p", "--port", type=int, default=1939, help="The port the server is hosted on.")
-parser.add_argument("-win", "--window", type=bool, default=True, help="Whether to show a window or not")
+parser.add_argument("-host", "--hostname",
+                    type=str,
+                    default="localhost",
+                    help="The hostname for the server.")
+parser.add_argument("-p", "--port",
+                    type=int,
+                    default=1939,
+                    help="The port the server is hosted on.")
+parser.add_argument("-win", "--window",
+                    type=bool,
+                    default=True,
+                    help="Whether to show a window or not")
 args = parser.parse_args()
 
 #Pygame Clock
@@ -63,7 +73,7 @@ if WINDOW_TYPE == "onscreen":
 #Declare server variables
 server_peer:RPCPeer = RPCPeer()
 connected_ids:list[int] = []
-state_list:list[str] = []
+state_dict:dict[int, dict[str, Any]] = {} #Parsed, id:dict
 
 #Declare logging
 handler = LatestLogHandler()
@@ -85,11 +95,11 @@ count_text:Text = Text(text='', position=(.5*1.778, .5), origin=(.5, .5))
 fps_text:Text = Text(text='', position = (-.5*1.778, .5), origin=(-0.5, 0.5))
 
 @rpc(server_peer)
-def send_state(connection, time_received, gamestate:str):
+def state_to_client(connection, time_received, gamestate:str):
     '''
     Send the gamestate to the server
     '''
-    state_list.append(gamestate)
+    pass
 
 @rpc(server_peer)
 def on_connect(connection, time_connected):
@@ -111,6 +121,10 @@ def on_disconnect(connection, time_disconnected):
     connected_ids.remove(connection_id)
     logger.info("Client of id %d disconnected from the server!", connection_id)
 
+def parse_state(state:str) -> dict[str, Any]:
+    '''Parses state, returns the information in the dictionary'''
+    return {}
+
 def start_server(hostname, port):
     '''The function that starts the server'''
     logger.info("Starting server on port %d.", port)
@@ -124,21 +138,22 @@ def update():
     else:
         #Only runs if the server is running
         for i in range(server_peer.connection_count()):
-            pass
+            #Put the id with the parsed state dictionary
+            state_dict[id(server_peer.get_connections()[i])] = parse_state(server_peer.state_to_server(server_peer.get_connections()[i])) # type: ignore
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":
             #Update text
             new_status_text = f"latest logs:\n{LatestLogHandler.get_logs()}"
             if status_text.text != new_status_text:
                 status_text.text = new_status_text
-                
             new_con_count_text = f"connection count {server_peer.connection_count()}"
             if count_text.text != new_con_count_text:
                 count_text.text = new_con_count_text
             #Updates every frame because the fps will be different
             fps_text.text = f"fps: {clock.get_fps()}"
 
-def input(key):
+def input(key):# pylint: disable=function-redefined
+    '''Input handler'''
     if key == "q":
         logger.warning("Test warning")
 
@@ -150,7 +165,7 @@ else:
 
 while 1:
     #Main loop
-    app.step()
+    app.step()# type: ignore
     clock.tick(DATA_RATE)
 
     #This probably should depend on how many players the game is meant for
