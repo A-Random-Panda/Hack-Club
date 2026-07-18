@@ -2,7 +2,7 @@ from ursina import *
 from math import sin, cos, radians, atan2, degrees
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.player import _Player
+    from scripts.in_game.player import _Player
 
 class UpdateMinimap():
     def __init__(self,map_icon,real_entity,map_size):
@@ -21,7 +21,8 @@ class MinimapIcons:
         self.vision_cone_icon:Entity = Entity(scale = (4,0.2), parent= self.player_icon, model = "quad", z = -1, color = color.red, origin = (0.5,0), a = 0.4 )
         self.vision_cone_icon1:Entity = Entity(scale = (4,0.2), parent= self.player_icon, model = "quad", z = -1, color = color.red, origin = (0.5,0), a = 0.4 )
         self.player = player
-    def vision_cone(self):
+    '''
+    def vision_cone(self): #might try using this to detect sight lines
         left_angle = radians(self.player.rotation_y - 135)
         right_angle = radians(self.player.rotation_y - 45)
         left_dir = Vec3(sin(left_angle), 0, cos(left_angle))
@@ -32,7 +33,8 @@ class MinimapIcons:
         self.right_bound = raycast(origin = self.player.world_position, direction =  right_dir, ignore = [self.player], distance = 100)
         self.vision_cone_icon.scale = (self.left_bound.distance/2, 0.2)
         self.vision_cone_icon1.scale = (self.right_bound.distance/2, 0.2)
-    def in_sight(self, target:Entity, camera:Entity): 
+    
+    def in_sight(self, target:Entity, camera:Entity): #this does not work as intended
         dir_target = target.world_position - camera.world_position
         target_angle = degrees(atan2(dir_target.x,dir_target.z))
         player_angle = camera.rotation_y
@@ -40,5 +42,5 @@ class MinimapIcons:
         if abs(angle_difference) < 45:
             target_ray = raycast(origin = camera.world_position + camera.forward * 1, direction = dir_target.normalized(),debug = True, distance = 100, ignore = [self.player,camera])
             if target_ray.entity == target:
-                print(target_ray.entity)
-                print("you see it")
+                pass
+    '''

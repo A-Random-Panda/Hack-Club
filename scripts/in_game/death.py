@@ -2,9 +2,9 @@ import time
 from ursina import Entity
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.player import _Player
-    from scripts.audio_controller import AudioController
-    from scripts.ui import UIController
+    from scripts.in_game.player import _Player
+    from scripts.in_game.audio_controller import AudioController
+    from scripts.in_game.ui import UIController
 
 
 

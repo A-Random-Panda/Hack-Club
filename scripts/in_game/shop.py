@@ -1,9 +1,9 @@
-from scripts.settings import MAX_CAM_COST, FASTER_RELOAD_COST
+from scripts.in_game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.audio_controller import AudioController
-    from scripts.ui import UIController
-    from scripts.player import _Player
+    from scripts.in_game.audio_controller import AudioController
+    from scripts.in_game.ui import UIController
+    from scripts.in_game.player import _Player
     
 
 

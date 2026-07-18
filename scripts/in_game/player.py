@@ -1,7 +1,7 @@
 '''This module contains the player class for the game'''
 from typing import Any
 from ursina import *
-from scripts.editable_controls_FPC import FirstPersonController
+from scripts.in_game.editable_controls_FPC import FirstPersonController
 
 
 _player_properties:dict[str,Any] = {
@@ -21,7 +21,7 @@ class _Player(FirstPersonController):
         self.perspective_list:list[Entity] = []
         self.cam_icon_list:list[Entity] = []
         self.cd:float = 0.0
-        self.bullet_trail = None #entity
+        self.bullet_trail:Entity = None #entity
         self.in_menu:bool = False
         self.changed_key = None #str
         self.control_change_button_pressed:bool =  False
@@ -35,19 +35,21 @@ class _Player(FirstPersonController):
         self.input_enabled:bool = True
     def update(self):
         super().update()
-        if self.in_camera and not self.in_menu:
+        if self.in_menu or self.in_shop: 
+            super().movement()
+
+            
+        elif self.in_camera:
             cam = self.perspective_list[self.current_cam]
             cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
             cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-40, cam.original_rotation_y+40)
-            #
-            super().movement_in_cam()
-        elif self.in_menu or self.in_shop: 
-            super().movement_not_in_cam()
+            super().movement()
+            
         else:
-            super().movement_not_in_cam()
-            super().mouse_movement_not_in_cam()
+            super().movement()
+            super().mouse_movement()
             
 
 #This is probably not the best way to make a singleton esque thing, but it works okay?
