@@ -124,6 +124,7 @@ def on_disconnect(connection, time_disconnected):
 
 def parse_state(state:str) -> dict[str, Any]:
     '''Parses state, returns the information in the dictionary'''
+    dictionary = {}
     '''
     ('Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)', 'DNE', 'DNE', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)')
     '''
