@@ -22,6 +22,7 @@ Attempt to:
 
 import argparse
 import logging
+from sys import exit
 
 from pygame.time import Clock
 from ursina import *
@@ -36,18 +37,33 @@ START_TEXT:str = "The server is not on" #This should never show
 #Declare command line arguments
 parser = argparse.ArgumentParser(description="The script to start the game server.")
 parser.add_argument("-host", "--hostname", type=str, default="localhost", help="The hostname for the server.")
-parser.add_argument("-p", "---port", type=int, default=1939, help="The port the server is hosted on.")
+parser.add_argument("-p", "--port", type=int, default=1939, help="The port the server is hosted on.")
+parser.add_argument("-win", "--window", type=bool, default=True, help="Whether to show a window or not")
 args = parser.parse_args()
 
 #Pygame Clock
-#There is no way to limit fps in Ursina without a pygame clock as far I as know
+#There is no way to limit fps in Ursina without a different library as far I as know
 clock = Clock()
 
-#Declare Ursina app
-app = Ursina(vsync=False)
+#Declare Ursina app and properties
+#Check window type
+if args.window:
+    WINDOW_TYPE = 'onscreen'
+else:
+    WINDOW_TYPE = 'none'
+
+app = Ursina(vsync=False, window_type=WINDOW_TYPE)
+#If the screen is showing, disable debug options
+if WINDOW_TYPE == "onscreen":
+    window.entity_counter.disable()
+    window.exit_button.disable()
+    window.fps_counter.disable()
+    window.collider_counter.disable()
 
 #Declare server variables
 server_peer:RPCPeer = RPCPeer()
+connected_ids:list[int] = []
+state_list:list[str] = []
 
 #Declare logging
 handler = LatestLogHandler()
@@ -64,45 +80,36 @@ logger:logging.Logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 
 #Text displayed
-status_text:Text = Text(text=START_TEXT, origin=(-0.5, 0.5), position=(-.5, .5))
-count_text:Text = Text(text='', position=(.5, .5))
+status_text:Text = Text(text=START_TEXT, origin=(0, 0), position=(0, 0))
+count_text:Text = Text(text='', position=(.5*1.778, .5), origin=(.5, .5))
+fps_text:Text = Text(text='', position = (-.5*1.778, .5), origin=(-0.5, 0.5))
 
 @rpc(server_peer)
-def get_state(connection, time_received, position:int = 42, **kwargs:dict):
+def send_state(connection, time_received, gamestate:str):
     '''
-    Receive the gamestate of the connection
+    Send the gamestate to the server
     '''
-    for k,v in kwargs.items():
-        if k == "position":
-            logger.debug("position %s gotten!", v)
-    logger.info(position)
-
-    #Get events
-    #Get player position/velocity
+    state_list.append(gamestate)
 
 @rpc(server_peer)
 def on_connect(connection, time_connected):
     '''
     On connect to server
     '''
-    logger.info("%s connected to the server!", connection)
+    #Should probably send a token on connection for identification
+    connection_id = id(connection)
+    logger.info("Client of id %d connected to the server!", connection_id)
+    connected_ids.append(connection_id)
+    server_peer.send_id(connection, connection_id)
 
 @rpc(server_peer)
 def on_disconnect(connection, time_disconnected):
     '''
     On disconnect from server
     '''
-    logger.info("%s disconnected from the server!", connection)
-
-
-def send_state(client:Connection, **kwargs):
-    '''
-    Sends the gamestate to the client
-    '''
-    #I think I should only have to send for stuff like camera once?
-    #But always send movement info
-    #So this should be implemented with like an event system with kwargs probably
-    pass
+    connection_id = id(connection)
+    connected_ids.remove(connection_id)
+    logger.info("Client of id %d disconnected from the server!", connection_id)
 
 def start_server(hostname, port):
     '''The function that starts the server'''
@@ -115,8 +122,21 @@ def update():
     if not server_peer.is_running():
         status_text.text = START_TEXT
     else:
-        status_text.text = f"latest logs:\n{LatestLogHandler.get_logs()}"
-        count_text.text = f"connection count {server_peer.connection_count()}"
+        #Only runs if the server is running
+        for i in range(server_peer.connection_count()):
+            pass
+        #Doesn't update the text if there's no window
+        if WINDOW_TYPE == "onscreen":
+            #Update text
+            new_status_text = f"latest logs:\n{LatestLogHandler.get_logs()}"
+            if status_text.text != new_status_text:
+                status_text.text = new_status_text
+                
+            new_con_count_text = f"connection count {server_peer.connection_count()}"
+            if count_text.text != new_con_count_text:
+                count_text.text = new_con_count_text
+            #Updates every frame because the fps will be different
+            fps_text.text = f"fps: {clock.get_fps()}"
 
 def input(key):
     if key == "q":
@@ -126,6 +146,7 @@ if __name__ == "__main__":
     start_server(args.hostname, args.port)
 else:
     logger.fatal("Server was not properly run; please run the server directly!.")
+    exit(1)
 
 while 1:
     #Main loop
