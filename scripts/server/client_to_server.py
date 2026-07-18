@@ -1,6 +1,6 @@
 from ursina import *
-from scripts.in_game.player import get_player
-player = get_player
+from scripts.in_game.player import get_player, _Player
+player:_Player = get_player
 def send_info():
     cam_position_list = []
     cam_rotation_list = []
@@ -17,7 +17,9 @@ def send_info():
             str(player.reload_time),
             str(player.dead),
             str(player.world_position),
-            str(player.rotation)
+            str(player.rotation),
+            str(player.points),
+            str(player.in_zone)
             )
     else:
         return (str(len(player.perspective_list)),
@@ -28,7 +30,9 @@ def send_info():
             str(player.reload_time),
             str(player.dead),
             str(player.world_position),
-            str(player.rotation)
+            str(player.rotation),
+            str(player.points),
+            str(player.in_zone)
             )
 
 def info_key():
@@ -41,4 +45,6 @@ def info_key():
                "player dead: bool",
                "player world position: vec3",
                "player rotation: vec3",
+               "player points: boolean",
+               "player in zone: boolean"
                )
