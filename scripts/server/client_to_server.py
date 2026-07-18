@@ -5,13 +5,9 @@ player = get_player()
 def send_info():
     cam_position_list = []
     cam_rotation_list = []
-    for cams in player.perspective_list:
-        cam_position_list.append(cams.world_position)
-        cam_rotation_list.append(cams.rotation)
+
     if player.bullet_trail is not None and player.bullet_trail:
         return (str(player.perspective_list),
-            str(cam_position_list),
-            str(cam_rotation_list),
             str(player.bullet_trail),
             str(player.bullet_trail.world_position),
             str(player.reload_time),
