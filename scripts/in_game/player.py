@@ -33,6 +33,8 @@ class _Player(FirstPersonController):
         self.dead:bool = False
         self.death_timer:float = 0.0
         self.input_enabled:bool = True
+        self.in_zone:bool = False
+        self.points:int = 0
     def update(self):
         super().update()
         if self.in_menu or self.in_shop: 

@@ -17,6 +17,7 @@ from scripts.in_game.settings import *
 from scripts.in_game.ui import UIController
 from scripts.in_game.shop import ShopUpgrades
 from scripts.server.client_to_server import send_info, info_key
+from scripts.in_game.game_objective import KOTH
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -27,7 +28,6 @@ test = False
 #Declare logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 #Create app
 app = Ursina(icon="assets/textures/ursina.ico")
@@ -59,6 +59,7 @@ player.previous_y = player.y
 ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
+ko = KOTH(player,10,10,10)
 
 #Buttons in shop menu
 ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
@@ -196,8 +197,6 @@ def input(key):
 
     if key ==  "t":
         print("space")
-        print(info_key())
-        test = True
 
 def update():
     global test
@@ -274,7 +273,8 @@ def update():
     #Runs once when you respawn
     elif player.dead:
         death_manager.respawned()
-    
+    ko.within_zone()
+    ko.gain_points()
     #use this for taking a overview screenshot
     '''
     camera.position = (0, 100, 0)
