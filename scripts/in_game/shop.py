@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 class ShopUpgrades:
     def __init__(self,player,ui,audio):
-        self.player:_Player = player
-        self.ui:UIController = ui
-        self.audio:AudioController = audio
+        self.player:"_Player" = player
+        self.ui:"UIController" = ui
+        self.audio:"AudioController" = audio
 
     def cam_upgrade(self) -> None:
         current_upgrade = self.player.max_cams-5

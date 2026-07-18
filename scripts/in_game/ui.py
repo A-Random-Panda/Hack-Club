@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class UIController:
     def __init__(self, player, mouse):
-        self.player:_Player = player
+        self.player:"_Player" = player
         self.mouse = mouse
         self.menu_overlay = Entity(scale = (2,2) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
         self.control_button_list = []

@@ -123,6 +123,7 @@ def on_disconnect(connection, time_disconnected):
 
 def parse_state(state:str) -> dict[str, Any]:
     '''Parses state, returns the information in the dictionary'''
+    
     return {}
 
 def start_server(hostname, port):

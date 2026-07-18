@@ -8,7 +8,7 @@ SHOOTING_VOLUME = 0.5
 RELOAD_VOLUME = 0.83
 
 class AudioController():
-    def __init__(self, player: _Player):
+    def __init__(self, player: "_Player"):
         self.shooting = Audio("sniper_shot",autoplay=False, volume= SHOOTING_VOLUME, spatial = True, parent = player)
         self.reload = Audio("reload", autoplay = False, volume = RELOAD_VOLUME, spatial = True)
         self.death = Audio("death",autoplay = False, volume = PLAYER_VOLUME, spatial = True, parent = player)

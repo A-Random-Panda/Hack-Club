@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from scripts.in_game.player import _Player
 
 #function for shooting
-def shoot(player:_Player, reload:Audio, shooting:Audio):
+def shoot(player:"_Player", reload:Audio, shooting:Audio):
     play_multi = 1 / (player.reload_time / 5)
     if player.reload_time < abs(time.perf_counter()-player.cd):
         hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
@@ -25,7 +25,7 @@ def shoot(player:_Player, reload:Audio, shooting:Audio):
         destroy(player.bullet_trail,delay = 0.1)
 
 #function for the reload timer
-def reload_timer(player:_Player,cooldown_text:Text):
+def reload_timer(player:"_Player",cooldown_text:Text):
     timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 

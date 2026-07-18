@@ -14,7 +14,7 @@ class UpdateMinimap():
         self.map_icon.x = self.real_entity.x / self.map_size
         self.map_icon.y = self.real_entity.z / self.map_size
 class MinimapIcons:
-    def __init__(self, player:_Player):
+    def __init__(self, player:"_Player"):
         self.minimap:Entity = Entity(scale=(0.2,0.2), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)
         self.player_icon:Entity = Entity(parent = self.minimap, texture = "red_dot", scale = 0.05, model = "quad", z =-0.5, color=color.red)
         self.square_icon:Entity = Entity(parent = self.minimap, scale = 0.05, model = "quad", z =-0.5)
