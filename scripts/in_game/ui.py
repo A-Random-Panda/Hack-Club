@@ -22,6 +22,12 @@ class UIController:
         self.leaderboard_text = Text("0 username", origin = (0,0), position = (0,0), scale = 3, color=color.white, enabled= False, z = -2)
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 
+        #Main menu
+        self.background = Entity(model="quad", scale = (2,2),color = color.black, enabled = False, parent=camera.ui, z = -3)
+        self.open_game_button = Button(model = "quad", scale = 0.2, origin=(0,0), color=color.white, text = f"start game", z = -4, text_color=color.black)
+
+
+
         #Buttons Inside the shop
         self.upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
         self.faster_reload_button = Button(model = "quad", scale = 0.2, x = 0.1, z = -2, color=color.gray, text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: ${FASTER_RELOAD_COST[0]}", text_size = 0.8, text_color = color.black, enabled = False)

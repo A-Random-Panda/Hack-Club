@@ -4,10 +4,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from scripts.in_game.player import _Player
     from scripts.in_game.ui import UIController
+    from scripts.in_game.audio_controller import AudioController
 class KOTH:
-    def __init__(self,player:"_Player",objective_length:int,location_x:int,location_z:int,ui:UIController):
+    def __init__(self,player:"_Player",objective_length:int,location_x:int,location_z:int,ui:UIController,audio:AudioController):
         self.objective_length = objective_length
         self.ui = ui
+        self.audio = audio
         self.location_z:int = location_z
         self.location_x:int = location_x
         self.player:_Player = player
@@ -29,6 +31,7 @@ class KOTH:
                 self.time_inside = time.perf_counter()
                 self.player.points += 10
                 self.ui.leaderboard_text.text = f"{self.player.points} username"
+                self.audio.success.play()
                 print(self.player.points)
     def update_zone(self):
         destroy(self.obj_wall2)

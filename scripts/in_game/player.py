@@ -40,24 +40,28 @@ class _Player(FirstPersonController):
         self.input_enabled:bool = True
         self.in_zone:bool = False
         self.points:int = 0
+        self.in_main_menu:bool = False
     @override
     def update(self):
-        super().update()
-        if self.in_menu or self.in_shop: 
-            super().movement()
+        if self.in_main_menu:
+            return
+        else:
+            super().update()
+            if self.in_menu or self.in_shop: 
+                super().movement()
 
             
-        elif self.in_camera:
-            cam = self.perspective_list[self.current_cam]
-            cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
-            cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
-            cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
-            cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-40, cam.original_rotation_y+40)
-            super().movement()
+            elif self.in_camera:
+                cam = self.perspective_list[self.current_cam]
+                cam.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
+                cam.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
+                cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
+                cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-40, cam.original_rotation_y+40)
+                super().movement()
             
-        else:
-            super().movement()
-            super().mouse_movement()
+            else:
+                super().movement()
+                super().mouse_movement()
             
 
 def get_player() -> _Player:
