@@ -1,5 +1,4 @@
 from ursina import *
-<<<<<<< HEAD
 from scripts.in_game.player import get_player
 player = get_player()
 def send_info():
