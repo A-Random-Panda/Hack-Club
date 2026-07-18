@@ -19,6 +19,7 @@ Attempt to:
 1. Get gamestate of all players
 2. Send the gamestate of every other player to current player 
 '''
+#pylint: disable=pointless-string-statement
 
 import argparse
 import logging
@@ -123,9 +124,10 @@ def on_disconnect(connection, time_disconnected):
 
 def parse_state(state:str) -> dict[str, Any]:
     '''Parses state, returns the information in the dictionary'''
-    
+    '''
+    ('Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)', 'DNE', 'DNE', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)')
+    '''
     return {}
-
 def start_server(hostname, port):
     '''The function that starts the server'''
     logger.info("Starting server on port %d.", port)
