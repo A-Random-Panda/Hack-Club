@@ -197,9 +197,10 @@ def input(key):
 
     if key ==  "t":
         print("space")
-        koth1.location_z = 5
-        koth1.location_x = 5
-        
+        koth1.z =10
+        koth1.objective_length = 30
+        koth1.update_zone()
+
 
 
 def update():

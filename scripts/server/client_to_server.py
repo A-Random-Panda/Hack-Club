@@ -12,7 +12,7 @@ def send_info():
         return (str(len(player.perspective_list)),
             str(cam_position_list),
             str(cam_rotation_list),  
-            str("True")         
+            str("True"),         
             str(player.reload_time),
             str(player.dead),
             str(player.world_position),
