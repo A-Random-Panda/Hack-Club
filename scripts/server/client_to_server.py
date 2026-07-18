@@ -1,6 +1,6 @@
 from ursina import *
-from scripts.in_game.player import get_player, _Player
-player:_Player = get_player
+from scripts.in_game.player import get_player
+player = get_player()
 def send_info():
     cam_position_list = []
     cam_rotation_list = []
@@ -12,7 +12,7 @@ def send_info():
         return (str(len(player.perspective_list)),
             str(cam_position_list),
             str(cam_rotation_list),  
-            str("True"),         
+            str(True), 
             str(player.reload_time),
             str(player.dead),
             str(player.world_position),
@@ -24,7 +24,7 @@ def send_info():
         return (str(len(player.perspective_list)),
             str(cam_position_list),
             str(cam_rotation_list),
-            str("False"),
+            str(False),
             str(player.reload_time),
             str(player.dead),
             str(player.world_position),
