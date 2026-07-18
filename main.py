@@ -280,8 +280,6 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-    print(mouse.locked, mouse.velocity)
-
 
 
 app.run()
