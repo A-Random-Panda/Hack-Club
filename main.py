@@ -59,7 +59,7 @@ player.previous_y = player.y
 ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
-ko = KOTH(player,10,10,10)
+koth1 = KOTH(player,10,10,10)
 
 #Buttons in shop menu
 ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
@@ -200,6 +200,10 @@ def input(key):
     if key ==  "t":
         print(send_info())
         print(info_key())
+        koth1.location_z = 5
+        koth1.location_x = 5
+        
+
 
 def update():
     global test
@@ -275,8 +279,9 @@ def update():
     #Runs once when you respawn
     elif player.dead:
         death_manager.respawned()
-    ko.within_zone()
-    ko.gain_points()
+    koth1.within_zone()
+    koth1.gain_points()
+
     #use this for taking a overview screenshot
     '''
     camera.position = (0, 100, 0)

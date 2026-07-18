@@ -27,3 +27,4 @@ class KOTH:
                 self.time_inside = time.perf_counter()
                 self.player.points += 10
                 print(self.player.points)
+    
