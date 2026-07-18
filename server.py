@@ -138,9 +138,9 @@ def update():
         status_text.text = START_TEXT
     else:
         #Only runs if the server is running
-        for i in range(server_peer.connection_count()):
+        for i in server_peer.get_connections():
             #Put the id with the parsed state dictionary
-            state_dict[id(server_peer.get_connections()[i])] = parse_state(server_peer.state_to_server(server_peer.get_connections()[i])) # type: ignore
+            state_dict[id(i)] = parse_state(server_peer.state_to_server(i)) # type: ignore
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":
             #Update text
