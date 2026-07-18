@@ -1,8 +1,6 @@
 from ursina import *
-from scripts.in_game.player import *
-player = get_player()
-
-def send_info():
+from scripts.in_game.player import _Player
+def send_info(player:_Player):
     cam_position_list = []
     cam_rotation_list = []
     for cam in player.perspective_list:
@@ -31,7 +29,6 @@ def send_info():
             str(player.world_position),
             str(player.rotation)
             )
-print(send_info())
 
 def info_key():
     return  ("amount of player cams",

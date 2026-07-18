@@ -68,7 +68,6 @@ ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 ui_controller.quit_button.on_click = application.quit
 ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
-camera.parent = player.camera_pivot
 
 
 #Control change buttons
@@ -197,7 +196,6 @@ def input(key):
 
     if key ==  "t":
         print("space")
-        print(send_info())
         print(info_key())
         test = True
 
@@ -277,10 +275,13 @@ def update():
     elif player.dead:
         death_manager.respawned()
     
-
     #use this for taking a overview screenshot
     '''
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
+    print(mouse.locked, mouse.velocity)
+
+
+
 app.run()
