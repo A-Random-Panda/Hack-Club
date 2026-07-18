@@ -19,7 +19,8 @@ class UIController:
         self.cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
         self.camoverlay = Text (parent = camera.ui,scale=2,position=(-0.7,0.4),color=color.gray, enabled = False)
 
-
+        self.leaderboard_text = Text("0 username", origin = (0,0), position = (0,0), scale = 3, color=color.white, enabled= False, z = -2)
+        self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 
         #Buttons Inside the shop
         self.upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
@@ -125,10 +126,16 @@ class UIController:
         self.mouse.locked = not boolean
         self.player.cursor.enabled = not boolean
     
-    def reset_and_update_controls(self):
+    def open_leaderboard(self,boolean) -> None:
+        self.leaderboard_text.enabled = boolean
+        self.leaderboard_overlay.enabled = boolean
+
+
+    def reset_and_update_controls(self) -> None:
         reset_controls_to_default()
         self.update_control_text()
-    def close_all_uis(self):
+    
+    def close_all_uis(self) -> None:
         self.open_control_menu(False)
         self.open_shop_menu(False)
         self.open_volume_menu(False)

@@ -59,7 +59,7 @@ player.previous_y = player.y
 ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
-koth1 = KOTH(player,10,10,10)
+koth1 = KOTH(player,10,10,10,ui_controller)
 
 #Buttons in shop menu
 ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
@@ -147,7 +147,7 @@ def input(key):
     #Shooting
     if key == get_binding(Controls.SHOOT):
         shoot(player,audio_controller.reload,audio_controller.shooting)
-        print(send_info())
+        print(send_info(player))
         print(info_key())
 
 
@@ -197,11 +197,13 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
+
+
     if key ==  "t":
-        print(send_info())
+        print(send_info(player))
         print(info_key())
-        koth1.z =10
-        koth1.objective_length = 30
+        koth1.location_z = -10
+        koth1.objective_length = 3
         koth1.update_zone()
 
 
@@ -209,6 +211,11 @@ def input(key):
 def update():
     global test
     "Frame handler"
+    if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
+        ui_controller.open_leaderboard(True)
+    else:
+        ui_controller.open_leaderboard(False)
+
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
         player_shadow.rotation_y -= player_sensitivity * time.dt
 
