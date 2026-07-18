@@ -1,9 +1,9 @@
 from ursina import *
-from scripts.controls import *
-from scripts.settings import MAX_CAM_COST, FASTER_RELOAD_COST
+from scripts.in_game.controls import *
+from scripts.in_game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.player import _Player
+    from scripts.in_game.player import _Player
 
 
 

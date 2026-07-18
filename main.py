@@ -7,15 +7,16 @@ import subprocess
 
 from ursina import *
 
-from scripts.controls import *
-from scripts.player import get_player
-from scripts.death import DeathManager
-from scripts.minimap import UpdateMinimap, MinimapIcons
-from scripts.combat import shoot, reload_timer
-from scripts.audio_controller import AudioController
-from scripts.settings import *
-from scripts.ui import UIController
-from scripts.shop import ShopUpgrades
+from scripts.in_game.controls import *
+from scripts.in_game.player import get_player
+from scripts.in_game.death import DeathManager
+from scripts.in_game.minimap import UpdateMinimap, MinimapIcons
+from scripts.in_game.combat import shoot, reload_timer
+from scripts.in_game.audio_controller import AudioController
+from scripts.in_game.settings import *
+from scripts.in_game.ui import UIController
+from scripts.in_game.shop import ShopUpgrades
+from scripts.server.client_to_server import send_info, info_key
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -26,7 +27,6 @@ test = False
 #Declare logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 
 #Create app
@@ -60,8 +60,6 @@ ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 
-
-
 #Buttons in shop menu
 ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
 ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
@@ -70,15 +68,14 @@ ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 ui_controller.quit_button.on_click = application.quit
 ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
+camera.parent = player.camera_pivot
 
 
 #Control change buttons
 ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
-
-
 def cam_switching():
     if player.current_cam == len(player.perspective_list):
-            player.current_cam = 0
+        player.current_cam = 0
         #If the camera is on the player and there is at least one camera
     if player.current_cam == 0 and len(player.perspective_list) > 1: #player
         player.in_camera = False
@@ -200,7 +197,9 @@ def input(key):
 
     if key ==  "t":
         print("space")
-        #test = True
+        print(send_info())
+        print(info_key())
+        test = True
 
 def update():
     global test
@@ -242,13 +241,15 @@ def update():
 
 
     #update minimap and player position
+    #some of this code is broken
     update_player_icon.minimap_update()
     minimap_icons.player_icon.rotation_z = player.rotation_y + 90
+    '''
     minimap_icons.vision_cone_icon1.rotation_z = minimap_icons.player_icon.rotation_z - 135
     minimap_icons.vision_cone_icon.rotation_z = minimap_icons.player_icon.rotation_z - 55
-    minimap_icons.vision_cone()
+    minimap_icons.vision_cone() 
     minimap_icons.in_sight(moving_block, camera)
-
+    '''
     #moving block for testing
     
     if enable_moving_block:
@@ -275,12 +276,11 @@ def update():
     #Runs once when you respawn
     elif player.dead:
         death_manager.respawned()
-
+    
 
     #use this for taking a overview screenshot
     '''
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-
 app.run()

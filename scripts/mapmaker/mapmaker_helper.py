@@ -2,7 +2,7 @@
 
 import math
 import logging
-from scripts.editable_controls_FPC import FirstPersonController as _old_first_person_controller
+from scripts.in_game.editable_controls_FPC import FirstPersonController as _old_first_person_controller
 from typing import override
 
 _tolarance = 0.00001
@@ -19,8 +19,8 @@ class FirstPersonController(_old_first_person_controller):
     @override
     def update(self):
         super().update()
-        super().movement_not_in_cam()
-        super().mouse_movement_not_in_cam()
+        super().movement()
+        super().mouse_movement()
 
 def game_round(value:int|float, face) -> int:
     '''
