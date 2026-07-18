@@ -17,8 +17,6 @@ def send_info():
             )
     else:
         return (str(player.perspective_list),
-            str(cam_position_list),
-            str(cam_rotation_list),
             str("DNE"),
             str("DNE"),
             str(player.reload_time),
