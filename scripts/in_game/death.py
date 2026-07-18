@@ -13,9 +13,9 @@ RESPAWN_POSITION = (0.5, 1.0,0.5)
 
 class DeathManager():
     def __init__(self, player, audio, ui, player_shadow, cam_switching):
-        self.player:_Player = player
-        self.audio:AudioController = audio
-        self.ui:UIController = ui
+        self.player:"_Player" = player
+        self.audio:"AudioController" = audio
+        self.ui:"UIController" = ui
         self.player_shadow:Entity = player_shadow
         self.cam_switching = cam_switching
     def kill(self) -> None:
@@ -26,9 +26,7 @@ class DeathManager():
         self.player.death_timer = time.perf_counter()
         self.player.input_enabled = False
         self.ui.respawn_text.enabled = True
-        print("dead")
     def while_dead(self) -> None:
-        print("still dead")
         timer = "Respawning in " + str(round(RESPAWN_TIME - time.perf_counter() + self.player.death_timer, 1))
         self.ui.respawn_text.text = timer
         self.ui.respawn_text.enabled = True
@@ -36,7 +34,6 @@ class DeathManager():
         self.ui.menu_overlay.enabled = True
     def respawned(self) -> None:
         self.player.dead = False
-        print("alive")
         self.player.input_enabled = True
         self.player.enabled = True
         self.ui.respawn_text.enabled = False
