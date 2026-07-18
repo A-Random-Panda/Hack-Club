@@ -25,11 +25,8 @@ def on_disconnect(connection, time_disconnected):
     print("%s disconnected from the server!", connection)
 
 @rpc(peer)
-def get_state(connection, time_received, position:int ,**kwargs:dict):
-    '''
-    Receive the gamestate of the connection
-    '''
-    print(position)
+def send_id(connection, time_receieved, connection_id:int):
+    print(f"Got sent connection id {connection_id}")
 
 def update():
     '''Main handler'''
@@ -41,7 +38,10 @@ def input(key):
     if key == "c":
         print("attempted to connect to server")
         peer.start("localhost", port=1939, is_host=False)
+    if key == "d":
+        print("disconnecting from server")
+        peer.disconnect_all()
     if key == "h":
         print("attempted get_state call")
-        peer.get_state(peer.get_connections()[0], 67, )
+        peer.get_state(peer.get_connections()[0], 67)
 app.run()
