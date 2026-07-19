@@ -16,8 +16,8 @@
 
 static PyObject *
 parse_state(PyObject *self, PyObject *args) {
-    //('1', '[Vec3(0.5, 1.05, 0.5)]', '[Vec3(0, 10.277778, 0)]', 'DNE', 'DNE', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, 10.277778, 0)')
-    //('amount of player cams', 'player cams position: list[vec3]', 'player cams rotation: list[vec3]', 'bullet trail: entity', 'bullet trail position: vec3', 'reload time: float', 'player dead: bool', 'player world position: vec3', 'player rotation: vec3')
+    //('1', '[Vec3(0.5, 1.05, 0.5)]', '[Vec3(0, 10.277778, 0)]', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, 10.277778, 0)')
+    //('amount of player cams', 'player cams position: list[vec3]', 'player cams rotation: list[vec3]', 'reload time: float', 'player dead: bool', 'player world position: vec3', 'player rotation: vec3'), 'player dead: bool', 'player world position: vec3', 'player rotation: vec3')
     const char * stateString;
     int cameraCount;
     int playerDead;
@@ -119,4 +119,8 @@ int parseVec3(char **state, int *length_left, double **variable) {
         err = safe_remove_from_string(state, length_left, 2);
         if (err == -1) {return -1;}
     }
+}
+
+int parseVec3(char **state, int *length_left, double **variable) {
+    //Parses a list of vec3 starting from the
 }
