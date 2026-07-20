@@ -7,11 +7,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MAX_CAMERAS 11
 #define MAX_QUOTATIONS 50 //Guessimate; For cameras, 11*2 is 22, shouldn't be more than this
 //1460 is kinda the absolute max packet size
 #define MAX_PACKET_SIZE 1024 //Not max packet size, but if much it's bigger than this, we should probably switch to a different format
+
+int parseVec3(char *str, double *result);
+int parseDouble(char *str, double *result);
+int parseListVec3(char *str, double (*result)[3], int amount);
 
 static PyObject *
 parse_state(PyObject *self, PyObject *args) {
@@ -91,7 +96,6 @@ parse_state(PyObject *self, PyObject *args) {
     //Now we should have a null terminated list of all the quotes
     //With quoteIndex being 1 over the maximum defined
 
-
     //Error management
     inputError:
         PyErr_SetString(PyExc_ValueError, "The value inputted is incorrect.");
@@ -105,21 +109,98 @@ parse_state(PyObject *self, PyObject *args) {
 }
 
 int parseListVec3(char *str, double (*result)[3], int amount) {
-    //Not exactly sure how sscanf works, but I'm just praying that it works at this point
+    //I uh, can't be bothered to learn how to do this properly
+    //Takes a pointer a list of 3 as input
     int matched;
-    for (int i = 0; i < amount; i++) {
-        matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result[i][0], result[i][1], result[i][2]);
+    if (amount == 1) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2]);
         if (matched != 3) {
             printf("%d Matched\n", matched);
             return -1;
         }
     }
+    else if (amount == 2) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2]);
+        if (matched != 6) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 3) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2]);
+        if (matched != 9) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 4) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2]);
+        if (matched != 12) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 5) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2]);
+        if (matched != 15) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 6) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2]);
+        if (matched != 18) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 7) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2], &result[6][0], &result[6][1], &result[6][2]);
+        if (matched != 21) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 8) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2], &result[6][0], &result[6][1], &result[6][2], &result[7][0], &result[7][1], &result[7][2]);
+        if (matched != 24) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 9) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2], &result[6][0], &result[6][1], &result[6][2], &result[7][0], &result[7][1], &result[7][2], &result[8][0], &result[8][1], &result[8][2]);
+        if (matched != 27) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 10) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2], &result[6][0], &result[6][1], &result[6][2], &result[7][0], &result[7][1], &result[7][2], &result[8][0], &result[8][1], &result[8][2], &result[9][0], &result[9][1], &result[9][2]);
+        if (matched != 30) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else if (amount == 11) {
+        matched = sscanf(str, "[Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf), Vec3(%lf, %lf, %lf)]", &result[0][0], &result[0][1], &result[0][2], &result[1][0], &result[1][1], &result[1][2], &result[2][0], &result[2][1], &result[2][2], &result[3][0], &result[3][1], &result[3][2], &result[4][0], &result[4][1], &result[4][2], &result[5][0], &result[5][1], &result[5][2], &result[6][0], &result[6][1], &result[6][2], &result[7][0], &result[7][1], &result[7][2], &result[8][0], &result[8][1], &result[8][2], &result[9][0], &result[9][1], &result[9][2], &result[10][0], &result[10][1], &result[10][2]);
+        if (matched != 33) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    else {
+        printf("Amount was not in range");
+        return -1;
+    }
+    printf("returned 0\n");
     return 0;
 }
 
-int parseVec3(char *str, double (*result)[3]) {
+int parseVec3(char *str, double *result) {
+    //Takes a list of 3 as input
     //Not exactly sure how sscanf works, but I'm just praying that it works at this point
-	int matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result[0], result[1], result[2]);
+	int matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result, result+1, result+2);
     if (matched != 3) {
 		printf("%d Matched\n", matched);
         return -1;
@@ -128,7 +209,8 @@ int parseVec3(char *str, double (*result)[3]) {
 }
 
 int parseDouble(char *str, double *result) {
-	int matched = sscanf(str, "Vec3(%lf)", result);
+    //Takes a pointer to a double as input
+	int matched = sscanf(str, "%lf", result);
     if (matched != 1) {
 		printf("%d Matched\n", matched);
         return -1;
