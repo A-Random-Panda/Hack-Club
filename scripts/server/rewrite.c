@@ -14,101 +14,7 @@
 //1460 is kinda the absolute max packet size
 #define MAX_PACKET_SIZE 1024 //Not max packet size, but if much it's bigger than this, we should probably switch to a different format
 
-int parseVec3(char *str, double *result);
-int parseDouble(char *str, double *result);
-int parseListVec3(char *str, double (*result)[3], int amount);
-
-static PyObject *
-parse_state(PyObject *self, PyObject *args) {
-    //The idea behind this is to create a copy of the input in a buffer, and edit the buffer
-    //Such that each quotation in the list gets turned into a null terminated string
-    //With the first character being stored into a string
-
-    //('1', '[Vec3(0.5, 1.05, 0.5)]', '[Vec3(0, 10.277778, 0)]', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, 10.277778, 0)')
-    //('amount of player cams', 'player cams position: list[vec3]', 'player cams rotation: list[vec3]', 'reload time: float', 'player dead: bool', 'player world position: vec3', 'player rotation: vec3'), 'player dead: bool', 'player world position: vec3', 'player rotation: vec3')
-    
-    //Variable declarations
-    PyObject *stateDict = PyDict_New();
-    //Used in the output
-    int cameraCount;
-    int playerDead;
-    //Technically, these can all be one buffer, but I think it's gonna be fine either way
-    double dblBuf;
-    double vec3Buf[3];
-    double listVec3Buf[3][MAX_CAMERAS]; 
-    
-    //Used in the implementation
-    int stateLen;
-    int quoteIndex;
-    int secondQuotation;
-    char *stateBuffer;
-    char *quotedStrings[MAX_QUOTATIONS]; //Things in the quotes
-
-    //Get the string from the args
-    const char * stateString;
-    if (!PyArg_ParseTuple(args, "s", &stateString)) {
-        return NULL;
-    }
-
-    //Check that the string fits our max packet size
-    stateLen = strlen(stateString);
-    if (stateLen * sizeof(char) > MAX_PACKET_SIZE) {
-        goto dataSizeError;
-    }
-    
-    //Puts the string into a seperate buffer
-    stateBuffer = (char*)malloc(stateLen * sizeof(char) + 1);
-    if (stateBuffer == NULL) {
-        goto memoryError;
-    }
-    strcpy(stateBuffer, stateString); //Unsafe function but I explicitily created the buffer to be the size
-    //And I cannot be bothered to learn the safe portable version right now
-
-    //Seperates each quotation
-    quoteIndex = 0;
-    secondQuotation = false;
-    //Iterates through the string until a '
-    for (int i = 0; i < stateLen; i++) {
-        //If there's more than the maximum, error
-        if (quoteIndex >= 50) {
-            goto inputError;
-        }
-        //If it's the first quotation mark, put the index plus one into the quotes list, add one to the quoteIndex
-        //Worst case scenario it's the null terminator, and we check if the secondQuotation is true
-        //After the loop to catch the error anyways
-        if (stateBuffer[i] == '\'' && !secondQuotation) {
-            quotedStrings[quoteIndex+1] = stateBuffer[i];
-            quoteIndex++;
-            secondQuotation = true;
-        }
-        //If it's the second quotation mark, set it to a null terminator
-        else if (stateBuffer[i] == '\'' && secondQuotation) {
-            stateBuffer[i] = '\0';
-            secondQuotation = false;
-        }
-    }
-
-    //Checks if it expects a second quotation
-    if (secondQuotation) {
-        goto inputError;
-    }
-
-    //Now we should have a null terminated list of all the quotes
-    //With quoteIndex being 1 over the maximum defined
-
-    //Error management
-    inputError:
-        PyErr_SetString(PyExc_ValueError, "The value inputted is incorrect.");
-        return NULL;
-    dataSizeError:
-        PyErr_SetString(PyExc_BufferError, "Too much data got sent.");
-        return NULL;
-    memoryError:
-        PyErr_SetString(PyExc_MemoryError, "Program ran out of memory.");
-        return NULL;
-}
-
-int parseListVec3(char *str, double (*result)[3], int amount) {
+static int parseListVec3(char *str, double (*result)[3], int amount) {
     //I uh, can't be bothered to learn how to do this properly
     //Takes a pointer a list of 3 as input
     int matched;
@@ -197,7 +103,7 @@ int parseListVec3(char *str, double (*result)[3], int amount) {
     return 0;
 }
 
-int parseVec3(char *str, double *result) {
+static int parseVec3(char *str, double *result) {
     //Takes a list of 3 as input
     //Not exactly sure how sscanf works, but I'm just praying that it works at this point
 	int matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result, result+1, result+2);
@@ -208,7 +114,7 @@ int parseVec3(char *str, double *result) {
     return 0;
 }
 
-int parseDouble(char *str, double *result) {
+static int parseDouble(char *str, double *result) {
     //Takes a pointer to a double as input
 	int matched = sscanf(str, "%lf", result);
     if (matched != 1) {
@@ -216,4 +122,111 @@ int parseDouble(char *str, double *result) {
         return -1;
     }
     return 0;
+}
+
+static PyObject *
+parse_state(PyObject *self, PyObject *args) {
+    //The idea behind this is to create a copy of the input in a buffer, and edit the buffer
+    //Such that each quotation in the list gets turned into a null terminated string
+    //With the first character being stored into a string
+
+    //('1', '[Vec3(0.5, 1.05, 0.5)]', '[Vec3(0, 10.277778, 0)]', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, 10.277778, 0)')
+    //('amount of player cams', 'player cams position: list[vec3]', 'player cams rotation: list[vec3]', 'reload time: float', 'player dead: bool', 'player world position: vec3', 'player rotation: vec3'), 'player dead: bool', 'player world position: vec3', 'player rotation: vec3')
+    
+    //Variable declarations
+    PyObject *stateDict = PyDict_New();
+    //Used in the output
+    int cameraCount;
+    int playerDead;
+    //Technically, these can all be one buffer, but I think it's gonna be fine either way
+    double dblBuf;
+    double vec3Buf[3];
+    double listVec3Buf[3][MAX_CAMERAS]; 
+    
+    //Used in the implementation
+    int stateLen;
+    int quoteIndex;
+    int secondQuotation;
+    char *stateBuffer;
+    char *quotedStrings[MAX_QUOTATIONS]; //Things in the quotes
+
+    //Get the string from the args
+    const char * stateString;
+    if (!PyArg_ParseTuple(args, "s", &stateString)) {
+        return NULL;
+    }
+
+    //Check that the string fits our max packet size
+    stateLen = strlen(stateString);
+    if (stateLen * sizeof(char) > MAX_PACKET_SIZE) {
+        goto dataSizeError;
+    }
+    
+    //Puts the string into a seperate buffer
+    stateBuffer = (char*)malloc(stateLen * sizeof(char) + 1);
+    if (stateBuffer == NULL) {
+        goto memoryError;
+    }
+    strcpy(stateBuffer, stateString); //Unsafe function but I explicitily created the buffer to be the size
+    //And I cannot be bothered to learn the safe portable version right now
+
+    //Seperates each quotation
+    quoteIndex = 0;
+    secondQuotation = false;
+    //Iterates through the string until a '
+    for (int i = 0; i < stateLen; i++) {
+        //If there's more than the maximum, error
+        if (quoteIndex >= 50) {
+            goto inputError;
+        }
+        //If it's the first quotation mark, put the index plus one into the quotes list, add one to the quoteIndex
+        //Worst case scenario it's the null terminator, and we check if the secondQuotation is true
+        //After the loop to catch the error anyways
+        if (stateBuffer[i] == '\'' && !secondQuotation) {
+            quotedStrings[quoteIndex+1] = &stateBuffer[i];
+            quoteIndex++;
+            secondQuotation = true;
+        }
+        //If it's the second quotation mark, set it to a null terminator
+        else if (stateBuffer[i] == '\'' && secondQuotation) {
+            stateBuffer[i] = '\0';
+            secondQuotation = false;
+        }
+    }
+
+    //Checks if it expects a second quotation
+    if (secondQuotation) {
+        goto inputError;
+    }
+
+    //Now we should have a null terminated list of all the quotes
+    //With quoteIndex being 1 over the maximum defined
+
+    //Error management
+    inputError:
+        PyErr_SetString(PyExc_ValueError, "The value inputted is incorrect.");
+        return NULL;
+    dataSizeError:
+        PyErr_SetString(PyExc_BufferError, "Too much data got sent.");
+        return NULL;
+    memoryError:
+        PyErr_SetString(PyExc_MemoryError, "Program ran out of memory.");
+        return NULL;
+}
+
+static PyMethodDef parse_method[] = {
+    {"parse_state", (PyCFunction)parse_state, METH_VARARGS, "Parses the input string in the format (I can't be bothered to write this out right now) THIS TOOK WAY TOO LONG TO WRITE!"},
+    {NULL, NULL, 0, NULL}
+};
+
+static struct PyModuleDef game_state_parser = {
+    PyModuleDef_HEAD_INIT,
+    "game_state_parser",
+    "A parser for the game state (badly) string written in C",
+    0,
+    parse_method
+};
+
+PyMODINIT_FUNC PyInit_game_state_parser(void) {
+    return PyModule_Create(&game_state_parser);
 }
