@@ -179,7 +179,7 @@ start_text = "Host or join a room."
 status_text = Text(text=start_text, origin=(0, 0), z=1, y=0.1)
 host_input_field = InputField(default_value="localhost", scale_x=0.6, scale_y=0.1)
 host_button = Button(text="Host", scale_x=0.28, scale_y=0.1, x=-0.16, y=-0.11)
-join_button = Button(text="Join", scale_x=0.28, scale_y=0.1, x=0.16, y=-0.11)
+join_friend_button = Button(text="Join", scale_x=0.28, scale_y=0.1, x=0.16, y=-0.11)
 
 chat_input_field = InputField(scale=0.6, scale_y=0.05, x=-0.48, y=-0.45, z=1)
 
@@ -389,7 +389,7 @@ def host():
     peer.start(h, port, is_host=True)
     host_input_field.enabled = False
     host_button.enabled = False
-    join_button.enabled = False
+    join_friend_button.enabled = False
 
 host_button.on_click = host
 
@@ -401,10 +401,10 @@ def join():
     host_input_field.enabled = False
     host_button.disabled = True
     host_button.enabled = False
-    join_button.disabled = True
-    join_button.enabled = False
+    join_friend_button.disabled = True
+    join_friend_button.enabled = False
 
-join_button.on_click = join
+join_friend_button.on_click = join
 
 def on_chat_submit():
     if len(chat_input_field.text) == 0:
@@ -479,16 +479,16 @@ def update():
         host_input_field.enabled = True
         host_button.disabled = False
         host_button.enabled = True
-        join_button.disabled = False
-        join_button.enabled = True
+        join_friend_button.disabled = False
+        join_friend_button.enabled = True
         chat_input_field.enabled = False
         return
 
     host_input_field.enabled = False
     host_button.disabled = True
     host_button.enabled = False
-    join_button.disabled = True
-    join_button.enabled = False
+    join_friend_button.disabled = True
+    join_friend_button.enabled = False
     chat_input_field.enabled = True
     if peer.is_hosting():
         status_text.text = "Hosting.\nWASD to move."

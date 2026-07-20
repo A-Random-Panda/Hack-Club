@@ -41,6 +41,7 @@ class _Player(FirstPersonController):
         self.in_zone:bool = False
         self.points:int = 0
         self.in_main_menu:bool = False
+        self.username:str = ""
     @override
     def update(self):
         if self.in_main_menu:

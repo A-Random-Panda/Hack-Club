@@ -97,9 +97,16 @@ ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 ui_controller.quit_button.on_click = application.quit
 ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
+ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
 #Buttons in main menu
 ui_controller.open_game_button.on_click = main_menu.player_main_menu
+ui_controller.map_selector_button.on_click = main_menu.map_selector
+ui_controller.back_to_main_button.on_click = Func(main_menu.switch_back)
+ui_controller.name_input.on_click = Func(ui_controller.reset_input_field, ui_controller.name_input)
+ui_controller.join_friend_button.on_click = Func(main_menu.join_game)
+ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
+ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
 
 #Control change buttons
 ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
@@ -206,7 +213,8 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
-
+    if key == get_binding(Controls.OPEN_CHAT):
+        print("hi")
 
     if key ==  "t":
         print(send_info(player))
