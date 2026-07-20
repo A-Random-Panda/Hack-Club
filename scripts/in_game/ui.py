@@ -19,14 +19,34 @@ class UIController:
         self.cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
         self.camoverlay = Text (parent = camera.ui,scale=2,position=(-0.7,0.4),color=color.gray, enabled = False)
 
-        self.leaderboard_text = Text("0 username", origin = (0,0), position = (0,0), scale = 3, color=color.white, enabled= False, z = -2)
+        self.leaderboard_text = Text(f"{self.player.points} {self.player.username}", origin = (0,0), position = (0,0), scale = 1.1, color=color.white, enabled= False, z = -2)
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
-
+        
         #Main menu
         self.background = Entity(model="quad", scale = (2,2),color = color.black, enabled = False, parent=camera.ui, z = -3)
-        self.open_game_button = Button(model = "quad", scale = 0.2, origin=(0,0), color=color.white, text = f"start game", z = -4, text_color=color.black)
+        self.open_game_button = Button(model = "quad", scale = 0.2, position =(0.2,0, -4), color=color.white, text = f"Host game", text_color=color.black)
+        self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.2, 0, -4), color=color.white, text = f"map selector", text_color=color.black) 
+        self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4), color=color.white, text = f"Join Friend", text_color=color.black)
+        self.join_game_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4), color=color.white, text = f"Join Game", text_color=color.black, enabled = False)
+        
+        self.name_input = InputField(default_value= "Username Here",character_limit = 15, position=(0, -0.15), scale=(0.3, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.name_input.highlight_color = color.white  
+        self.name_input.highlight_text_color = color.black
+        self.name_input.text_color = color.black
 
+        self.host_input = InputField(default_value= "Enter Host Name", position=(0, 0), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.host_input.highlight_color = color.white  
+        self.host_input.highlight_text_color = color.black
+        self.host_input.text_color = color.black
 
+        self.port_input = InputField(default_value= "Enter Port", position=(0, 0.15), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.port_input.highlight_color = color.white  
+        self.port_input.highlight_text_color = color.black
+        self.port_input.text_color = color.black
+
+        #Map selector
+        self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3, color=color.red,enabled = False)
+        self.back_to_main_button = Button(model = "quad", scale = 0.2, position = (-0.8,-0.4,-4),text = "Back to \n main menu", color=color.orange, enabled = False)
 
         #Buttons Inside the shop
         self.upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2, color=color.gray, text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: ${MAX_CAM_COST[0]}" , text_size = 0.8, text_color = color.black, enabled = False)
@@ -36,6 +56,13 @@ class UIController:
         #Cash shown inside the shop
         self.current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
         
+        #Chat message
+        self.chat_field = InputField(position = (0, 0), scale = (0.5,0.05), color = color.white, enabled = False, text_color = color.black)
+        self.chat_field.highlight_color = color.white  
+        self.chat_field.highlight_text_color = color.black
+        self.chat_field.text_color = color.black
+
+
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume',
                                dynamic=True, 
@@ -71,12 +98,12 @@ class UIController:
 
 
 
-        #Main menu escape buttons
-        self.quit_button = Button(model = "quad", scale = 0.2, x = 0, z = -2, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
+        #Escape menu buttons
+        self.quit_button = Button(model = "quad", scale = 0.2, x = 0, y=-.2, z = -2, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
         self.volume_button = Button(model = "quad", scale = 0.2, x = 0.2, z = -2, color = color.gray, text = "volume controls", text_size = 0.8, text_color = color.black, enabled = False)
         self.control_button = Button(model = "quad", scale = 0.2, x = -0.2, z = -2, color = color.gray, text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
-        self.button_list = [self.volume_button,self.quit_button,self.control_button]
-        
+        self.resume_button = Button(model = "quad", scale = 0.2, z = -2, color=color.gray, text = "Resume", text_size = 0.8, text_color = color.black, enabled = False)
+        self.button_list = [self.volume_button,self.quit_button,self.control_button,self.resume_button]
 
     def control_changer(self,control,button) -> None:
         self.player.control_change_button_pressed = True
@@ -127,7 +154,7 @@ class UIController:
             button.text = f'{button.name}\n{get_binding(control)}'
         #Function used to reset controls
     
-    def mouse_in_menu(self, boolean) -> None:
+    def mouse_in_menu(self, boolean = True) -> None:
         self.mouse.visible = boolean
         self.mouse.locked = not boolean
         self.player.cursor.enabled = not boolean
@@ -136,6 +163,9 @@ class UIController:
         self.leaderboard_text.enabled = boolean
         self.leaderboard_overlay.enabled = boolean
 
+    def reset_input_field(self, input_field:InputField):
+        if input_field.text == input_field.default_value:
+            input_field.text = ""
 
     def reset_and_update_controls(self) -> None:
         reset_controls_to_default()

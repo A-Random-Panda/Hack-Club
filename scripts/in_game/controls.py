@@ -33,6 +33,8 @@ class Controls(_IntEnum):
     SHOOT = 12
     OPEN_SHOP = 13
     CHECK_LEADERBOARD = 14
+    OPEN_CHAT = 15
+    SEND_MSG = 16
 
 _UNCHANGABLE_CONTROLS = [
     Controls.QUIT_GAME
@@ -54,6 +56,8 @@ _BINDINGS_DICT:dict[Controls, str] = {
     Controls.SHOOT: "f",
     Controls.OPEN_SHOP: "b",
     Controls.CHECK_LEADERBOARD: "tab",
+    Controls.OPEN_CHAT: "y",
+    Controls.SEND_MSG: "enter"
 }
 
 _CONTROL_NAMES:dict[str, Controls] = {
@@ -71,7 +75,9 @@ _CONTROL_NAMES:dict[str, Controls] = {
     "Pan Right" : Controls.CAMERA_RIGHT,
     "Shoot" : Controls.SHOOT,
     "Open Shop" : Controls.OPEN_SHOP,
-    "Check Leaderboard" : Controls.CHECK_LEADERBOARD
+    "Check Leaderboard" : Controls.CHECK_LEADERBOARD,
+    "Open Chat" : Controls.OPEN_CHAT,
+    "Send Message" : Controls.SEND_MSG,
 }
 
 _DEFAULT_CONTROLS = deepcopy(_BINDINGS_DICT)
@@ -91,6 +97,8 @@ control_button_data_list = [
     ("Player Camera Right", Controls.CAMERA_RIGHT, -0.4, -0.6),
     ("Open Shop", Controls.OPEN_SHOP, 0,0),
     ("Check Leaderboard", Controls.CHECK_LEADERBOARD, 0,-0.2),
+    ("Open Chat", Controls.OPEN_CHAT, 0,-0.4),
+    ("Send Message", Controls.SEND_MSG, 0, -0.6)
 ]
 
 def _change_controls(changed_controls:dict) -> None:
