@@ -27,10 +27,10 @@ parse_state(PyObject *self, PyObject *args) {
     //Used in the output
     int cameraCount;
     int playerDead;
-    double playerPos[3];
-    double playerRotation[3];
-    double camLocations[MAX_CAMERAS][3];
-    double camRotations[MAX_CAMERAS][3];
+    //Technically, these can all be one buffer, but I think it's gonna be fine either way
+    double dblBuf;
+    double vec3Buf[3];
+    double listVec3Buf[3][MAX_CAMERAS]; 
     
     //Used in the implementation
     int stateLen;
@@ -104,10 +104,33 @@ parse_state(PyObject *self, PyObject *args) {
         return NULL;
 }
 
-int parseVec3(char *str, double*result[3]) {
+int parseListVec3(char *str, double (*result)[3], int amount) {
     //Not exactly sure how sscanf works, but I'm just praying that it works at this point
-    if (sscanf(str, "[Vec3(%lf, %lf, %lf)]", result[0], result[1], result[2]) == EOF) {
-        PyErr_SetString(PyExc_MemoryError, "Program ran out of memory.");
+    int matched;
+    for (int i = 0; i < amount; i++) {
+        matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result[i][0], result[i][1], result[i][2]);
+        if (matched != 3) {
+            printf("%d Matched\n", matched);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int parseVec3(char *str, double (*result)[3]) {
+    //Not exactly sure how sscanf works, but I'm just praying that it works at this point
+	int matched = sscanf(str, "Vec3(%lf, %lf, %lf)", result[0], result[1], result[2]);
+    if (matched != 3) {
+		printf("%d Matched\n", matched);
+        return -1;
+    }
+    return 0;
+}
+
+int parseDouble(char *str, double *result) {
+	int matched = sscanf(str, "Vec3(%lf)", result);
+    if (matched != 1) {
+		printf("%d Matched\n", matched);
         return -1;
     }
     return 0;
