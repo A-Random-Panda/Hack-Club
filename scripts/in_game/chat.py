@@ -6,13 +6,15 @@ if TYPE_CHECKING:
     from scripts.in_game.ui import UIController
 
 
-class Chat:
+class ChatController:
     def __init__(self, player:_Player, ui:UIController, audio:AudioController):
         self.player = player
         self.ui = ui
         self.audio = audio
-        self.chat_list = []
+        self.chat_list:list[Text] = []
 
-    def max_chat(self):
+    def chat(self):
         if len(self.chat_list) > 4:
-            self.chat_list.pop
+            destroy(self.chat_list.pop(0))
+        for msg in range (len(self.chat_list)):
+            self.chat_list[msg].y = -.2 - 0.05 * (4-msg)

@@ -56,6 +56,13 @@ class UIController:
         #Cash shown inside the shop
         self.current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
         
+        #Chat message
+        self.chat_field = InputField(position = (0, 0), scale = (0.5,0.05), color = color.white, enabled = False, text_color = color.black)
+        self.chat_field.highlight_color = color.white  
+        self.chat_field.highlight_text_color = color.black
+        self.chat_field.text_color = color.black
+
+
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume',
                                dynamic=True, 
@@ -147,7 +154,7 @@ class UIController:
             button.text = f'{button.name}\n{get_binding(control)}'
         #Function used to reset controls
     
-    def mouse_in_menu(self, boolean) -> None:
+    def mouse_in_menu(self, boolean = True) -> None:
         self.mouse.visible = boolean
         self.mouse.locked = not boolean
         self.player.cursor.enabled = not boolean

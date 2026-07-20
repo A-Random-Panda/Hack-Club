@@ -19,7 +19,7 @@ class MainMenu:
         self.ui.mouse_in_menu(boolean)
         self.ui.name_input.enabled = boolean
         if boolean == False:
-            if self.ui.name_input.text.strip(" ") == "":
+            if self.ui.name_input.text.strip(" ") == "" or self.ui.name_input.text == self.ui.name_input.default_value:
                 self.player.username = DEFAULT_NAMES[randint(1,30)]
             else:
                 self.player.username = self.ui.name_input.text

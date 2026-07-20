@@ -42,10 +42,13 @@ class _Player(FirstPersonController):
         self.points:int = 0
         self.in_main_menu:bool = False
         self.username:str = ""
+        self.in_chat:bool = False
     @override
     def update(self):
         if self.in_main_menu:
             return
+        elif self.in_chat:
+            super().update()
         else:
             super().update()
             if self.in_menu or self.in_shop: 

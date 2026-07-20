@@ -19,7 +19,7 @@ from scripts.in_game.shop import ShopUpgrades
 from scripts.server.client_to_server import send_info, info_key
 from scripts.in_game.game_objective import KOTH
 from scripts.in_game.main_menu import MainMenu
-
+from scripts.in_game.chat import ChatController
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -62,6 +62,7 @@ ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
+chat = ChatController(player,ui_controller,audio_controller)
 
 def cam_switching():
     if player.current_cam == len(player.perspective_list):
@@ -129,8 +130,12 @@ def input(key):
      #Escape menu
     if player.in_main_menu:
         return
+
+
     if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
         player.in_menu = not player.in_menu
+        player.in_chat = False
+        ui_controller.chat_field.enabled = False
         #Buttons
         if player.in_menu:
             ui_controller.mouse_in_menu(True)
@@ -145,6 +150,7 @@ def input(key):
         player.in_shop = False
         ui_controller.open_shop_menu(False)
 
+
     
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
@@ -153,6 +159,25 @@ def input(key):
     
 
     if not player.input_enabled:
+        return
+
+    #Chat
+    if key == get_binding(Controls.OPEN_CHAT) and not player.in_chat:
+        ui_controller.chat_field.enabled = True
+        print("hi")
+        player.in_chat = True
+        audio_controller.footsteps.stop()
+        ui_controller.mouse_in_menu()
+        ui_controller.chat_field.text = ""
+        
+    
+    if key == get_binding(Controls.SEND_MSG) and player.in_chat == True:
+        ui_controller.mouse_in_menu(False)
+        player.in_chat = False
+        ui_controller.chat_field.enabled = False
+        chat.chat_list.append(Text(text = f"{player.username}: {ui_controller.chat_field.text}", origin = (0.8,0),position = (0.8,0,-2), scale = 1, color=color.black,enabled = True))
+
+    if player.in_chat == True:
         return
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
@@ -165,7 +190,6 @@ def input(key):
         shoot(player,audio_controller.reload,audio_controller.shooting)
         print(send_info(player))
         print(info_key())
-
 
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
@@ -213,8 +237,6 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
-    if key == get_binding(Controls.OPEN_CHAT):
-        print("hi")
 
     if key ==  "t":
         print(send_info(player))
@@ -228,19 +250,25 @@ def input(key):
 def update():
     global test
 
+
     if player.in_main_menu:
         return
-    "Frame handler"
-    if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
-        ui_controller.open_leaderboard(True)
-    else:
-        ui_controller.open_leaderboard(False)
+    
+    chat.chat()
 
-    if held_keys[get_binding(Controls.CAMERA_LEFT)]:
-        player_shadow.rotation_y -= player_sensitivity * time.dt
+    #Runs once when you die
+    if test:
+        test = False
+        death_manager.kill()
+    #Continuiesly runs when you are dead
+    if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
+        death_manager.while_dead()
+    #Runs once when you respawn
+    elif player.dead:
+        death_manager.respawned()
+    koth1.within_zone()
+    koth1.gain_points()
 
-    if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
-        player_shadow.rotation_y += player_sensitivity * time.dt
 
     if player.y < -2:
         player.position = (0.5, 1.0,0.5)
@@ -295,20 +323,20 @@ def update():
                 audio_controller.success.play()
         update_moving_square_icon.minimap_update()
 
-    
 
-    #Runs once when you die
-    if test:
-        test = False
-        death_manager.kill()
-    #Continuiesly runs when you are dead
-    if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
-        death_manager.while_dead()
-    #Runs once when you respawn
-    elif player.dead:
-        death_manager.respawned()
-    koth1.within_zone()
-    koth1.gain_points()
+    if player.in_chat == True:
+        return
+
+    if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
+        ui_controller.open_leaderboard(True)
+    else:
+        ui_controller.open_leaderboard(False)
+
+    if held_keys[get_binding(Controls.CAMERA_LEFT)]:
+        player_shadow.rotation_y -= player_sensitivity * time.dt
+
+    if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
+        player_shadow.rotation_y += player_sensitivity * time.dt
 
     #use this for taking a overview screenshot
     '''
