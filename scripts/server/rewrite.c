@@ -1,0 +1,114 @@
+//So I just realized I had no idea what I was smoking with the parser...
+//So I am just gonna remake it and pretend the original never happened
+//Right now the errors aren't the best
+//But I'll only make them more deccriptive if it ever becomes an issue
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_CAMERAS 11
+#define MAX_QUOTATIONS 50 //Guessimate; For cameras, 11*2 is 22, shouldn't be more than this
+//1460 is kinda the absolute max packet size
+#define MAX_PACKET_SIZE 1024 //Not max packet size, but if much it's bigger than this, we should probably switch to a different format
+
+static PyObject *
+parse_state(PyObject *self, PyObject *args) {
+    //The idea behind this is to create a copy of the input in a buffer, and edit the buffer
+    //Such that each quotation in the list gets turned into a null terminated string
+    //With the first character being stored into a string
+
+    //('1', '[Vec3(0.5, 1.05, 0.5)]', '[Vec3(0, 10.277778, 0)]', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, 10.277778, 0)')
+    //('amount of player cams', 'player cams position: list[vec3]', 'player cams rotation: list[vec3]', 'reload time: float', 'player dead: bool', 'player world position: vec3', 'player rotation: vec3'), 'player dead: bool', 'player world position: vec3', 'player rotation: vec3')
+    
+    //Variable declarations
+    PyObject *stateDict = PyDict_New();
+    //Used in the output
+    int cameraCount;
+    int playerDead;
+    double playerPos[3];
+    double playerRotation[3];
+    double camLocations[MAX_CAMERAS][3];
+    double camRotations[MAX_CAMERAS][3];
+    
+    //Used in the implementation
+    int stateLen;
+    int quoteIndex;
+    int secondQuotation;
+    char *stateBuffer;
+    char *quotedStrings[MAX_QUOTATIONS]; //Things in the quotes
+
+    //Get the string from the args
+    const char * stateString;
+    if (!PyArg_ParseTuple(args, "s", &stateString)) {
+        return NULL;
+    }
+
+    //Check that the string fits our max packet size
+    stateLen = strlen(stateString);
+    if (stateLen * sizeof(char) > MAX_PACKET_SIZE) {
+        goto dataSizeError;
+    }
+    
+    //Puts the string into a seperate buffer
+    stateBuffer = (char*)malloc(stateLen * sizeof(char) + 1);
+    if (stateBuffer == NULL) {
+        goto memoryError;
+    }
+    strcpy(stateBuffer, stateString); //Unsafe function but I explicitily created the buffer to be the size
+    //And I cannot be bothered to learn the safe portable version right now
+
+    //Seperates each quotation
+    quoteIndex = 0;
+    secondQuotation = false;
+    //Iterates through the string until a '
+    for (int i = 0; i < stateLen; i++) {
+        //If there's more than the maximum, error
+        if (quoteIndex >= 50) {
+            goto inputError;
+        }
+        //If it's the first quotation mark, put the index plus one into the quotes list, add one to the quoteIndex
+        //Worst case scenario it's the null terminator, and we check if the secondQuotation is true
+        //After the loop to catch the error anyways
+        if (stateBuffer[i] == '\'' && !secondQuotation) {
+            quotedStrings[quoteIndex+1] = stateBuffer[i];
+            quoteIndex++;
+            secondQuotation = true;
+        }
+        //If it's the second quotation mark, set it to a null terminator
+        else if (stateBuffer[i] == '\'' && secondQuotation) {
+            stateBuffer[i] = '\0';
+            secondQuotation = false;
+        }
+    }
+
+    //Checks if it expects a second quotation
+    if (secondQuotation) {
+        goto inputError;
+    }
+
+    //Now we should have a null terminated list of all the quotes
+    //With quoteIndex being 1 over the maximum defined
+
+
+    //Error management
+    inputError:
+        PyErr_SetString(PyExc_ValueError, "The value inputted is incorrect.");
+        return NULL;
+    dataSizeError:
+        PyErr_SetString(PyExc_BufferError, "Too much data got sent.");
+        return NULL;
+    memoryError:
+        PyErr_SetString(PyExc_MemoryError, "Program ran out of memory.");
+        return NULL;
+}
+
+int parseVec3(char *str, double*result[3]) {
+    //Not exactly sure how sscanf works, but I'm just praying that it works at this point
+    if (sscanf(str, "[Vec3(%lf, %lf, %lf)]", result[0], result[1], result[2]) == EOF) {
+        PyErr_SetString(PyExc_MemoryError, "Program ran out of memory.");
+        return -1;
+    }
+    return 0;
+}
