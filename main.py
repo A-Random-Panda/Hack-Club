@@ -199,12 +199,17 @@ def input(key):
         ui_controller.chat_field.text = ""
         player.chat_opened = time.perf_counter()
         invoke(setattr, ui_controller.chat_field, "text", "", delay=0.01)        
-    
-    if key == get_binding(Controls.SEND_MSG) and player.in_chat == True:
+
+    if key == get_binding(Controls.SEND_MSG) and player.in_chat:
         ui_controller.mouse_in_menu(False)
         player.in_chat = False
         ui_controller.chat_field.enabled = False
-        player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}", origin = (0.8,0),position = (0.8,0,-2), scale = 0.75, color=color.white,enabled = True))
+        player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}",
+                              origin = (0.8,0),
+                              position = (0.8,0,-2),
+                              scale = 0.75,
+                              color=color.white,
+                              enabled = True))
         chat.chat_list.append(player.message)
 
     if player.in_chat:
@@ -248,7 +253,8 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,
+                                  y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
