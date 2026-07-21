@@ -1,5 +1,6 @@
 from ursina import *
 from typing import TYPE_CHECKING
+import time
 if TYPE_CHECKING:
     from scripts.in_game.player import _Player
     from scripts.in_game.audio_controller import AudioController
@@ -16,5 +17,14 @@ class ChatController:
     def chat(self):
         if len(self.chat_list) > 4:
             destroy(self.chat_list.pop(0))
-        for msg in range (len(self.chat_list)):
-            self.chat_list[msg].y = -.2 - 0.05 * (4-msg)
+        
+        if 4 < abs(time.perf_counter()- self.player.chat_opened):
+            for msg in range (len(self.chat_list)):
+                self.chat_list[msg].enabled = False
+                self.ui.chat_overlay.enabled = False
+
+        else:
+            for msg in range (len(self.chat_list)):
+                self.chat_list[msg].y = -.2 - 0.05 * (msg)
+                self.chat_list[msg].enabled = True
+                self.ui.chat_overlay.enabled = True

@@ -18,6 +18,7 @@ class UIController:
         self.text_box = Entity(scale = (0.4,0.1) ,origin = (0,0), position = (-.6,-.4), parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), enabled = True)
         self.cooldown_text = Text("test", origin = (0,0),position = (-.6,-.4,-.9), scale = 1.5, color=color.green,enabled = True)
         self.camoverlay = Text (parent = camera.ui,scale=2,position=(-0.7,0.4),color=color.gray, enabled = False)
+        self.chat_overlay = Entity(scale = (0.55,0.25) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False, position = (0.95,-.275,-1), origin = (0.8,0))
 
         self.leaderboard_text = Text(f"{self.player.points} {self.player.username}", origin = (0,0), position = (0,0), scale = 1.1, color=color.white, enabled= False, z = -2)
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui, model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
@@ -57,12 +58,10 @@ class UIController:
         self.current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
         
         #Chat message
-        self.chat_field = InputField(position = (0, 0), scale = (0.5,0.05), color = color.white, enabled = False, text_color = color.black)
+        self.chat_field = InputField(position = (0.4, -0.45), scale = (0.65,0.03), color = color.white, enabled = False, text_color = color.black, character_limit = 32)
         self.chat_field.highlight_color = color.white  
         self.chat_field.highlight_text_color = color.black
         self.chat_field.text_color = color.black
-
-
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume',
                                dynamic=True, 

@@ -2,6 +2,7 @@
 from typing import Any, override
 from ursina import *
 from scripts.in_game.editable_controls_FPC import FirstPersonController
+from scripts.in_game.controls import *
 
 
 _player_properties:dict[str,Any] = {
@@ -43,6 +44,8 @@ class _Player(FirstPersonController):
         self.in_main_menu:bool = False
         self.username:str = ""
         self.in_chat:bool = False
+        self.chat_opened:float = 0.0
+        self.message:Entity = None
     @override
     def update(self):
         if self.in_main_menu:
@@ -66,6 +69,12 @@ class _Player(FirstPersonController):
             else:
                 super().movement()
                 super().mouse_movement()
+    def input(self, key):
+        if self.in_chat:
+            return
+
+        if key == get_binding(Controls.JUMP):
+            self.jump()
             
 
 def get_player() -> _Player:
@@ -76,3 +85,5 @@ def get_player() -> _Player:
     return _Player()
 if __name__ == "__main__":
     print(_Player() == _Player())
+
+
