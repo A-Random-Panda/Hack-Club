@@ -31,7 +31,7 @@ class UIController:
                                            model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
         
         #Main menu
-        self.background = Entity(model="quad", scale = (2,2),color = color.black, enabled = False, parent=camera.ui, z = -3)
+        self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0.2,0, -4),
                                         color=color.white, text = "Host game", text_color=color.black)
         self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.2, 0, -4),
