@@ -54,6 +54,10 @@ class MainMenu:
         self.ui.port_input.enabled = boolean
         self.ui.port_text.enabled = boolean
         self.ui.join_game_button.enabled = boolean
+        if self.ui.port_input.text.strip() == "":
+            self.ui.port_input.text = self.ui.port_input.default_value
+        if self.ui.host_input.text.strip() == "":
+            self.ui.host_input.text = self.ui.host_input.default_value
 
     def switch_back(self):
         self.join_game(False)
