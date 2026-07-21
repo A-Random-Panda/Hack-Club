@@ -4,8 +4,8 @@ This is the main file that will run the game
 import logging
 import time
 from typing import Any
+from atexit import register
 import subprocess #Will be used later to start the server
-
 
 from ursina import *
 from ursina.networking import *
@@ -52,8 +52,6 @@ wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box"
 wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
 wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=14, z=0, rotation_y=90)
 
-
-
 #Setup
 player = get_player()
 player.in_main_menu = True
@@ -67,8 +65,17 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
+server_process:None|subprocess.Popen = None
+
+#Set what happens on exit
+@register
+def on_exit():
+    '''Cleanup on exit'''
+    if server_process is not None:
+        server_process.kill()
 
 def cam_switching():
+    '''Function for camera switching'''
     if player.current_cam == len(player.perspective_list):
         player.current_cam = 0
         #If the camera is on the player and there is at least one camera
