@@ -20,7 +20,7 @@ class MainMenu:
         self.ui.name_input.enabled = boolean
         if boolean == False:
             if self.ui.name_input.text.strip(" ") == "" or self.ui.name_input.text == self.ui.name_input.default_value:
-                self.player.username = DEFAULT_NAMES[randint(1,30)]
+                self.player.username = DEFAULT_NAMES[randint(0,29)]
             else:
                 self.player.username = self.ui.name_input.text
         self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username}"
