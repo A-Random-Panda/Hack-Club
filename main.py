@@ -155,7 +155,7 @@ ui_controller.player_volume_slider.on_value_changed = player_change_volume
 peer:RPCPeer = RPCPeer()
 class GameState():
     '''Variables relating to the game state'''
-    in_game = False
+    game_started = False
     state_string:str = ""
     game_state:dict[str, Any] = {}
 
@@ -167,7 +167,7 @@ def state_to_client(connection, time_received, state:str):
 @rpc(peer)
 def in_game(connection, time_received, state:bool):
     '''Whether the game is in the lobby or in game'''
-    GameState.in_game = state
+    GameState.game_started = state
 
 @rpc(peer)
 def on_connect(connection, time_connected):

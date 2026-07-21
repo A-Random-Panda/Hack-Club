@@ -98,7 +98,8 @@ a_text:Text = Text(text='', position = (-.5*1.778, -.5), origin=(-0.5, -0.5))
 
 #Information
 class ClientInformation():
-    state_dict:dict[int, str] = {} #Parsed, id:dict
+    '''Information from the client'''
+    state_dict = {}
 
 @register
 def on_exit() -> None:
@@ -123,11 +124,14 @@ def on_connect(connection, time_connected):
     '''
     On connect to server
     '''
-    #Should probably send a token on connection for identification
-    connection_id = id(connection)
-    logger.info("Client of id %d connected to the server!", connection_id)
-    connected_ids.append(connection_id)
-    server_peer.send_id(connection, connection_id)
+    #Check how many people are already connected
+    if server_peer.connection_count() > 1:
+        connection.disconnect()
+        logger.info("Client attempted to join a full server")
+    else:
+        connection_id = id(connection)
+        logger.info("Client of id %d connected to the server!", connection_id)
+        connected_ids.append(connection_id)
 
 @rpc(server_peer)
 def on_disconnect(connection, time_disconnected):
@@ -139,6 +143,17 @@ def on_disconnect(connection, time_disconnected):
     if connection_id in ClientInformation.state_dict:
         del ClientInformation.state_dict[connection_id]
     logger.info("Client of id %d disconnected from the server!", connection_id)
+
+@rpc(server_peer)
+def start_game(connection, time_received):
+    '''Function to start the game'''
+    if server_peer.connection_count() == 2:
+        for i in server_peer.get_connections():
+            try:
+                server_peer.ingame(i, True)
+            except Exception as err:
+                logger.error("Caught exception %s, disconnecting peer", err)
+                i.disconnect()
 
 def start_server(hostname, port):
     '''The function that starts the server'''
