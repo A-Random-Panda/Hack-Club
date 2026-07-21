@@ -12,7 +12,7 @@
 #define MAX_CAMERAS 11
 #define MAX_QUOTATIONS 50 //Guessimate; For cameras, 11*2 is 22, shouldn't be more than this
 //1460 is kinda the absolute max packet size
-#define MAX_PACKET_SIZE 1024 //Not max packet size, but if much it's bigger than this, we should probably switch to a different format
+#define MAX_PACKET_SIZE 1460 //If it's bigger than this, we should probably switch to a different format
 
 static int parseListVec3(char *str, double (*result)[3], int amount) {
     //I uh, can't be bothered to learn how to do this properly

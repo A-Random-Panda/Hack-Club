@@ -270,8 +270,8 @@ def input(key):
 def update():
     global test
 
-    #Conected to multiplayer
     if peer.is_running():
+        #Conected to multiplayer
         peer.update()
         if GameState.in_game:
             #In Game

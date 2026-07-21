@@ -75,7 +75,6 @@ if WINDOW_TYPE == "onscreen":
 in_game:bool  = False
 server_peer:RPCPeer = RPCPeer()
 connected_ids:list[int] = []
-state_dict:dict[int, dict[str, Any]] = {} #Parsed, id:dict
 
 #Declare logging
 handler = LatestLogHandler()
@@ -97,10 +96,22 @@ count_text:Text = Text(text='', position=(.5*1.778, .5), origin=(.5, .5))
 fps_text:Text = Text(text='', position = (-.5*1.778, .5), origin=(-0.5, 0.5))
 a_text:Text = Text(text='', position = (-.5*1.778, -.5), origin=(-0.5, -0.5))
 
+#Information
+class ClientInformation():
+    state_dict:dict[int, str] = {} #Parsed, id:dict
+
 @rpc(server_peer)
-def test(connection, time_received, your_mom:int):
+def test(connection, time_received, your_mom:str):
     '''Testing'''
-    a_text.text = (f"Received text {your_mom}")
+    a_text.text = (f"Received text: {your_mom} from {id(connection)}")
+
+@rpc(server_peer)
+def state_to_server(connection, time_connected, state:str):
+    if len(state) > 1460:
+        logger.error("Id of %d sent too much data!", id(connection))
+        connection.disconnect()
+    else:
+        ClientInformation.state_dict[id(connection)] = state
 
 @rpc(server_peer)
 def on_connect(connection, time_connected):
@@ -120,16 +131,9 @@ def on_disconnect(connection, time_disconnected):
     '''
     connection_id = id(connection)
     connected_ids.remove(connection_id)
-    del state_dict[connection_id]
+    if connection_id in ClientInformation.state_dict:
+        del ClientInformation.state_dict[connection_id]
     logger.info("Client of id %d disconnected from the server!", connection_id)
-
-def parse_state(state:str) -> dict[str, Any]:
-    '''Parses state, returns the information in the dictionary'''
-    dictionary = {}
-    '''
-    ('Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)', 'DNE', 'DNE', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)')
-    '''
-    return {}
 
 def start_server(hostname, port):
     '''The function that starts the server'''
@@ -137,20 +141,12 @@ def start_server(hostname, port):
     server_peer.start(hostname, port, is_host=True)
 
 def update():
-    '''Main handler'''
     server_peer.update()
+    '''Main handler'''
     if not server_peer.is_running():
         status_text.text = START_TEXT
     else:
         #Only runs if the server is running
-        #Get the state from each client
-        for i in server_peer.get_connections():
-            #Put the id with the parsed state dictionary
-            try:
-                state_dict[id(i)] = parse_state(server_peer.state_to_server(i)) # type: ignore
-            except Exception as e:
-                i.disconnect()
-                logger.error(e)
         #This is where server side verification happens... if it ever gets implemented
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":

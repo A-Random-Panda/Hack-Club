@@ -9,7 +9,6 @@ peer = RPCPeer()
 text:Text = Text(text="Client", origin=(-0.5, 0.5), position=(-.5, .5))
 count_text:Text = Text(text='', position=(.5, .5))
 
-
 @rpc(peer)
 def on_connect(connection, time_connected):
     '''
@@ -43,5 +42,8 @@ def input(key):
         peer.disconnect_all()
     if key == "h":
         print("attempted get_state call")
-        peer.test(peer.get_connections()[0], "this is text")
+        try:
+            peer.test(peer.get_connections()[0], "this is text")
+        except:
+            print("state call not accepted")
 app.run()
