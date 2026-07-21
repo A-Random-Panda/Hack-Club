@@ -48,6 +48,8 @@ class _Player(FirstPersonController):
         self.message:Entity = None
         self.laser:Entity = None
         self.respawn_point:Vec3 = (0,2,0)
+        self.rounds:int = 0
+        self.lose_streak: int = 0
 
 
     @override

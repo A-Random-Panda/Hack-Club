@@ -52,6 +52,7 @@ class MainMenu:
         self.ui.join_friend_button.enabled = not boolean
         self.ui.host_input.enabled = boolean
         self.ui.port_input.enabled = boolean
+        self.ui.port_text.enabled = boolean
         self.ui.join_game_button.enabled = boolean
 
     def switch_back(self):

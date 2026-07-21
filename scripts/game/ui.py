@@ -58,6 +58,7 @@ class UIController:
         self.port_input.highlight_color = color.white  
         self.port_input.highlight_text_color = color.black
         self.port_input.text_color = color.black
+        self.port_text = Text(text = "port value", position=(-0.08, -0.05), text_size = 0.4 , z = -5, color = color.white, enabled = False)
 
         #Map selector
         self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,
@@ -85,6 +86,7 @@ class UIController:
         self.chat_field.highlight_color = color.white  
         self.chat_field.highlight_text_color = color.black
         self.chat_field.text_color = color.black
+        
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume',
                                dynamic=True,
