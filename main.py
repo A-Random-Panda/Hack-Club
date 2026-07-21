@@ -283,7 +283,7 @@ def input(key):
 
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA) and not player.in_menu and not player.in_shop and not len(player.perspective_list) > player.max_cams:
-        infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player] + player.perspective_list)
+        infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player, player.laser, player.bullet_trail] + player.perspective_list)
         if infront.hit and not player.in_camera:
             dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:

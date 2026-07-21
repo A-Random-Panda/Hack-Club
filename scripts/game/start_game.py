@@ -1,4 +1,5 @@
 from ursina import *
+from scripts.game.settings import *
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from scripts.game.player import _Player
@@ -36,15 +37,24 @@ def end_round(player:"_Player", ui:"UIController"):
     ui.win_text.text = f'{player.username} WINS!!!'
     ui.lose_text.text =f'{player.username} LOSES!!!'
     ui.draw_text.text =f'{player.username} DRAWS!!!'
+    player.rounds += 1
     if player.points > 100:
         ui.win_text.enabled = True
         invoke(setattr, ui.win_text, "enabled", False, delay = 10)
+        player.cash += WIN_BONUS * player.rounds
+        player.lose_streak = 0
+
     elif player.points < 100:
+        player.cash += LOSS_BONUS[player.lose_streak] * player.rounds
         ui.lose_text.enabled = True
         invoke(setattr, ui.lose_text, "enabled", False, delay = 10)
+
     else:
         ui.draw_text.enabled = True
+        player.cash += DRAW_BONUS * player.rounds
         invoke(setattr, ui.draw_text, "enabled", False, delay = 10)
+
     start_game(player, ui)
     ui.menu_overlay.enabled = True
     invoke(setattr, ui.menu_overlay, "enabled", False, delay = 10)
+    

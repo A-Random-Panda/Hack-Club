@@ -1,6 +1,9 @@
 #Upgrade cost list (place holders)
 MAX_CAM_COST:list[int] = [100,500,1500,4500,7000]
 FASTER_RELOAD_COST:list[int] = [100,500,1500,4500,7000]
+WIN_BONUS = 1000
+LOSS_BONUS = [200, 400, 600]
+DRAW_BONUS = 500
 
 #Settings
 player_sensitivity:float = 150
