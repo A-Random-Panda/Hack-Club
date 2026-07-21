@@ -1,3 +1,4 @@
+from __future__ import annotations
 from ursina import *
 import time
 from typing import TYPE_CHECKING

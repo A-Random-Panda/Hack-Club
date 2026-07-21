@@ -3,9 +3,12 @@ This is the main file that will run the game
 """
 import logging
 import time
-import subprocess
+from typing import Any
+from atexit import register
+import subprocess #Will be used later to start the server
 
 from ursina import *
+from ursina.networking import *
 
 from scripts.in_game.controls import *
 from scripts.in_game.player import get_player
@@ -16,11 +19,12 @@ from scripts.in_game.audio_controller import AudioController
 from scripts.in_game.settings import *
 from scripts.in_game.ui import UIController
 from scripts.in_game.shop import ShopUpgrades
-from scripts.server.client_to_server import send_info, info_key
 from scripts.in_game.game_objective import KOTH
 from scripts.in_game.main_menu import MainMenu
 from scripts.in_game.chat import ChatController
 from scripts.in_game.start_game import start_game, destory_all_cameras, end_round
+from scripts.client.client_to_server import send_info, info_key
+from scripts.client.parsing import parse_state
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -49,8 +53,6 @@ wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box"
 wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
 wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=14, z=0, rotation_y=90)
 
-
-
 #Setup
 player = get_player()
 player.in_main_menu = True
@@ -64,9 +66,9 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
-laser(player)
 
 def cam_switching():
+    '''Function for camera switching'''
     if player.current_cam == len(player.perspective_list):
         player.current_cam = 0
         #If the camera is on the player and there is at least one camera
@@ -125,14 +127,40 @@ def player_change_volume():
 ui_controller.gun_volume_slider.on_value_changed = gun_change_volume
 ui_controller.player_volume_slider.on_value_changed = player_change_volume
 
+#Multiplayer
+peer:RPCPeer = RPCPeer()
+class GameState():
+    in_game = False
+    state_string:str = ""
+    game_state:dict[str, Any] = {}
+
+@rpc(peer)
+def state_to_client(connection, time_received, state:str):
+    '''Sends state from the server to the client'''
+    GameState.state_string = state
+
+@rpc(peer)
+def in_game(connection, time_received, state:bool):
+    '''Whether the game is in the lobby or in game'''
+    GameState.in_game = state
+
+@rpc(peer)
+def on_connect(connection, time_connected):
+    '''On connection to the server'''
+    logger.info("You were connected to a server!")
+
+@rpc(peer)
+def on_disconnect(connection, time_disconnected):
+    '''On disconnection to the server'''
+    logger.error("You were disconnected at %s!", time_disconnected)
+
 #Detect key inputs
 def input(key):
-    global test
     '''Input handler'''
+    global test
      #Escape menu
     if player.in_main_menu:
         return
-
 
     if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
         player.in_menu = not player.in_menu
@@ -147,18 +175,15 @@ def input(key):
             ui_controller.mouse_in_menu(False)
             ui_controller.open_volume_menu(False)
             ui_controller.open_control_menu(False)
-    
+
     if key == get_binding(Controls.QUIT_GAME) and player.in_shop:
         player.in_shop = False
         ui_controller.open_shop_menu(False)
 
-
-    
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
             player.control_change_button_pressed = False
-    
 
     if not player.input_enabled:
         return
@@ -174,15 +199,20 @@ def input(key):
         ui_controller.chat_field.text = ""
         player.chat_opened = time.perf_counter()
         invoke(setattr, ui_controller.chat_field, "text", "", delay=0.01)        
-    
-    if key == get_binding(Controls.SEND_MSG) and player.in_chat == True:
+
+    if key == get_binding(Controls.SEND_MSG) and player.in_chat:
         ui_controller.mouse_in_menu(False)
         player.in_chat = False
         ui_controller.chat_field.enabled = False
-        player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}", origin = (0.8,0),position = (0.8,0,-2), scale = 0.75, color=color.white,enabled = True))
+        player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}",
+                              origin = (0.8,0),
+                              position = (0.8,0,-2),
+                              scale = 0.75,
+                              color=color.white,
+                              enabled = True))
         chat.chat_list.append(player.message)
 
-    if player.in_chat == True:
+    if player.in_chat:
         return
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
@@ -214,17 +244,17 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,
+                                  y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
 
-   
     #Jumping sound
     if key == get_binding(Controls.JUMP) and player.grounded:
         audio_controller.jump.play()
-    
+
     #Open shop menu
     if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
         player.in_shop = not player.in_shop
@@ -236,16 +266,26 @@ def input(key):
 
     if key ==  "t":
         print(send_info(player))
+        print(parse_state(send_info(player)))
         print(info_key())
         koth1.location_z = -10
         koth1.objective_length = 3
         koth1.update_zone()
-        end_round(player,ui_controller)
+
 
 
 def update():
     global test
 
+    if peer.is_running():
+        #Conected to multiplayer
+        peer.update()
+        if GameState.in_game:
+            #In Game
+            pass
+        else:
+            #Waiting in the menu
+            pass
 
     if player.in_main_menu:
         return
@@ -342,6 +382,5 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-
 
 app.run()
