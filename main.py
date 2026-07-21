@@ -11,7 +11,7 @@ from scripts.in_game.controls import *
 from scripts.in_game.player import get_player
 from scripts.in_game.death import DeathManager
 from scripts.in_game.minimap import UpdateMinimap, MinimapIcons
-from scripts.in_game.combat import shoot, reload_timer
+from scripts.in_game.combat import shoot, reload_timer, laser, update_laser
 from scripts.in_game.audio_controller import AudioController
 from scripts.in_game.settings import *
 from scripts.in_game.ui import UIController
@@ -63,6 +63,7 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
+laser(player)
 
 def cam_switching():
     if player.current_cam == len(player.perspective_list):
@@ -328,6 +329,7 @@ def update():
                 audio_controller.success.play()
         update_moving_square_icon.minimap_update()
 
+    update_laser(player)
 
     if player.in_chat == True:
         return
