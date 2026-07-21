@@ -66,6 +66,15 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
+laser(player)
+server_process:None|subprocess.Popen = None
+
+#Set what happens on exit
+@register
+def on_exit():
+    '''Cleanup on exit'''
+    if server_process is not None:
+        server_process.kill()
 
 def cam_switching():
     '''Function for camera switching'''
