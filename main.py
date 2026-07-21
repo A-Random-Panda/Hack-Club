@@ -20,6 +20,7 @@ from scripts.server.client_to_server import send_info, info_key
 from scripts.in_game.game_objective import KOTH
 from scripts.in_game.main_menu import MainMenu
 from scripts.in_game.chat import ChatController
+from scripts.in_game.start_game import start_game, destory_all_cameras, end_round
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -197,16 +198,7 @@ def input(key):
 
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS):
-        player.current_cam = 0
-        for i in range(1,len(player.perspective_list)):
-            destroy(player.perspective_list[i])
-        for icons in player.cam_icon_list:
-            destroy(icons)
-        player.in_camera = False
-        camera.parent = player.camera_pivot
-        ui_controller.camoverlay.disable()
-        player.perspective_list.clear()
-        player.perspective_list.append(player)
+        destory_all_cameras(player,ui_controller)
 
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA) and not player.in_menu and not player.in_shop and not len(player.perspective_list) > player.max_cams:
@@ -248,7 +240,7 @@ def input(key):
         koth1.location_z = -10
         koth1.objective_length = 3
         koth1.update_zone()
-
+        end_round(player,ui_controller)
 
 
 def update():

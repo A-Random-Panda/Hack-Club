@@ -47,6 +47,9 @@ class _Player(FirstPersonController):
         self.chat_opened:float = 0.0
         self.message:Entity = None
         self.laser:Entity = None
+        self.respawn_point:Vec3 = (0,2,0)
+
+
     @override
     def update(self):
         if self.in_main_menu:

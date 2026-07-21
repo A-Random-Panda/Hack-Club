@@ -5,6 +5,7 @@ FASTER_RELOAD_COST:list[int] = [100,500,1500,4500,7000]
 #Settings
 player_sensitivity:float = 150
 player_volume:float = 1.5
+
 DEFAULT_NAMES:list[str] = [
     "Cotton Mather",
     "Deodat Lawson",
