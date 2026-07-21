@@ -280,9 +280,7 @@ def input(key):
         koth1.location_z = -10
         koth1.objective_length = 3
         koth1.update_zone()
-
-
-
+        end_round(player,ui_controller)
 def update():
     global test
 
