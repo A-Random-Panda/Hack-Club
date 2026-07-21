@@ -3,6 +3,7 @@ This is the main file that will run the game
 """
 import logging
 import time
+import pathlib
 from typing import Any
 from atexit import register
 import subprocess #Will be used later to start the server
@@ -67,10 +68,24 @@ koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 server_process:None|subprocess.Popen = None
 
-#Set what happens on exit
+def start_server(port:int) -> None:
+    '''Start a local server'''
+    #Removing the global would make the code more complicated
+    global server_process #pylint: disable=global-statement
+    if "__compiled__" in globals():
+        #Code if compiled with nuitka
+        #Assume multidist was used
+        path = pathlib.Path(__file__).resolve()
+        server_process = subprocess.Popen([path, "server", f"--port {port}"])
+    else:
+        #Ran from source
+        server_process = subprocess.Popen(["server.py", f"--port {port}"])
+
+#Set kill_server() on exit
 @register
-def on_exit():
-    '''Cleanup on exit'''
+def kill_server() -> None:
+    '''Kills the server process if it's open'''
+    peer.disconnect_all()
     if server_process is not None:
         server_process.kill()
 
@@ -137,6 +152,7 @@ ui_controller.player_volume_slider.on_value_changed = player_change_volume
 #Multiplayer
 peer:RPCPeer = RPCPeer()
 class GameState():
+    '''Variables relating to the game state'''
     in_game = False
     state_string:str = ""
     game_state:dict[str, Any] = {}

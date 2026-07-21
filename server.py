@@ -23,7 +23,7 @@ Attempt to:
 
 import argparse
 import logging
-from typing import Any
+from atexit import register
 from sys import exit #pylint: disable=redefined-builtin
 
 from pygame.time import Clock
@@ -99,6 +99,11 @@ a_text:Text = Text(text='', position = (-.5*1.778, -.5), origin=(-0.5, -0.5))
 #Information
 class ClientInformation():
     state_dict:dict[int, str] = {} #Parsed, id:dict
+
+@register
+def on_exit() -> None:
+    '''Disconnects all on exit'''
+    server_peer.disconnect_all()
 
 @rpc(server_peer)
 def test(connection, time_received, your_mom:str):
