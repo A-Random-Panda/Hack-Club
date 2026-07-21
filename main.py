@@ -5,7 +5,7 @@ import logging
 import time
 import pathlib
 import subprocess
-from typing import Any
+from sys import executable
 from atexit import register
 
 from ursina import *
@@ -26,6 +26,7 @@ from scripts.game.chat import ChatController
 from scripts.game.start_game import start_game, destory_all_cameras, end_round
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
+from scripts.client.rpc_functions import GameState, peer, state_to_client, game, on_connect, on_disconnect
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
@@ -70,19 +71,6 @@ koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
-
-def start_server(port:int) -> None:
-    '''Start a local server'''
-    #Removing the global would make the code more complicated
-    global server_process #pylint: disable=global-statement
-    if "__compiled__" in globals():
-        #Code if compiled with nuitka
-        #Assume multidist was used
-        path = pathlib.Path(__file__).resolve()
-        server_process = subprocess.Popen([path, "server", f"--port {port}"])
-    else:
-        #Ran from source
-        server_process = subprocess.Popen(["server.py", f"--port {port}"])
 
 #Sets kill_server() on exit
 @register
@@ -132,14 +120,35 @@ ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
 #Main menu buttons
 ui_controller.open_game_button.on_click = main_menu.player_main_menu
+ui_controller.host_game_button.on_click = main_menu.host_game
 ui_controller.map_selector_button.on_click = main_menu.map_selector
-ui_controller.back_to_main_button.on_click = Func(main_menu.switch_back)
+ui_controller.back_to_main_button.on_click = main_menu.switch_back
 ui_controller.name_input.on_click = Func(ui_controller.reset_input_field, ui_controller.name_input)
-ui_controller.join_friend_button.on_click = Func(main_menu.join_game)
-ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
-ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
 
-#Join server button
+#Host server
+def start_server() -> None:
+    '''Start a local server'''
+    #Removing the global would make the code more complicated
+    global server_process #pylint: disable=global-statement
+    port = ui_controller.port_input.text
+    window_state_box_checked = ui_controller.has_window_checkbox.value
+    if window_state_box_checked:
+        window_state = "--window"
+    else:
+        window_state = "--no-window"
+    if "__compiled__" in globals():
+        #Code if compiled with nuitka
+        #Assume multidist was used
+        path = pathlib.Path(__file__).resolve()
+        server_process = subprocess.Popen([path, "server", "--port", port, window_state])
+    else:
+        #Ran from source
+        server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state])
+        pass
+
+ui_controller.start_server_button.on_click_setter(start_server)
+
+#Join Server
 def join_game() -> None:
     '''Function that connects to the server in the text fields'''
     host = ui_controller.host_input.text
@@ -155,6 +164,9 @@ def join_game() -> None:
     except Exception as err:
         logger.error(err)
 
+ui_controller.join_friend_button.on_click = main_menu.join_game
+ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
+ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
 ui_controller.join_game_button.on_click_setter(join_game)
 
 #Control change buttons
@@ -170,40 +182,6 @@ def player_change_volume():
 #Sound sliders
 ui_controller.gun_volume_slider.on_value_changed = gun_change_volume
 ui_controller.player_volume_slider.on_value_changed = player_change_volume
-
-#Multiplayer
-peer:RPCPeer = RPCPeer()
-class GameState():
-    '''Variables relating to the game state'''
-    game_started = False
-    state_string:str = ""
-    game_state:dict[str, Any] = {}
-
-@rpc(peer)
-def state_to_client(connection, time_received, state:str):
-    '''Receives the game state from the server'''
-    GameState.state_string = state
-
-@rpc(peer)
-def game(connection, time_received, gamestate:bool):
-    '''Controls whether the game has started or not'''
-    GameState.game_started = gamestate
-
-@rpc(peer)
-def on_connect(connection, time_connected):
-    '''
-    On connection to the server
-    Currently logs it to the console
-    '''
-    logger.info("You were connected to a server!")
-
-@rpc(peer)
-def on_disconnect(connection, time_disconnected):
-    '''
-    Runs on disconnection to the server
-    Currently logs it to the console.
-    '''
-    logger.error("You were disconnected from the server at %s!", time_disconnected)
 
 #Detect key inputs
 def input(key):

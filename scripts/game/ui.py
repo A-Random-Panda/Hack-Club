@@ -32,15 +32,17 @@ class UIController:
         
         #Main menu
         self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
-        self.open_game_button = Button(model = "quad", scale = 0.2, position =(0.2,0, -4),
+        self.open_game_button = Button(model = "quad", scale = 0.2, position =(0,0, -4),
+                                        color=color.white, text = "Open Game", text_color=color.black)
+        self.host_game_button = Button(model = "quad", scale = 0.2, position =(0.25,0, -4),
                                         color=color.white, text = "Host game", text_color=color.black)
-        self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.2, 0, -4),
+        self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.25, 0, -4),
                                            color=color.white, text = "map selector", text_color=color.black) 
         self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                           color=color.white, text = "Join Friend", text_color=color.black)
         self.name_input = InputField(default_value= "Username Here",character_limit = 15, position=(0, -0.15),
                                       scale=(0.3, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
-        self.name_input.highlight_color = color.white  
+        self.name_input.highlight_color = color.white
         self.name_input.highlight_text_color = color.black
         self.name_input.text_color = color.black
 
@@ -60,9 +62,16 @@ class UIController:
         self.port_input.text_color = color.black
         self.port_text = Text(text = "port value", position=(-0.08, -0.05), text_size = 0.4 , z = -5, color = color.white, enabled = False)
 
+        #Host game
+        self.start_server_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
+                                        color=color.white, text = "Start server", text_color=color.black, enabled = False)
+        self.has_window_checkbox = Checkbox(start_value=False, scale = (0.1), position = (.35, 0, -4),
+                                            enabled = False)
+        self.has_window_text = Text(text="Start with window", origin = (0, 0), position = (.35, -.1, -4), enabled = False)
+
         #Map selector
         self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,
-                                       color=color.red,enabled = False)
+                                       color=color.red, enabled = False)
         self.back_to_main_button = Button(model = "quad", scale = 0.2, position = (-0.8,-0.4,-4),
                                           text = "Back to \n main menu", color=color.orange, enabled = False)
 
@@ -164,46 +173,46 @@ class UIController:
             self.control_buttons_dict[control] = button
 
 
-    def ui_changer(self, boolean = False) -> None:
+    def ui_changer(self, is_open = False) -> None:
         for button in self.button_list:
-            button.enabled = boolean
+            button.enabled = is_open
         for upgrades in self.shop_buttons_list:
             upgrades.enabled = False
 
-    def open_shop_menu(self, boolean = False) -> None:
-        self.menu_overlay.enabled = boolean
-        self.upgrade_cams_button.enabled = boolean
-        self.faster_reload_button.enabled = boolean
-        self.mouse.visible = boolean
-        self.mouse.locked = not boolean
-        self.player.cursor.enabled = not boolean
-        self.current_cash.enabled = boolean
+    def open_shop_menu(self, is_open = False) -> None:
+        self.menu_overlay.enabled = is_open
+        self.upgrade_cams_button.enabled = is_open
+        self.faster_reload_button.enabled = is_open
+        self.mouse.visible = is_open
+        self.mouse.locked = not is_open
+        self.player.cursor.enabled = not is_open
+        self.current_cash.enabled = is_open
 
-    def open_volume_menu(self, boolean = True) -> None:
+    def open_volume_menu(self, is_open = True) -> None:
         self.ui_changer()
-        self.menu_overlay.enabled = boolean
-        self.gun_volume_slider.enabled = boolean
-        self.player_volume_slider.enabled = boolean
+        self.menu_overlay.enabled = is_open
+        self.gun_volume_slider.enabled = is_open
+        self.player_volume_slider.enabled = is_open
 
-    def open_control_menu(self, boolean = True) -> None:
+    def open_control_menu(self, is_open = True) -> None:
         self.ui_changer()
-        self.menu_overlay.enabled = boolean
+        self.menu_overlay.enabled = is_open
         for button in self.control_button_list:
-            button.enabled = boolean
+            button.enabled = is_open
     #Update the control buttons text after it changes
     def update_control_text(self) -> None:
         for control, button in self.control_buttons_dict.items():
             button.text = f'{button.name}\n{get_binding(control)}'
         #Function used to reset controls
 
-    def mouse_in_menu(self, boolean = True) -> None:
-        self.mouse.visible = boolean
-        self.mouse.locked = not boolean
-        self.player.cursor.enabled = not boolean
+    def mouse_in_menu(self, is_open = True) -> None:
+        self.mouse.visible = is_open
+        self.mouse.locked = not is_open
+        self.player.cursor.enabled = not is_open
 
-    def open_leaderboard(self, boolean) -> None:
-        self.leaderboard_text.enabled = boolean
-        self.leaderboard_overlay.enabled = boolean
+    def open_leaderboard(self, is_open) -> None:
+        self.leaderboard_text.enabled = is_open
+        self.leaderboard_overlay.enabled = is_open
 
     def reset_input_field(self, input_field:InputField):
         if input_field.text == input_field.default_value:
