@@ -38,22 +38,22 @@ class UIController:
                                            color=color.white, text = "map selector", text_color=color.black) 
         self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                           color=color.white, text = "Join Friend", text_color=color.black)
-        self.join_game_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
-                                        color=color.white, text = "Join Game", text_color=color.black, enabled = False)
-        
         self.name_input = InputField(default_value= "Username Here",character_limit = 15, position=(0, -0.15),
                                       scale=(0.3, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
         self.name_input.highlight_color = color.white  
         self.name_input.highlight_text_color = color.black
         self.name_input.text_color = color.black
 
-        self.host_input = InputField(default_value= "localhost", position=(0, 0), scale=(0.5, 0.05), z = -5,
+        #Join friend:
+        self.join_game_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
+                                        color=color.white, text = "Join Game", text_color=color.black, enabled = False)
+        self.host_input = InputField(default_value= "localhost", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
                                       color = color.white, enabled = False, text_color=color.black)
         self.host_input.highlight_color = color.white  
         self.host_input.highlight_text_color = color.black
         self.host_input.text_color = color.black
 
-        self.port_input = InputField(default_value = "1983", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
+        self.port_input = InputField(default_value = "1983", position=(0, 0), scale=(0.5, 0.05), z = -5,
                                       color = color.white, enabled = False, text_color=color.black, limit_content_to='0123456789')
         self.port_input.highlight_color = color.white  
         self.port_input.highlight_text_color = color.black

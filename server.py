@@ -44,7 +44,7 @@ parser.add_argument("-host", "--hostname",
                     help="The hostname for the server.")
 parser.add_argument("-p", "--port",
                     type=int,
-                    default=1939,
+                    default=1983,
                     help="The port the server is hosted on.")
 parser.add_argument("-win", "--window",
                     type=bool,
@@ -104,6 +104,7 @@ class ClientInformation():
 @register
 def on_exit() -> None:
     '''Disconnects all on exit'''
+    logger.info("Exiting...")
     server_peer.disconnect_all()
 
 @rpc(server_peer)

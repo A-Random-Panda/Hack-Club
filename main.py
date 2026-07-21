@@ -90,6 +90,7 @@ def kill_server() -> None:
     '''Kills the server process if it's open'''
     peer.disconnect_all()
     if server_process is not None:
+        logger.info("Killing server...")
         server_process.kill()
 
 def cam_switching():
@@ -119,17 +120,17 @@ update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block
 main_menu = MainMenu(player,audio_controller,ui_controller)
 main_menu.open_main_menu()
 
-#Buttons in shop menu
+#Shop menu buttons
 ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
 ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 
-#Buttons in escape menu
+#Escape menu buttons
 ui_controller.quit_button.on_click = application.quit
 ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
 ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
-#Buttons in main menu
+#Main menu buttons
 ui_controller.open_game_button.on_click = main_menu.player_main_menu
 ui_controller.map_selector_button.on_click = main_menu.map_selector
 ui_controller.back_to_main_button.on_click = Func(main_menu.switch_back)
@@ -137,6 +138,24 @@ ui_controller.name_input.on_click = Func(ui_controller.reset_input_field, ui_con
 ui_controller.join_friend_button.on_click = Func(main_menu.join_game)
 ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
 ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
+
+#Join server button
+def join_game() -> None:
+    '''Function that connects to the server in the text fields'''
+    host = ui_controller.host_input.text
+    port = int(ui_controller.port_input.text)
+    logger.debug("host: %s, port %d", host, port)
+    try:
+        logger.info("Attempted to join server")
+        peer.start(host, port, is_host=False)
+        if not peer.is_running():
+            logger.info("Server connection unsucessful")
+        else:
+            logger.info("Server sucessfully joined")
+    except Exception as err:
+        logger.error(err)
+
+ui_controller.join_game_button.on_click_setter(join_game)
 
 #Control change buttons
 ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
@@ -184,7 +203,7 @@ def on_disconnect(connection, time_disconnected):
     Runs on disconnection to the server
     Currently logs it to the console.
     '''
-    logger.error("You were disconnected at %s!", time_disconnected)
+    logger.error("You were disconnected from the server at %s!", time_disconnected)
 
 #Detect key inputs
 def input(key):
