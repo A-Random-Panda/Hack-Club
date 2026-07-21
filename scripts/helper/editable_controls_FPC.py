@@ -1,7 +1,7 @@
 """A modified verson of the FirstPersonController class, where the controls are changable"""
 
 from ursina import *
-from scripts.in_game.controls import *
+from scripts.game.controls import *
 
 class FirstPersonController(Entity):
     def __init__(self, height=2, **kwargs):

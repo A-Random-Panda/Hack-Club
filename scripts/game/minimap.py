@@ -2,7 +2,7 @@ from ursina import *
 from math import sin, cos, radians, atan2, degrees
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
+    from scripts.game.player import _Player
 
 class UpdateMinimap():
     def __init__(self,map_icon,real_entity,map_size):

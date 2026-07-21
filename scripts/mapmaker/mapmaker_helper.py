@@ -3,7 +3,7 @@
 import math
 import logging
 from typing import override
-from scripts.in_game.editable_controls_FPC import FirstPersonController as _old_first_person_controller
+from scripts.helper.editable_controls_FPC import FirstPersonController as _old_first_person_controller
 
 _tolarance = 0.00001
 

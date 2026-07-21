@@ -2,11 +2,11 @@ from __future__ import annotations
 from ursina import *
 from typing import TYPE_CHECKING
 from random import randint
-from scripts.in_game.settings import DEFAULT_NAMES
+from scripts.game.settings import DEFAULT_NAMES
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
-    from scripts.in_game.audio_controller import AudioController
-    from scripts.in_game.ui import UIController
+    from scripts.game.player import _Player
+    from scripts.game.audio_controller import AudioController
+    from scripts.game.ui import UIController
 
 class MainMenu:
     def __init__(self, player:_Player, audio: AudioController, ui: UIController):

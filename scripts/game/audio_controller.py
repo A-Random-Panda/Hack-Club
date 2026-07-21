@@ -1,7 +1,7 @@
 from ursina import Audio
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
+    from scripts.game.player import _Player
 
 PLAYER_VOLUME = 1
 SHOOTING_VOLUME = 0.5

@@ -10,7 +10,7 @@ import enum
 from ursina import *
 from scripts.in_game.player import _player_properties
 from scripts.in_game.controls import Controls, get_binding
-from scripts.in_game.better_editor_camera import EditorCamera
+from scripts.helper.better_editor_camera import EditorCamera
 from scripts.mapmaker.mapmaker_constants import *
 from scripts.mapmaker.mapmaker_helper import *
 from scripts.mapmaker.map_save import save_map

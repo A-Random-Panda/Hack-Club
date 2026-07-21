@@ -4,28 +4,29 @@ This is the main file that will run the game
 import logging
 import time
 import pathlib
+import subprocess
 from typing import Any
 from atexit import register
-import subprocess #Will be used later to start the server
 
 from ursina import *
 from ursina.networking import *
 
-from scripts.in_game.controls import *
-from scripts.in_game.player import get_player
-from scripts.in_game.death import DeathManager
-from scripts.in_game.minimap import UpdateMinimap, MinimapIcons
-from scripts.in_game.combat import shoot, reload_timer, laser, update_laser
-from scripts.in_game.audio_controller import AudioController
-from scripts.in_game.settings import *
-from scripts.in_game.ui import UIController
-from scripts.in_game.shop import ShopUpgrades
-from scripts.in_game.game_objective import KOTH
-from scripts.in_game.main_menu import MainMenu
-from scripts.in_game.chat import ChatController
-from scripts.in_game.start_game import start_game, destory_all_cameras, end_round
+from scripts.game.controls import *
+from scripts.game.player import get_player
+from scripts.game.death import DeathManager
+from scripts.game.minimap import UpdateMinimap, MinimapIcons
+from scripts.game.combat import shoot, reload_timer, laser, update_laser
+from scripts.game.audio_controller import AudioController
+from scripts.game.settings import *
+from scripts.game.ui import UIController
+from scripts.game.shop import ShopUpgrades
+from scripts.game.game_objective import KOTH
+from scripts.game.main_menu import MainMenu
+from scripts.game.chat import ChatController
+from scripts.game.start_game import start_game, destory_all_cameras, end_round
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
+
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -68,7 +69,7 @@ shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 laser(player)
-server_process:None|subprocess.Popen = None
+server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
 
 def start_server(port:int) -> None:
     '''Start a local server'''
@@ -83,7 +84,7 @@ def start_server(port:int) -> None:
         #Ran from source
         server_process = subprocess.Popen(["server.py", f"--port {port}"])
 
-#Set kill_server() on exit
+#Sets kill_server() on exit
 @register
 def kill_server() -> None:
     '''Kills the server process if it's open'''
@@ -161,22 +162,28 @@ class GameState():
 
 @rpc(peer)
 def state_to_client(connection, time_received, state:str):
-    '''Sends state from the server to the client'''
+    '''Receives the game state from the server'''
     GameState.state_string = state
 
 @rpc(peer)
-def in_game(connection, time_received, state:bool):
-    '''Whether the game is in the lobby or in game'''
-    GameState.game_started = state
+def game(connection, time_received, gamestate:bool):
+    '''Controls whether the game has started or not'''
+    GameState.game_started = gamestate
 
 @rpc(peer)
 def on_connect(connection, time_connected):
-    '''On connection to the server'''
+    '''
+    On connection to the server
+    Currently logs it to the console
+    '''
     logger.info("You were connected to a server!")
 
 @rpc(peer)
 def on_disconnect(connection, time_disconnected):
-    '''On disconnection to the server'''
+    '''
+    Runs on disconnection to the server
+    Currently logs it to the console.
+    '''
     logger.error("You were disconnected at %s!", time_disconnected)
 
 #Detect key inputs
@@ -297,22 +304,23 @@ def input(key):
         koth1.objective_length = 3
         koth1.update_zone()
         end_round(player,ui_controller)
+
 def update():
     global test
 
     if peer.is_running():
         #Conected to multiplayer
         peer.update()
-        if GameState.in_game:
+        if GameState.game_started:
             #In Game
             pass
         else:
-            #Waiting in the menu
+            #Before game start
             pass
 
     if player.in_main_menu:
         return
-    
+
     if player.in_chat:
         player.chat_opened = time.perf_counter()
     chat.chat()

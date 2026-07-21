@@ -1,8 +1,8 @@
 '''This module contains the player class for the game'''
 from typing import Any, override
 from ursina import *
-from scripts.in_game.editable_controls_FPC import FirstPersonController
-from scripts.in_game.controls import *
+from scripts.helper.editable_controls_FPC import FirstPersonController
+from scripts.game.controls import *
 
 
 _player_properties:dict[str,Any] = {

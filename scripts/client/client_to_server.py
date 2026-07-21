@@ -1,5 +1,5 @@
 from ursina import *
-from scripts.in_game.player import _Player
+from scripts.game.player import _Player
 def send_info(player:_Player):
     cam_position_list:list[Vec3] = []
     cam_rotation_list:list[Vec3] = []

@@ -1,9 +1,9 @@
 from ursina import *
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
-    from scripts.in_game.audio_controller import AudioController
-    from scripts.in_game.ui import UIController
+    from scripts.game.player import _Player
+    from scripts.game.audio_controller import AudioController
+    from scripts.game.ui import UIController
 
 
 def destory_all_cameras(player: "_Player", ui: "UIController"):

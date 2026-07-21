@@ -1,9 +1,9 @@
-from ursina import *
-from scripts.in_game.controls import *
-from scripts.in_game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
+    from scripts.game.player import _Player
+from ursina import *
+from scripts.game.controls import *
+from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 
 
 
@@ -35,12 +35,12 @@ class UIController:
         self.name_input.highlight_text_color = color.black
         self.name_input.text_color = color.black
 
-        self.host_input = InputField(default_value= "Enter Host Name", position=(0, 0), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.host_input = InputField(default_value= "localhost", position=(0, 0), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
         self.host_input.highlight_color = color.white  
         self.host_input.highlight_text_color = color.black
         self.host_input.text_color = color.black
 
-        self.port_input = InputField(default_value= "Enter Port", position=(0, 0.15), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.port_input = InputField(default_value = "1983", position=(0, 0.15), scale=(0.5, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black, limit_content_to='0123456789')
         self.port_input.highlight_color = color.white  
         self.port_input.highlight_text_color = color.black
         self.port_input.text_color = color.black
@@ -124,7 +124,7 @@ class UIController:
             self.control_buttons_dict[control] = button
 
 
-    def ui_changer(self,boolean = False) -> None:
+    def ui_changer(self, boolean = False) -> None:
         for button in self.button_list:
             button.enabled = boolean
         for upgrades in self.shop_buttons_list:
@@ -139,13 +139,13 @@ class UIController:
         self.player.cursor.enabled = not boolean
         self.current_cash.enabled = boolean
 
-    def open_volume_menu(self,boolean = True) -> None:
+    def open_volume_menu(self, boolean = True) -> None:
         self.ui_changer()
         self.menu_overlay.enabled = boolean
         self.gun_volume_slider.enabled = boolean
         self.player_volume_slider.enabled = boolean
 
-    def open_control_menu(self,boolean = True) -> None:
+    def open_control_menu(self, boolean = True) -> None:
         self.ui_changer()
         self.menu_overlay.enabled = boolean
         for button in self.control_button_list:
@@ -155,13 +155,13 @@ class UIController:
         for control, button in self.control_buttons_dict.items():
             button.text = f'{button.name}\n{get_binding(control)}'
         #Function used to reset controls
-    
+
     def mouse_in_menu(self, boolean = True) -> None:
         self.mouse.visible = boolean
         self.mouse.locked = not boolean
         self.player.cursor.enabled = not boolean
-    
-    def open_leaderboard(self,boolean) -> None:
+
+    def open_leaderboard(self, boolean) -> None:
         self.leaderboard_text.enabled = boolean
         self.leaderboard_overlay.enabled = boolean
 
@@ -172,11 +172,10 @@ class UIController:
     def reset_and_update_controls(self) -> None:
         reset_controls_to_default()
         self.update_control_text()
-    
+
     def close_all_uis(self) -> None:
         self.open_control_menu(False)
         self.open_shop_menu(False)
         self.open_volume_menu(False)
         self.mouse_in_menu(False)
         self.player.in_menu = False
-    

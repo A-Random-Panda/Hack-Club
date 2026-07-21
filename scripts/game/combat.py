@@ -2,7 +2,7 @@ from ursina import *
 import time
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
+    from scripts.game.player import _Player
 
 #function for shooting
 def shoot(player:"_Player", reload:Audio, shooting:Audio):

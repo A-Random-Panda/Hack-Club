@@ -3,9 +3,9 @@ from ursina import *
 import time
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from scripts.in_game.player import _Player
-    from scripts.in_game.ui import UIController
-    from scripts.in_game.audio_controller import AudioController
+    from scripts.game.player import _Player
+    from scripts.game.ui import UIController
+    from scripts.game.audio_controller import AudioController
 class KOTH:
     def __init__(self,player:"_Player",objective_length:int,location_x:int,location_z:int,ui:UIController,audio:AudioController):
         self.objective_length = objective_length
