@@ -43,5 +43,5 @@ def input(key):
         peer.disconnect_all()
     if key == "h":
         print("attempted get_state call")
-        peer.get_state(peer.get_connections()[0], 67)
+        peer.test(peer.get_connections()[0], "this is text")
 app.run()

@@ -33,7 +33,7 @@ from ursina.networking import *
 from scripts.server.log_to_variable_handler import LatestLogHandler
 
 #Constants
-DATA_RATE = 64 #Times data is sent to the client per second
+DATA_RATE = 32 #Times data is sent to the client per second
 START_TEXT:str = "The server is not on" #This should never show
 
 #Declare command line arguments
@@ -72,6 +72,7 @@ if WINDOW_TYPE == "onscreen":
     window.collider_counter.disable()
 
 #Declare server variables
+in_game:bool  = False
 server_peer:RPCPeer = RPCPeer()
 connected_ids:list[int] = []
 state_dict:dict[int, dict[str, Any]] = {} #Parsed, id:dict
@@ -94,13 +95,12 @@ logger.addHandler(handler)
 status_text:Text = Text(text=START_TEXT, origin=(0, 0), position=(0, 0))
 count_text:Text = Text(text='', position=(.5*1.778, .5), origin=(.5, .5))
 fps_text:Text = Text(text='', position = (-.5*1.778, .5), origin=(-0.5, 0.5))
+a_text:Text = Text(text='', position = (-.5*1.778, -.5), origin=(-0.5, -0.5))
 
 @rpc(server_peer)
-def state_to_client(connection, time_received, gamestate:str):
-    '''
-    Send the gamestate to the server
-    '''
-    pass
+def test(connection, time_received, your_mom:int):
+    '''Testing'''
+    a_text.text = (f"Received text {your_mom}")
 
 @rpc(server_peer)
 def on_connect(connection, time_connected):
@@ -120,6 +120,7 @@ def on_disconnect(connection, time_disconnected):
     '''
     connection_id = id(connection)
     connected_ids.remove(connection_id)
+    del state_dict[connection_id]
     logger.info("Client of id %d disconnected from the server!", connection_id)
 
 def parse_state(state:str) -> dict[str, Any]:
@@ -129,6 +130,7 @@ def parse_state(state:str) -> dict[str, Any]:
     ('Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)', 'DNE', 'DNE', '5.0', 'False', 'Vec3(0.5, 1.05, 0.5)', 'Vec3(0, -11.712962, 0)')
     '''
     return {}
+
 def start_server(hostname, port):
     '''The function that starts the server'''
     logger.info("Starting server on port %d.", port)
@@ -141,9 +143,15 @@ def update():
         status_text.text = START_TEXT
     else:
         #Only runs if the server is running
+        #Get the state from each client
         for i in server_peer.get_connections():
             #Put the id with the parsed state dictionary
-            state_dict[id(i)] = parse_state(server_peer.state_to_server(i)) # type: ignore
+            try:
+                state_dict[id(i)] = parse_state(server_peer.state_to_server(i)) # type: ignore
+            except Exception as e:
+                i.disconnect()
+                logger.error(e)
+        #This is where server side verification happens... if it ever gets implemented
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":
             #Update text
