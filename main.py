@@ -3,9 +3,12 @@ This is the main file that will run the game
 """
 import logging
 import time
+from typing import Any
 import subprocess
 
+
 from ursina import *
+from ursina.networking import *
 
 from scripts.in_game.controls import *
 from scripts.in_game.player import get_player
@@ -123,14 +126,37 @@ def player_change_volume():
 ui_controller.gun_volume_slider.on_value_changed = gun_change_volume
 ui_controller.player_volume_slider.on_value_changed = player_change_volume
 
+#Multiplayer
+peer:RPCPeer = RPCPeer()
+class GameState():
+    in_game = False
+    state_string:str = ""
+    game_state:dict[str, Any] = {}
+
+@rpc(peer)
+def send_state_to_client(connection, time_received, state:str):
+    GameState.state_string = state
+
+@rpc(peer)
+def in_game(connection, time_received, state:bool):
+    '''Receives information about whether they're '''
+    GameState.in_game = state
+
+@rpc(peer)
+def on_connect(connection, time_connected):
+    logger.info("You were connected to a server!")
+
+@rpc(peer)
+def on_disconnect(connection, time_disconnected):
+    logger.error("You were disconnected at %s!", time_disconnected)
+
 #Detect key inputs
 def input(key):
-    global test
     '''Input handler'''
+    global test
      #Escape menu
     if player.in_main_menu:
         return
-
 
     if key == get_binding(Controls.QUIT_GAME) and not player.in_shop:
         player.in_menu = not player.in_menu
@@ -149,14 +175,11 @@ def input(key):
     if key == get_binding(Controls.QUIT_GAME) and player.in_shop:
         player.in_shop = False
         ui_controller.open_shop_menu(False)
-
-
     
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
             player.control_change_button_pressed = False
-    
 
     if not player.input_enabled:
         return
@@ -169,7 +192,6 @@ def input(key):
         audio_controller.footsteps.stop()
         ui_controller.mouse_in_menu()
         ui_controller.chat_field.text = ""
-        
     
     if key == get_binding(Controls.SEND_MSG) and player.in_chat == True:
         ui_controller.mouse_in_menu(False)
@@ -245,11 +267,18 @@ def input(key):
         koth1.objective_length = 3
         koth1.update_zone()
 
-
-
 def update():
     global test
 
+    #Conected to multiplayer
+    if peer.is_running():
+        peer.update()
+        if GameState.in_game:
+            #In Game
+            pass
+        else:
+            #Waiting in the menu
+            pass
 
     if player.in_main_menu:
         return
@@ -343,6 +372,5 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-
 
 app.run()
