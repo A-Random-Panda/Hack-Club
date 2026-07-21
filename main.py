@@ -113,12 +113,13 @@ ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
 ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
 
 #Escape menu buttons
-ui_controller.quit_button.on_click = application.quit
+ui_controller.quit_button.on_click = main_menu.open_main_menu
 ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
 ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
 #Main menu buttons
+ui_controller.exit_game_button.on_click = main_menu.normal_exit
 ui_controller.open_game_button.on_click = main_menu.player_main_menu
 ui_controller.host_game_button.on_click = main_menu.host_game
 ui_controller.map_selector_button.on_click = main_menu.map_selector

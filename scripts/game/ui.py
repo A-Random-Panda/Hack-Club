@@ -42,6 +42,8 @@ class UIController:
                                           color=color.white, text = "Join Friend", text_color=color.black)
         self.name_input = InputField(default_value= "Username Here",character_limit = 15, position=(0, -0.15),
                                       scale=(0.3, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
+        self.exit_game_button = Button(model = "quad", scale = (0.6,0.075), position = (0,-0.4, -4),
+                                          color=color.white, text = "Exit game", text_color=color.black)
         self.name_input.highlight_color = color.white
         self.name_input.highlight_text_color = color.black
         self.name_input.text_color = color.black

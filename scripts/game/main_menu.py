@@ -1,7 +1,9 @@
 from __future__ import annotations
-from ursina import *
 from typing import TYPE_CHECKING
 from random import randint
+from sys import exit
+
+from ursina import *
 from scripts.game.settings import DEFAULT_NAMES
 if TYPE_CHECKING:
     from scripts.game.player import _Player
@@ -86,3 +88,7 @@ class MainMenu:
         self.join_game(False)
         self.map_selector(False)
         self.player_main_menu(True)
+
+    def normal_exit(self):
+        '''Exit with 0 code'''
+        exit(0)
