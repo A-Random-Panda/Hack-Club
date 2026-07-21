@@ -141,8 +141,8 @@ def start_server(hostname, port):
     server_peer.start(hostname, port, is_host=True)
 
 def update():
-    server_peer.update()
     '''Main handler'''
+    server_peer.update()
     if not server_peer.is_running():
         status_text.text = START_TEXT
     else:
