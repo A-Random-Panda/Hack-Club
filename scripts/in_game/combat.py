@@ -29,5 +29,17 @@ def reload_timer(player:"_Player",cooldown_text:Text):
     timer = "Shooting cooldown " + str(round(player.reload_time - time.perf_counter() +player.cd, 1))
     cooldown_text.text = timer if player.reload_time - (time.perf_counter()-player.cd) > 0 else "READY"
 
-
-
+def laser(player: "_Player"):
+    hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
+    player.laser = Entity(model="cube",
+                                    position= ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0),
+                                    scale = (0.05,0.05,distance(hit.world_point,player.world_position)),
+                                    color = rgb(255,0,0,0.3),parent = scene,
+                                    rotation = player.rotation,
+                                    collider = "box"
+                                    )
+def update_laser(player: "_Player"):
+    hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
+    player.laser.position = ((hit.world_point + player.world_position+player.forward)/2) + Vec3(0,1.7,0)
+    player.laser.rotation = player.rotation
+    player.laser.scale = (0.1,0.1,distance(hit.world_point,player.world_position))

@@ -95,7 +95,10 @@ class UIController:
                                         text = "Reset Keybinds", text_size = 0.8, text_color = color.black, enabled = False)
         self.control_button_list.append(self.reset_controls_to_default_button)
 
-
+        #Win / lose result screen text
+        self.win_text = Text(f'{self.player.username} WINS!!!', origin = (0,0),position = (0,0,-1.1), scale = 5, color=color.green,enabled = False)
+        self.lose_text = Text(f'{self.player.username} WINS!!!', origin = (0,0),position = (0,0,-1.1), scale = 5, color=color.red,enabled = False)
+        self.draw_text = Text(f'DRAW!!!', origin = (0,0),position = (0,0,0), scale = 5, color=color.gray,enabled = False)
 
         #Escape menu buttons
         self.quit_button = Button(model = "quad", scale = 0.2, x = 0, y=-.2, z = -2, color=color.gray, text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
