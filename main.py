@@ -4,7 +4,7 @@ This is the main file that will run the game
 import logging
 import time
 from typing import Any
-import subprocess
+import subprocess #Will be used later to start the server
 
 
 from ursina import *
@@ -19,10 +19,11 @@ from scripts.in_game.audio_controller import AudioController
 from scripts.in_game.settings import *
 from scripts.in_game.ui import UIController
 from scripts.in_game.shop import ShopUpgrades
-from scripts.server.client_to_server import send_info, info_key
 from scripts.in_game.game_objective import KOTH
 from scripts.in_game.main_menu import MainMenu
 from scripts.in_game.chat import ChatController
+from scripts.client.client_to_server import send_info, info_key
+from scripts.client.parsing import parse_state
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
 speed123 = 5*time.dt
@@ -134,20 +135,23 @@ class GameState():
     game_state:dict[str, Any] = {}
 
 @rpc(peer)
-def send_state_to_client(connection, time_received, state:str):
+def state_to_client(connection, time_received, state:str):
+    '''Sends state from the server to the client'''
     GameState.state_string = state
 
 @rpc(peer)
 def in_game(connection, time_received, state:bool):
-    '''Receives information about whether they're '''
+    '''Whether the game is in the lobby or in game'''
     GameState.in_game = state
 
 @rpc(peer)
 def on_connect(connection, time_connected):
+    '''On connection to the server'''
     logger.info("You were connected to a server!")
 
 @rpc(peer)
 def on_disconnect(connection, time_disconnected):
+    '''On disconnection to the server'''
     logger.error("You were disconnected at %s!", time_disconnected)
 
 #Detect key inputs
@@ -171,11 +175,11 @@ def input(key):
             ui_controller.mouse_in_menu(False)
             ui_controller.open_volume_menu(False)
             ui_controller.open_control_menu(False)
-    
+
     if key == get_binding(Controls.QUIT_GAME) and player.in_shop:
         player.in_shop = False
         ui_controller.open_shop_menu(False)
-    
+
     if player.control_change_button_pressed:
         if isinstance(key, str) and "mouse" not in key and "escape" not in key:
             player.changed_key = key
@@ -203,7 +207,7 @@ def input(key):
         player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}", origin = (0.8,0),position = (0.8,0,-2), scale = 0.75, color=color.white,enabled = True))
         chat.chat_list.append(player.message)
 
-    if player.in_chat == True:
+    if player.in_chat:
         return
     #Enter cameras
     if key == get_binding(Controls.TOGGLE_CAMERA):
@@ -250,11 +254,10 @@ def input(key):
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
         EditorCamera(enabled=True)
 
-   
     #Jumping sound
     if key == get_binding(Controls.JUMP) and player.grounded:
         audio_controller.jump.play()
-    
+
     #Open shop menu
     if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
         player.in_shop = not player.in_shop
@@ -266,6 +269,7 @@ def input(key):
 
     if key ==  "t":
         print(send_info(player))
+        print(parse_state(send_info(player)))
         print(info_key())
         koth1.location_z = -10
         koth1.objective_length = 3
