@@ -47,7 +47,7 @@ parser.add_argument("-p", "--port",
                     default=1983,
                     help="The port the server is hosted on.")
 parser.add_argument("-win", "--window",
-                    type=bool,
+                    action=argparse.BooleanOptionalAction,
                     default=True,
                     help="Whether to show a window or not")
 args = parser.parse_args()

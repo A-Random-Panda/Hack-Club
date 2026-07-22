@@ -121,7 +121,7 @@ def _change_controls(changed_controls:dict) -> None:
             if k in _UNCHANGABLE_CONTROLS and _BINDINGS_DICT[k] != v:
                 _logger.warning("Unchangable control %s attempted to be changed.", k)
             else:
-                _BINDINGS_DICT[k] = v       
+                _BINDINGS_DICT[k] = v
 
 def _get_json_path() -> _Path:
     '''Returns the path of the controls.json file'''

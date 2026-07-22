@@ -41,7 +41,7 @@ class _Player(FirstPersonController):
         self.input_enabled:bool = True
         self.in_zone:bool = False
         self.points:int = 0
-        self.in_main_menu:bool = False
+        self.in_main_menu:bool = True
         self.username:str = ""
         self.in_chat:bool = False
         self.chat_opened:float = 0.0
