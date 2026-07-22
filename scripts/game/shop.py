@@ -15,7 +15,7 @@ class ShopUpgrades:
         self.audio:"AudioController" = audio
 
     def cam_upgrade(self) -> None:
-        current_upgrade = self.player.max_cams-5
+        current_upgrade = self.player.max_cams-6
         if current_upgrade == len(MAX_CAM_COST)-1 and self.player.cash >= MAX_CAM_COST[current_upgrade]:
             self.player.cash -= MAX_CAM_COST[current_upgrade]
             self.ui.current_cash.text = f"{self.player.cash} cash"

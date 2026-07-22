@@ -8,8 +8,8 @@ import math
 import enum
 
 from ursina import *
-from scripts.in_game.player import _player_properties
-from scripts.in_game.controls import Controls, get_binding
+from scripts.game.player import _player_properties
+from scripts.game.controls import Controls, get_binding
 from scripts.helper.better_editor_camera import EditorCamera
 from scripts.mapmaker.mapmaker_constants import *
 from scripts.mapmaker.mapmaker_helper import *
@@ -25,7 +25,7 @@ app = Ursina()
 #Creatinng textures
 grid = Entity(model=Grid(*GRID_SIZE), scale=Vec3(100, 100), color=color.white, rotation_x=90, position=Vec3(.5, .5, .5), collider ="box")
 entitylist = []
-player_shadow = Entity(model="PlayerModel", color=color.white, texture="Bamboo",rotation_x=0, y=0)
+player_shadow = Entity(model="Better_Tank", color=color.red, rotation_x=0, y=0,scale = 0.5)
 player_line = Entity(model = Quad(radius=200, mode='line'), color=color.white)
 last_hit_line = Entity(model=Mesh(mode="line",vertices=((0,0,0),(0,100,0)), thickness=3),
                        enabled=False,)

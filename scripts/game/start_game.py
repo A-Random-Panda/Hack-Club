@@ -25,12 +25,13 @@ def start_game(player:"_Player",ui:"UIController"):
     player.cash = 1000
     ui.close_all_uis()
     player.points = 0
-    player.max_cams = 5
+    player.max_cams = 6
     player.reload_time = 5
     ui.current_cash.text = f"{player.cash} cash"
-    ui.faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: $500"
-    ui.upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: $500"
+    ui.faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: $100"
+    ui.upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: $100"
     ui.leaderboard_text.text = f"{player.points} {player.username}"
+    player.round_wins = 0
 
     destory_all_cameras(player, ui)
 
@@ -43,6 +44,7 @@ def end_round(player:"_Player", ui:"UIController"):
         ui.win_text.enabled = True
         invoke(setattr, ui.win_text, "enabled", False, delay = 10)
         player.cash += WIN_BONUS * player.rounds
+        player.round_wins += 1
         player.lose_streak = 0
 
     elif player.points < 100:
@@ -54,22 +56,26 @@ def end_round(player:"_Player", ui:"UIController"):
         ui.draw_text.enabled = True
         player.cash += DRAW_BONUS * player.rounds
         invoke(setattr, ui.draw_text, "enabled", False, delay = 10)
-    start_game(player, ui)
     ui.menu_overlay.enabled = True
+    ui.current_cash.text = f"{player.cash} cash"
     invoke(setattr, ui.menu_overlay, "enabled", False, delay = 10)
+    player.points = 0
     
 def buy_phase(player:"_Player", ui:"UIController", state = True):
     player.in_buy_phase = state
     ui.buy_overlay.enabled = state
     ui.buy_text.enabled = state
     player.in_round = not state
-    
+    ui.shop_timer_text.enabled = state
+    if state:
+        player.shop_timer = time.perf_counter()
 
 def start_round(player:"_Player", ui:"UIController"):
     player.in_round = True
     player.round_timer = time.perf_counter()
     buy_phase(player, ui, False)
+    ui.round_timer_text.enabled = True
+    player.position = player.respawn_point
     
-    pass
 def end_game(player:"_Player", ui:"UIController"):
     pass

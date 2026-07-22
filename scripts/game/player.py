@@ -32,8 +32,8 @@ class _Player(FirstPersonController):
         self.changed_key:str|None = None
         self.control_change_button_pressed:bool =  False
         self.control_change_key = None
-        self.max_cams:int = 5
-        self.cash:int = 100000
+        self.max_cams:int = 6
+        self.cash:int = 1000
         self.reload_time:float = 5.0
         self.in_shop:bool = False
         self.dead:bool = False
@@ -53,6 +53,8 @@ class _Player(FirstPersonController):
         self.in_buy_phase: bool  = False
         self.in_round: bool = False
         self.round_timer: float = 0.0
+        self.shop_timer: float = 0.0
+        self.round_wins: int = 0
 
 
     @override

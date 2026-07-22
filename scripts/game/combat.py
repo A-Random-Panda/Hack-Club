@@ -39,6 +39,8 @@ def laser(player: "_Player"):
                                     collider = "box"
                                     )
 def update_laser(player: "_Player"):
+    if player.laser == None:
+        return
     hit = raycast(origin = player.world_position + player.forward,distance=1000, direction = player.forward)
     if hit.hit:
         end = hit.world_point
@@ -47,3 +49,4 @@ def update_laser(player: "_Player"):
     player.laser.position = ((end + player.world_position+player.forward)/2) + Vec3(0,1.7,0)
     player.laser.rotation = player.rotation
     player.laser.scale = (0.1,0.1,distance(end,player.world_position))
+
