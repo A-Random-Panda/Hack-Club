@@ -149,9 +149,15 @@ def start_server() -> None:
     else:
         #Ran from source
         server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state])
-        pass
+    #Auto connect if box is checked
+    if ui_controller.auto_join_checkbox.value:
+        peer.start("localhost", port, is_host=False)
+        if not peer.is_running():
+            logger.info("Server connection unsucessful")
+        else:
+            logger.info("Server sucessfully joined")
 
-ui_controller.server_text.text = f"If you are connecting on the same network, connect with {local_ip}!"
+ui_controller.server_text.text = f"If you are connecting with someone on the same network, connect with hostname {local_ip}!"
 ui_controller.start_server_button.on_click_setter(start_server)
 
 #Join Server
@@ -334,8 +340,6 @@ def update():
     if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
         buy_phase(player, ui_controller, True)
         ui_controller.round_timer_text.enabled = False
-        
-        
 
     #Runs once when you die
     if test:

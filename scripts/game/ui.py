@@ -64,15 +64,20 @@ class UIController:
         self.port_input.highlight_color = color.white  
         self.port_input.highlight_text_color = color.black
         self.port_input.text_color = color.black
-        self.port_text = Text(text = "port value", position=(-0.08, -0.05), text_size = 0.4 , z = -5, color = color.white, enabled = False)
+        self.port_text = Text(text = "port", position=(0, -0.05), origin = (0, 0), text_size = 0.4 , z = -5, color = color.white, enabled = False)
+        self.hostname_text = Text(text = "hostname", position=(0, .10), origin = (0, 0), text_size = 0.4 , z = -5, color = color.white, enabled = False)
 
         #Host game
-        self.server_text = Text(position = (0, .1, -4), origin = (0, 0), enabled = False, color=color.green)
+        self.server_text = Text(position = (0, .1, -4), origin = (0, 0), enabled = False, color=color.black)
         self.start_server_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                         color=color.white, text = "Start server", text_color=color.black, enabled = False)
         self.has_window_checkbox = Checkbox(start_value=False, scale = (0.1), position = (.35, 0, -4),
                                             enabled = False)
+        self.auto_join_checkbox = Checkbox(start_value=False, scale = (0.1), position = (-.35, 0, -4),
+                                            enabled = False)
+        self.auto_join_text = Text(text="Auto join server", origin = (0, 0), position = (-.35, -.1, -4), enabled = False)
         self.has_window_text = Text(text="Start with window", origin = (0, 0), position = (.35, -.1, -4), enabled = False)
+
 
         #Map selector
         self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,

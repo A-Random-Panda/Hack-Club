@@ -70,6 +70,7 @@ class MainMenu:
                 self.ui.port_input.disable()
                 self.ui.port_text.disable()
                 self.ui.join_game_button.disable()
+                self.ui.hostname_text.disable()
             case _Screens.HOST_GAME:
                 self.ui.port_input.disable()
                 self.ui.port_text.disable()
@@ -77,6 +78,8 @@ class MainMenu:
                 self.ui.server_text.disable()
                 self.ui.has_window_checkbox.disable()
                 self.ui.has_window_text.disable()
+                self.ui.auto_join_checkbox.disable()
+                self.ui.auto_join_text.disable()
             case _:
                 _logger.error("Current screen unknown, entering main menu")
 
@@ -137,7 +140,7 @@ class MainMenu:
         self.ui.port_input.enable()
         self.ui.port_text.enable()
         self.ui.join_game_button.enable()
-
+        self.ui.hostname_text.enable()
         #Switches back if to default if the text box is blank
         if self.ui.port_input.text.strip() == "":
             self.ui.port_input.text = self.ui.port_input.default_value
@@ -154,7 +157,8 @@ class MainMenu:
         self.ui.server_text.enable()
         self.ui.has_window_checkbox.enable()
         self.ui.has_window_text.enable()
-
+        self.ui.auto_join_checkbox.enable()
+        self.ui.auto_join_text.enable()
         #Switches back if to default if the text box is blank
         if self.ui.port_input.text.strip() == "":
             self.ui.port_input.text = self.ui.port_input.default_value
