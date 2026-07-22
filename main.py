@@ -142,7 +142,7 @@ ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
 
 #Main menu buttons
 ui_controller.exit_game_button.on_click_setter(main_menu.normal_exit)
-ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game)), Wait(0.01), Func(cam_switching))
+ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching)))
 ui_controller.host_game_button.on_click_setter(main_menu.open_host_game)
 ui_controller.map_selector_button.on_click_setter(main_menu.open_map_selector)
 ui_controller.lobby_botton.on_click_setter(main_menu.open_lobby)
