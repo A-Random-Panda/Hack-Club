@@ -49,7 +49,7 @@ app = Ursina(icon="assets/textures/ursina.ico")
 #Objects on the map
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-player_shadow = Entity(model="PlayerModel", color=color.white,texture="Bamboo",rotation_x=0, y=0, enabled = False)
+player_shadow = Entity(model="Better_Tank", color=color.red,rotation_x=0, y=0, enabled = False, scale = 0.5)
 #cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
@@ -457,7 +457,6 @@ def update():
 
     if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
         player_shadow.rotation_y += player_sensitivity * time.dt
-
     #use this for taking a overview screenshot
     '''
     camera.position = (0, 100, 0)
