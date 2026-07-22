@@ -89,7 +89,7 @@ class MainMenu:
         self.player.enable()
         self.player.in_main_menu = False
         self.ui.background.disable()
-        self.ui.mouse_in_menu(False)
+        self.ui.set_mouse_game_state()
         if self.ui.name_input.text.strip() == "" or self.ui.name_input.text == self.ui.name_input.default_value:
             self.player.username = DEFAULT_NAMES[randint(0,29)]
         else:
@@ -104,7 +104,7 @@ class MainMenu:
         '''
         self.player.disable()
         self.ui.background.enable()
-        self.ui.mouse_in_menu(True)
+        self.ui.set_mouse_menu_state()
         self.player.in_main_menu = True
         if self.player.username:
             self.ui.name_input.text = self.player.username

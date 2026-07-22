@@ -99,50 +99,32 @@ class UIController:
         self.chat_field.text_color = color.black
         
         #Volume sliders
-        self.gun_volume_slider = ThinSlider(text='Gun Volume',
-                               dynamic=True,
-                               max = 100,
-                               step = 1,
-                               z = -2,
-                               x = -.25,
-                               y = 0,
-                               enabled = False,
-                               default = 50,
-                               )
+        self.gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True,
+                               max = 100, step = 1, default = 50,
+                               position = (-.25, 0, -2),
+                               enabled = False)
         self.gun_volume_slider.label.origin = (0,0)
         self.gun_volume_slider.label.position = (.25, -.05)
 
-        self.player_volume_slider = ThinSlider(text='Footstep Volume',
-                                    dynamic=True,
-                                    max = 100,
-                                    z = -2,
-                                    step = 1,
-                                    x =-.25,
-                                    y=-.2,
-                                    enabled = False,
-                                    default = 50,
-                                    )
+        self.player_volume_slider = ThinSlider(text='Footstep Volume',dynamic=True,
+                                    max = 100, step = 1, default = 50,
+                                    position = (-.25, -.2, -2),
+                                    enabled = False)
         self.player_volume_slider.label.origin = (0,0)
         self.player_volume_slider.label.position = (.25, -0.06)
 
         #Control menu buttons
         self.create_control_buttons()
-        self.reset_controls_to_default_button = Button(model = "quad",
-                                                        scale = 0.2,
-                                                        x = -0.8,
-                                                        y = 0.4,
-                                                        z = -2,
-                                                        color=color.gray,
-                                                        text = "Reset Keybinds",
-                                                        text_size = 0.8,
-                                                        text_color = color.black,
+        self.reset_controls_to_default_button = Button(model = "quad", color=color.gray,
+                                                        scale = 0.2,  position = (-.8, .4, -2),
+                                                        text = "Reset Keybinds", text_size = 0.8, text_color = color.black,
                                                         enabled = False)
         self.control_button_list.append(self.reset_controls_to_default_button)
 
         #Win / lose result screen text
         self.win_text = Text(f'{self.player.username} WINS!!!', origin = (0,0), position = (0,0,-1.1),
                               scale = 5, color=color.green,enabled = False)
-        self.lose_text = Text(f'{self.player.username} WINS!!!', origin = (0,0),position = (0,0,-1.1),
+        self.lose_text = Text(f'{self.player.username} WINS!!!', origin = (0,0), position = (0,0,-1.1),
                                scale = 5, color=color.red,enabled = False)
         self.draw_text = Text('DRAW!!!', origin = (0,0),position = (0,0,0), scale = 5, color=color.gray,enabled = False)
 
@@ -201,20 +183,29 @@ class UIController:
         self.menu_overlay.enabled = is_open
         for button in self.control_button_list:
             button.enabled = is_open
-    #Update the control buttons text after it changes
+            
     def update_control_text(self) -> None:
+        '''Update the control buttons text after it changes'''
         for control, button in self.control_buttons_dict.items():
             button.text = f'{button.name}\n{get_binding(control)}'
         #Function used to reset controls
 
-    def mouse_in_menu(self, is_open = True) -> None:
-        self.mouse.visible = is_open
-        self.mouse.locked = not is_open
-        self.player.cursor.enabled = not is_open
+    def set_mouse_menu_state(self) -> None:
+        '''Sets the mouse to the menu state'''
+        self.mouse.visible = True
+        self.mouse.locked = False
+        self.player.cursor.enabled = False
 
-    def open_leaderboard(self, is_open) -> None:
-        self.leaderboard_text.enabled = is_open
-        self.leaderboard_overlay.enabled = is_open
+    def set_mouse_game_state(self):
+        '''Sets the mouse to the game state'''
+        self.mouse.visible = False
+        self.mouse.locked = True
+        self.player.cursor.enabled = True
+
+    def toggle_leaderboard(self, enabled) -> None:
+        '''If true: shows leaderboard, if false: hides leaderboard'''
+        self.leaderboard_text.enabled = enabled
+        self.leaderboard_overlay.enabled = enabled
 
     def reset_input_field(self, input_field:InputField):
         if input_field.text == input_field.default_value:
@@ -228,5 +219,5 @@ class UIController:
         self.open_control_menu(False)
         self.open_shop_menu(False)
         self.open_volume_menu(False)
-        self.mouse_in_menu(False)
+        self.set_mouse_game_state()
         self.player.in_menu = False

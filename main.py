@@ -200,11 +200,11 @@ def input(key):
         ui_controller.chat_field.enabled = False
         #Buttons
         if player.in_menu:
-            ui_controller.mouse_in_menu(True)
+            ui_controller.set_mouse_menu_state()
             ui_controller.ui_changer(True)
             ui_controller.menu_overlay.enabled = True
         else:
-            ui_controller.mouse_in_menu(False)
+            ui_controller.set_mouse_game_state()
             ui_controller.open_volume_menu(False)
             ui_controller.open_control_menu(False)
 
@@ -227,13 +227,13 @@ def input(key):
         print("hi")
         player.in_chat = True
         audio_controller.footsteps.stop()
-        ui_controller.mouse_in_menu()
+        ui_controller.set_mouse_menu_state()
         ui_controller.chat_field.text = ""
         player.chat_opened = time.perf_counter()
         invoke(setattr, ui_controller.chat_field, "text", "", delay=0.01)        
 
     if key == get_binding(Controls.SEND_MSG) and player.in_chat:
-        ui_controller.mouse_in_menu(False)
+        ui_controller.set_mouse_game_state()
         player.in_chat = False
         ui_controller.chat_field.enabled = False
         player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}",
@@ -397,9 +397,9 @@ def update():
         return
 
     if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
-        ui_controller.open_leaderboard(True)
+        ui_controller.toggle_leaderboard(True)
     else:
-        ui_controller.open_leaderboard(False)
+        ui_controller.toggle_leaderboard(False)
 
     if held_keys[get_binding(Controls.CAMERA_LEFT)]:
         player_shadow.rotation_y -= player_sensitivity * time.dt
