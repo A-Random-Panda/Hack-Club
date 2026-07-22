@@ -1,6 +1,8 @@
 """
 This is the main file that will run the game
 """
+#pylint: disable=redefined-builtin, wildcard-import
+
 import logging
 import time
 import pathlib
@@ -24,9 +26,11 @@ from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
 from scripts.game.chat import ChatController
 from scripts.game.start_game import start_game, destory_all_cameras, end_round
+
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
-from scripts.client.rpc_functions import GameState, peer, state_to_client, game, on_connect, on_disconnect
+from scripts.client.rpc_functions import GameState, peer, state_to_client, game, on_connect, on_disconnect #pylint: disable=unused-import
+#pylint: enable=redefined-builtin, wildcard-import
 
 #Moving block for testing
 moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
