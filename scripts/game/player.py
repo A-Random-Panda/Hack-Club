@@ -50,6 +50,9 @@ class _Player(FirstPersonController):
         self.respawn_point:Vec3 = (0,2,0)
         self.rounds:int = 0
         self.lose_streak: int = 0
+        self.in_buy_phase: bool  = False
+        self.in_round: bool = False
+        self.round_timer: float = 0.0
 
 
     @override

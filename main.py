@@ -25,7 +25,7 @@ from scripts.game.shop import ShopUpgrades
 from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
 from scripts.game.chat import ChatController
-from scripts.game.start_game import start_game, destory_all_cameras, end_round
+from scripts.game.start_game import start_game, destory_all_cameras, end_round, buy_phase, start_round, end_game
 
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
@@ -288,7 +288,7 @@ def input(key):
         audio_controller.jump.play()
 
     #Open shop menu
-    if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu:
+    if key == get_binding(Controls.OPEN_SHOP) and not player.in_menu and player.in_buy_phase:
         player.in_shop = not player.in_shop
         if player.in_shop:
             ui_controller.open_shop_menu(True)
@@ -303,7 +303,7 @@ def input(key):
         koth1.location_z = -10
         koth1.objective_length = 3
         koth1.update_zone()
-        end_round(player,ui_controller)
+        start_round(player,ui_controller)
 
 def update():
     global test
@@ -323,6 +323,16 @@ def update():
     if player.in_chat:
         player.chat_opened = time.perf_counter()
     chat.chat()
+
+    if player.in_round:
+        ui_controller.round_timer_text.text = "Round ends in " + str (round((30 -(abs(time.perf_counter() - player.round_timer))),0))
+        ui_controller.round_timer_text.enabled = True
+
+    if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
+        buy_phase(player, ui_controller, True)
+        ui_controller.round_timer_text.enabled = False
+        
+        
 
     #Runs once when you die
     if test:

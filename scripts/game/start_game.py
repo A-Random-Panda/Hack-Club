@@ -1,6 +1,7 @@
 from ursina import *
 from scripts.game.settings import *
 from typing import TYPE_CHECKING
+import time
 if TYPE_CHECKING:
     from scripts.game.player import _Player
     from scripts.game.audio_controller import AudioController
@@ -53,8 +54,22 @@ def end_round(player:"_Player", ui:"UIController"):
         ui.draw_text.enabled = True
         player.cash += DRAW_BONUS * player.rounds
         invoke(setattr, ui.draw_text, "enabled", False, delay = 10)
-
     start_game(player, ui)
     ui.menu_overlay.enabled = True
     invoke(setattr, ui.menu_overlay, "enabled", False, delay = 10)
     
+def buy_phase(player:"_Player", ui:"UIController", state = True):
+    player.in_buy_phase = state
+    ui.buy_overlay.enabled = state
+    ui.buy_text.enabled = state
+    player.in_round = not state
+    
+
+def start_round(player:"_Player", ui:"UIController"):
+    player.in_round = True
+    player.round_timer = time.perf_counter()
+    buy_phase(player, ui, False)
+    
+    pass
+def end_game(player:"_Player", ui:"UIController"):
+    pass

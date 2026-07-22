@@ -20,7 +20,7 @@ class KOTH:
         self.obj_wall4 = Entity(model="cube", scale=(self.objective_length+0.5,2,0.5), color=color.yellow, collider = "box", x=self.location_x + self.objective_length/2, z=self.location_z, rotation_y=90)
         self.time_inside:float = 0.0
     def within_zone(self) -> None:
-        within_confines = (self.location_z + self.objective_length) >= self.player.z >= (self.location_z - self.objective_length/2) and (self.location_x+self.objective_length) >= self.player.x >= (self.location_x - self.objective_length/2)
+        within_confines = (self.location_z + self.objective_length/2) >= self.player.z >= (self.location_z - self.objective_length/2) and (self.location_x+self.objective_length/2) >= self.player.x >= (self.location_x - self.objective_length/2)
         if within_confines and not self.player.in_zone:
             self.player.in_zone = True
             self.time_inside = time.perf_counter()
