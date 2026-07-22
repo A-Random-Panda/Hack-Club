@@ -30,6 +30,8 @@ class UIController:
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui,
                                            model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
         
+        self.round_timer_text = Text("", position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
+
         #Main menu
         self.background = Entity(model="quad", scale = (2,2),color = color.black, enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0.2,0, -4),
@@ -87,6 +89,11 @@ class UIController:
         self.chat_field.highlight_text_color = color.black
         self.chat_field.text_color = color.black
         
+        #Buy phase
+        self.buy_text = Text("BUY PHASE",position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
+        self.buy_overlay = Entity(scale = (0.3,0.15), parent = camera.ui, origin = (0,0), position = (0,0.3), model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
+
+
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume',
                                dynamic=True,
