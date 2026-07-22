@@ -26,17 +26,20 @@ python main.py
 
 ## Build instructions
 ***Requirement: Python 3.12+***
+
+***Note: Python 3.14 only has expirimental support with Nuitka as of the time I'm writing this.***
 1. Clone the source code
 ```sh
 git clone https://github.com/A-Random-Panda/Hack-Club
 ```
 2. Run the build script depending on os:
-**Note you may need Visual Studio on the build machine**
-- Windows
+- **Windows**
+
+*Note: You may need Visual Studio on the build machine*
 ```
 .\build-windows.ps1
 ```
-- Linux
+- **Linux**
 ```
 .\build-linux.sh
 ```
