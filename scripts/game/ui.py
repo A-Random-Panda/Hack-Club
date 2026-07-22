@@ -53,7 +53,7 @@ class UIController:
         #Join friend:
         self.join_game_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                         color=color.white, text = "Join Game", text_color=color.black, enabled = False)
-        self.host_input = InputField(default_value= "localhost", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
+        self.host_input = InputField(default_value= "0.0.0.0", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
                                       color = color.white, enabled = False, text_color=color.black)
         self.host_input.highlight_color = color.white  
         self.host_input.highlight_text_color = color.black
@@ -67,6 +67,7 @@ class UIController:
         self.port_text = Text(text = "port value", position=(-0.08, -0.05), text_size = 0.4 , z = -5, color = color.white, enabled = False)
 
         #Host game
+        self.server_text = Text(position = (0, .1, -4), origin = (0, 0), enabled = False, color=color.green)
         self.start_server_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                         color=color.white, text = "Start server", text_color=color.black, enabled = False)
         self.has_window_checkbox = Checkbox(start_value=False, scale = (0.1), position = (.35, 0, -4),
@@ -190,7 +191,7 @@ class UIController:
         self.menu_overlay.enabled = is_open
         for button in self.control_button_list:
             button.enabled = is_open
-            
+
     def update_control_text(self) -> None:
         '''Update the control buttons text after it changes'''
         for control, button in self.control_buttons_dict.items():

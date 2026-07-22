@@ -74,6 +74,7 @@ class MainMenu:
                 self.ui.port_input.disable()
                 self.ui.port_text.disable()
                 self.ui.start_server_button.disable()
+                self.ui.server_text.disable()
                 self.ui.has_window_checkbox.disable()
                 self.ui.has_window_text.disable()
             case _:
@@ -150,6 +151,7 @@ class MainMenu:
         self.ui.port_input.enable()
         self.ui.port_text.enable()
         self.ui.start_server_button.enable()
+        self.ui.server_text.enable()
         self.ui.has_window_checkbox.enable()
         self.ui.has_window_text.enable()
 

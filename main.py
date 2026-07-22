@@ -7,6 +7,7 @@ import logging
 import time
 import pathlib
 import subprocess
+from socket import gethostname, gethostbyname
 from sys import executable
 from atexit import register
 
@@ -73,6 +74,7 @@ koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
+local_ip = gethostbyname(gethostname())
 
 #Sets kill_server() on exit
 @register
@@ -149,6 +151,7 @@ def start_server() -> None:
         server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state])
         pass
 
+ui_controller.server_text.text = f"If you are connecting on the same network, connect with {local_ip}!"
 ui_controller.start_server_button.on_click_setter(start_server)
 
 #Join Server
