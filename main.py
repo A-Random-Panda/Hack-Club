@@ -58,8 +58,6 @@ wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box
 
 #Setup
 player = get_player()
-player.in_main_menu = True
-player.visible = False
 player.cd = time.perf_counter()
 player.collider = MeshCollider(player, mesh = player.model)
 player.previous_x = player.x
@@ -120,10 +118,10 @@ ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
 #Main menu buttons
 ui_controller.exit_game_button.on_click = main_menu.normal_exit
-ui_controller.open_game_button.on_click = main_menu.player_main_menu
-ui_controller.host_game_button.on_click = main_menu.host_game
-ui_controller.map_selector_button.on_click = main_menu.map_selector
-ui_controller.back_to_main_button.on_click = main_menu.switch_back
+ui_controller.open_game_button.on_click = main_menu.enter_game
+ui_controller.host_game_button.on_click = main_menu.open_host_game
+ui_controller.map_selector_button.on_click = main_menu.open_map_selector
+ui_controller.back_to_main_button.on_click = main_menu.exit_subscreen
 ui_controller.name_input.on_click = Func(ui_controller.reset_input_field, ui_controller.name_input)
 
 #Host server
@@ -165,7 +163,7 @@ def join_game() -> None:
     except Exception as err:
         logger.error(err)
 
-ui_controller.join_friend_button.on_click = main_menu.join_game
+ui_controller.join_friend_button.on_click = main_menu.open_join_game
 ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
 ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
 ui_controller.join_game_button.on_click_setter(join_game)
@@ -305,7 +303,6 @@ def input(key):
 
 def update():
     global test
-
     if peer.is_running():
         #Conected to multiplayer
         peer.update()
