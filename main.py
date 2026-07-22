@@ -71,9 +71,8 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
-laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
-
+laser(player)
 #Sets kill_server() on exit
 @register
 def kill_server() -> None:
@@ -83,11 +82,27 @@ def kill_server() -> None:
         logger.info("Killing server...")
         server_process.kill()
 
+
+    '''
+    if player.current_cam == len(player.perspective_list) and player.in_round:
+        player.current_cam = 1
+        #If the camera is on the player and there is at least one camera
+    elif player.current_cam == 0 and player.in_round:
+        player.current_cam += 1
+    '''
+
 def cam_switching():
     '''Function for camera switching'''
     if player.current_cam == len(player.perspective_list):
         player.current_cam = 0
         #If the camera is on the player and there is at least one camera
+
+    if player.current_cam == len(player.perspective_list) and player.in_round:
+            player.current_cam = 1
+            #If the camera is on the player and there is at least one camera
+    elif player.current_cam == 0 and player.in_round:
+            player.current_cam += 1
+
     if player.current_cam == 0 and len(player.perspective_list) > 1: #player
         player.in_camera = False
         ui_controller.camoverlay.disable()
@@ -100,6 +115,7 @@ def cam_switching():
         player.in_camera = True
         ui_controller.camoverlay.enable()
         ui_controller.camoverlay.text= f'cam {player.current_cam}'
+
 
 #Variable declarations
 player.perspective_list = [player]
@@ -120,9 +136,10 @@ ui_controller.volume_button.on_click = ui_controller.open_volume_menu
 ui_controller.control_button.on_click = ui_controller.open_control_menu
 ui_controller.resume_button.on_click = ui_controller.close_all_uis
 
+
 #Main menu buttons
 ui_controller.exit_game_button.on_click = main_menu.normal_exit
-ui_controller.open_game_button.on_click = main_menu.enter_game
+ui_controller.open_game_button.on_click = Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching))
 ui_controller.host_game_button.on_click = main_menu.open_host_game
 ui_controller.map_selector_button.on_click = main_menu.open_map_selector
 ui_controller.back_to_main_button.on_click = main_menu.exit_subscreen
@@ -259,7 +276,7 @@ def input(key):
         print(info_key())
 
     #Reset cameras
-    if key == get_binding(Controls.RESET_CAMERAS):
+    if key == get_binding(Controls.RESET_CAMERAS) and player.in_shop:
         destory_all_cameras(player,ui_controller)
 
     #Placing camera
@@ -304,6 +321,7 @@ def input(key):
         koth1.objective_length = 3
         koth1.update_zone()
         start_round(player,ui_controller)
+        cam_switching()
 
 def update():
     global test
@@ -326,11 +344,24 @@ def update():
 
     if player.in_round:
         ui_controller.round_timer_text.text = "Round ends in " + str (round((30 -(abs(time.perf_counter() - player.round_timer))),0))
-        ui_controller.round_timer_text.enabled = True
+        ui_controller.round_timer_text.enable()
+        player.laser.enable()
+
 
     if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
         buy_phase(player, ui_controller, True)
-        ui_controller.round_timer_text.enabled = False
+        ui_controller.round_timer_text.disable()
+        player.laser.disable()
+        end_round(player,ui_controller)
+
+    if player.in_buy_phase:
+        ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((10 -(abs(time.perf_counter() - player.shop_timer))),0))
+    
+    if player.in_buy_phase and 10 < abs(time.perf_counter() - player.shop_timer):
+        start_round(player,ui_controller)
+        buy_phase(player, ui_controller, False)
+        cam_switching()
+        print(player.cash)
         
         
 
@@ -422,5 +453,4 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-
 app.run()

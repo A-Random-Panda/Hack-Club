@@ -31,6 +31,7 @@ class UIController:
                                            model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
         
         self.round_timer_text = Text("", position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
+        self.shop_timer_text = Text("", position = (0,0.2), scale = 0.5, enabled = False, origin = (0,0))
 
         #Main menu
         self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
