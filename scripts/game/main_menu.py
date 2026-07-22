@@ -70,12 +70,16 @@ class MainMenu:
                 self.ui.port_input.disable()
                 self.ui.port_text.disable()
                 self.ui.join_game_button.disable()
+                self.ui.hostname_text.disable()
             case _Screens.HOST_GAME:
                 self.ui.port_input.disable()
                 self.ui.port_text.disable()
                 self.ui.start_server_button.disable()
+                self.ui.server_text.disable()
                 self.ui.has_window_checkbox.disable()
                 self.ui.has_window_text.disable()
+                self.ui.auto_join_checkbox.disable()
+                self.ui.auto_join_text.disable()
             case _:
                 _logger.error("Current screen unknown, entering main menu")
 
@@ -89,7 +93,7 @@ class MainMenu:
         self.player.enable()
         self.player.in_main_menu = False
         self.ui.background.disable()
-        self.ui.mouse_in_menu(False)
+        self.ui.set_mouse_game_state()
         if self.ui.name_input.text.strip() == "" or self.ui.name_input.text == self.ui.name_input.default_value:
             self.player.username = DEFAULT_NAMES[randint(0,29)]
         else:
@@ -104,7 +108,7 @@ class MainMenu:
         '''
         self.player.disable()
         self.ui.background.enable()
-        self.ui.mouse_in_menu(True)
+        self.ui.set_mouse_menu_state()
         self.player.in_main_menu = True
         if self.player.username:
             self.ui.name_input.text = self.player.username
@@ -136,7 +140,7 @@ class MainMenu:
         self.ui.port_input.enable()
         self.ui.port_text.enable()
         self.ui.join_game_button.enable()
-
+        self.ui.hostname_text.enable()
         #Switches back if to default if the text box is blank
         if self.ui.port_input.text.strip() == "":
             self.ui.port_input.text = self.ui.port_input.default_value
@@ -150,9 +154,11 @@ class MainMenu:
         self.ui.port_input.enable()
         self.ui.port_text.enable()
         self.ui.start_server_button.enable()
+        self.ui.server_text.enable()
         self.ui.has_window_checkbox.enable()
         self.ui.has_window_text.enable()
-
+        self.ui.auto_join_checkbox.enable()
+        self.ui.auto_join_text.enable()
         #Switches back if to default if the text box is blank
         if self.ui.port_input.text.strip() == "":
             self.ui.port_input.text = self.ui.port_input.default_value

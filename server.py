@@ -40,7 +40,7 @@ START_TEXT:str = "The server is not on" #This should never show
 parser = argparse.ArgumentParser(description="The script to start the game server.")
 parser.add_argument("-host", "--hostname",
                     type=str,
-                    default="localhost",
+                    default="0.0.0.0",
                     help="The hostname for the server.")
 parser.add_argument("-p", "--port",
                     type=int,
@@ -140,7 +140,10 @@ def on_disconnect(connection, time_disconnected):
     On disconnect from server
     '''
     connection_id = id(connection)
-    connected_ids.remove(connection_id)
+    try:
+        connected_ids.remove(connection_id)
+    except Exception as err:
+        logging.info("%s, Someone may be trying to spam the server", err)
     if connection_id in ClientInformation.state_dict:
         del ClientInformation.state_dict[connection_id]
     logger.info("Client of id %d disconnected from the server!", connection_id)

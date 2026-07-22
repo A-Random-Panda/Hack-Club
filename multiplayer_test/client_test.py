@@ -36,7 +36,7 @@ def input(key):
     #connect
     if key == "c":
         print("attempted to connect to server")
-        peer.start("localhost", port=1939, is_host=False)
+        peer.start("192.168.56.1", port=1983, is_host=False)
     if key == "d":
         print("disconnecting from server")
         peer.disconnect_all()
