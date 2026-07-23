@@ -78,7 +78,6 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
-GameState.set_ui_controller(ui_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
 local_ip = gethostbyname(gethostname())
@@ -133,6 +132,11 @@ death_manager = DeathManager(player, audio_controller, ui_controller, player_sha
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
 update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
 main_menu = MainMenu(player,audio_controller,ui_controller)
+
+#Sets ui controller and main menu in rpc functions
+GameState.set_ui_controller(ui_controller)
+GameState.set_main_menu(main_menu)
+
 main_menu.open_main_menu()
 
 #Shop menu buttons
