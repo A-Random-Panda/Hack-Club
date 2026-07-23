@@ -21,39 +21,39 @@ class Purgatory():
         Entity(model="cube", scale=(600, 1, 400), texture='purg_floor', color=color.white, collider="box"),
 
         #Roof
-        Entity(model="cube", scale=(600, 1, 400), y=20, texture='purg_roof', color=color.white, collider="box"),
+        Entity(model="cube", scale=(600, 1, 400), y=8, texture='purg_roof', color=color.white, collider="box"),
 
         #Walls across x axis
-        Entity(model="cube", scale=(500, 20, 10), position=(0, 10, 200), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(500, 20, 10), position=(0, 10, -200), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(50, 20, 10), position=(275.0, 10, 25.0), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(50, 20, 10), position=(275.0, 10, -25.0), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(50, 20, 10), position=(-275.0, 10, 25.0), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(50, 20, 10), position=(-275.0, 10, -25.0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(500, 4, 10), position=(0, 2.0, 200), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(500, 4, 10), position=(0, 2.0, -200), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(50, 4, 10), position=(275.0, 2.0, 25.0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(50, 4, 10), position=(275.0, 2.0, -25.0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(50, 4, 10), position=(-275.0, 2.0, 25.0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(50, 4, 10), position=(-275.0, 2.0, -25.0), texture='purg_bound', color=color.white, collider="box"),
 
         #Walls across z axis
-        Entity(model="cube", scale=(10, 20, 175.0), position=(250, 10, 112.5), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 20, 175.0), position=(250, 10, -112.5), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 20, 175.0), position=(-250, 10, 112.5), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 20, 175.0), position=(-250, 10, -112.5), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 20, 50), position=(300, 10, 0), texture='purg_bound', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 20, 50), position=(-300, 10, 0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 175.0), position=(250, 2.0, 112.5), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 175.0), position=(250, 2.0, -112.5), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 175.0), position=(-250, 2.0, 112.5), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 175.0), position=(-250, 2.0, -112.5), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 50), position=(300, 2.0, 0), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 50), position=(-300, 2.0, 0), texture='purg_bound', color=color.white, collider="box"),
 
         #near spawn walls
-        Entity(model="cube", scale=(10, 10, 150), position=(200, 5, 0), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 10, 150), position=(-200, 5, 0), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 150), position=(200, 2.0, 0), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 150), position=(-200, 2.0, 0), texture='purg_wall', color=color.white, collider="box"),
 
         #Closer walls across z axis
-        Entity(model="cube", scale=(10, 10, 100), position=(150, 5, 100), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 10, 100), position=(-150, 5, 100), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 10, 100), position=(150, 5, -100), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(10, 10, 100), position=(-150, 5, -100), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 100), position=(150, 2.0, 100), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 100), position=(-150, 2.0, 100), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 100), position=(150, 2.0, -100), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(10, 4, 100), position=(-150, 2.0, -100), texture='purg_wall', color=color.white, collider="box"),
 
         #Closer walls across x axis point walls
-        Entity(model="cube", scale=(125.0, 10, 10), position=(87.5, 5, 150), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(125.0, 10, 10), position=(-87.5, 5, 150), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(125.0, 10, 10), position=(87.5, 5, -150), texture='purg_wall', color=color.white, collider="box"),
-        Entity(model="cube", scale=(125.0, 10, 10), position=(-87.5, 5, -150), texture='purg_wall', color=color.white, collider="box")
+        Entity(model="cube", scale=(125.0, 4, 10), position=(87.5, 2.0, 150), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(125.0, 4, 10), position=(-87.5, 2.0, 150), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(125.0, 4, 10), position=(87.5, 2.0, -150), texture='purg_wall', color=color.white, collider="box"),
+        Entity(model="cube", scale=(125.0, 4, 10), position=(-87.5, 2.0, -150), texture='purg_wall', color=color.white, collider="box")
         ]
 
     @classmethod
