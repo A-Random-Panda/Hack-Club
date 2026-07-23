@@ -6,7 +6,6 @@ from scripts.game.controls import *
 
 
 _player_properties:dict[str,Any] = {
-        "collider": "box",
         "position":(0.5,1,0.5),
         "speed":8,
         "jump_height":4,

@@ -43,6 +43,8 @@ test = False
 logging.basicConfig(level=logging.DEBUG, format="(%(asctime)s) %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
+application.asset_folder = Path(__file__).parent / "assets"
+
 #Create app
 app = Ursina(icon="assets/textures/ursina.ico")
 
