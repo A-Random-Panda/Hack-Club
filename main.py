@@ -47,24 +47,31 @@ logger = logging.getLogger(__name__)
 app = Ursina(icon="assets/textures/ursina.ico")
 
 #Objects on the map
-grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
-yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
+#grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
+#yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="Better_Tank", color=color.red,rotation_x=0, y=0, enabled = False, scale = 0.5)
 #cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
 
 #Walls
-wall1 = Entity(model="cube", scale=(50,12,1), color=color.red, collider = "box", x=0, z=-25)
-wall2 = Entity(model="cube", scale=(50,12,1), color=color.green, collider = "box", x=0, z=25)
-wall3 = Entity(model="cube", scale=(50,12,1), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
-wall4 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
-wall5 = Entity(model="cube", scale=(50,12,1), color=color.black, collider = "box", x=14, z=0, rotation_y=90)
+wall1 = Entity(model="cube", scale=(50,12,0.3), color=color.red, collider = "box", x=0, z=-25)
+wall2 = Entity(model="cube", scale=(50,12,0.3), color=color.green, collider = "box", x=0, z=25)
+wall3 = Entity(model="cube", scale=(50,12,0.3), color=color.blue, collider = "box", x=-25, z=0, rotation_y=90)
+wall4 = Entity(model="cube", scale=(50,12,0.3), color=color.black, collider = "box", x=25, z=0, rotation_y=90)
+wall10 = Entity(model="cube", scale=(50,12,0.3), color=color.red, collider = "box", x=0, z=-26)
+wall20 = Entity(model="cube", scale=(50,12,0.3), color=color.green, collider = "box", x=0, z=26)
+wall30 = Entity(model="cube", scale=(50,12,0.3), color=color.blue, collider = "box", x=-26, z=0, rotation_y=90)
+wall40 = Entity(model="cube", scale=(50,12,0.3), color=color.black, collider = "box", x=26, z=0, rotation_y=90)
+
+
+
 
 #Setup
 player = get_player()
+player.collider = "box"
 player.cd = time.perf_counter()
-player.collider = MeshCollider(player, mesh = player.model)
+player_shadow.collider = MeshCollider(player_shadow, mesh = player_shadow.model)
 player.previous_x = player.x
 player.previous_y = player.y
 ui_controller = UIController(player,mouse)
@@ -74,7 +81,6 @@ koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
-laser(player)
 local_ip = gethostbyname(gethostname())
 
 #Sets kill_server() on exit
@@ -447,7 +453,6 @@ def update():
     minimap_icons.in_sight(moving_block, camera)
     '''
     #moving block for testing
-    
     if enable_moving_block:
         global speed123
         global multi

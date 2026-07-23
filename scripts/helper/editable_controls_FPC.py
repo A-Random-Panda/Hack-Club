@@ -12,6 +12,8 @@ class FirstPersonController(Entity):
         self.camera_pivot = Entity(parent=self, y=self.height)
         self.previous_x = self.x
         self.previous_y = self.y
+        self.floor_ = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
+        self.floor_1 = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 
         camera.parent = self.camera_pivot
         camera.position = Vec3.zero
@@ -65,7 +67,6 @@ class FirstPersonController(Entity):
             # if not on ground and not on way up in jump, fall
             self.y -= min(self.air_time, ray.distance-.05) * time.dt * 100
             self.air_time += time.dt * .25 * self.gravity
-    
     def mouse_movement(self):
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
         self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
@@ -76,22 +77,19 @@ class FirstPersonController(Entity):
             self.forward * (held_keys[get_binding(Controls.MOVE_FORWARDS)] - held_keys[get_binding(Controls.MOVE_BACKWARDS)])
             + self.right * (held_keys[get_binding(Controls.MOVE_RIGHT)] - held_keys[get_binding(Controls.MOVE_LEFT)])
             ).normalized()
+        move_amount = self.direction * time.dt * self.speed
 
-        feet_ray = raycast(self.position+Vec3(0,0.5,0), self.direction, traverse_target=self.traverse_target, ignore=self.ignore_list, distance=.5, debug=False)
-        head_ray = raycast(self.position+Vec3(0,self.height-.1,0), self.direction, traverse_target=self.traverse_target, ignore=self.ignore_list, distance=.5, debug=False)
-        if not feet_ray.hit and not head_ray.hit:
-            move_amount = self.direction * time.dt * self.speed
+        old_pos = Vec3(self.position)
 
-            if raycast(self.position+Vec3(-.0,1,0), Vec3(1,0,0), distance=.5, traverse_target=self.traverse_target, ignore=self.ignore_list).hit:
-                move_amount[0] = min(move_amount[0], 0)
-            if raycast(self.position+Vec3(-.0,1,0), Vec3(-1,0,0), distance=.5, traverse_target=self.traverse_target, ignore=self.ignore_list).hit:
-                move_amount[0] = max(move_amount[0], 0)
-            if raycast(self.position+Vec3(-.0,1,0), Vec3(0,0,1), distance=.5, traverse_target=self.traverse_target, ignore=self.ignore_list).hit:
-                move_amount[2] = min(move_amount[2], 0)
-            if raycast(self.position+Vec3(-.0,1,0), Vec3(0,0,-1), distance=.5, traverse_target=self.traverse_target, ignore=self.ignore_list).hit:
-                move_amount[2] = max(move_amount[2], 0)
-            self.position += move_amount
+        self.x += move_amount.x
+        if self.intersects(ignore=(self.floor_,self.floor_1)).hit:
+            self.x = old_pos.x
 
+        self.z += move_amount.z
+        if self.intersects(ignore=(self.floor_,self.floor_1)).hit:
+            self.z = old_pos.z
+
+        
     def input(self, key):
         if key == get_binding(Controls.JUMP):
             self.jump()

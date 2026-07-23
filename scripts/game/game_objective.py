@@ -31,7 +31,7 @@ class KOTH:
             if 1.5 < abs(time.perf_counter()-self.time_inside):
                 self.time_inside = time.perf_counter()
                 self.player.points += 10
-                self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username}"
+                self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
                 self.audio.success.play()
                 print(self.player.points)
     def update_zone(self):

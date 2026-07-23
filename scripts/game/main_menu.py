@@ -99,7 +99,7 @@ class MainMenu:
         self.ui.background.disable()
         self.ui.set_mouse_game_state()
         self.ui.acquire_and_set_name()
-        self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username}"
+        self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
 
     def _disable_player(self) -> None:
         '''
