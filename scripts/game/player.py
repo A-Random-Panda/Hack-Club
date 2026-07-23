@@ -68,6 +68,7 @@ class _Player(FirstPersonController):
             if self.in_menu or self.in_shop: 
                 super().movement()
 
+
             
             elif self.in_camera:
                 cam = self.perspective_list[self.current_cam]
@@ -76,6 +77,7 @@ class _Player(FirstPersonController):
                 cam.camera_pivot.rotation_x= clamp(cam.camera_pivot.rotation_x, -20, 10)
                 cam.rotation_y= clamp(cam.rotation_y, cam.original_rotation_y-40, cam.original_rotation_y+40)
                 super().movement()
+
             
             else:
                 super().movement()
