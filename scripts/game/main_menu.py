@@ -98,7 +98,7 @@ class MainMenu:
             self.player.username = DEFAULT_NAMES[randint(0,29)]
         else:
             self.player.username = self.ui.name_input.text
-        self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username}"
+        self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
 
     def _disable_player(self) -> None:
         '''
