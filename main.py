@@ -82,7 +82,6 @@ chat = ChatController(player,ui_controller,audio_controller)
 GameState.set_ui_controller(ui_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
-laser(player)
 local_ip = gethostbyname(gethostname())
 
 #Sets kill_server() on exit
