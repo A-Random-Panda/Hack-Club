@@ -3,7 +3,7 @@
 import math
 import logging
 from typing import override
-from scripts.helper.editable_controls_FPC import FirstPersonController as _old_first_person_controller
+#from scripts.helper.editable_controls_FPC import FirstPersonController as _old_first_person_controller
 
 _tolarance = 0.00001
 
@@ -11,17 +11,16 @@ _tolarance = 0.00001
 logger = logging.getLogger(__name__)
 
 #Harry sucks so I have to do this
+'''
 class FirstPersonController(_old_first_person_controller):
-    '''
     Basically the update and physics update aren't in the same function
     so I need to do this
-    '''
     @override
     def update(self):
         super().update()
         super().movement()
         super().mouse_movement()
-
+'''
 def game_round(value:int|float, face) -> int:
     '''
     Rounding but it decides to round up or down depending on the face (1, 0, -1)
