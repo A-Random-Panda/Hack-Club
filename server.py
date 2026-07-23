@@ -72,7 +72,6 @@ if WINDOW_TYPE == "onscreen":
     window.collider_counter.disable()
 
 #Declare server variables
-in_game:bool  = False
 server_peer:RPCPeer = RPCPeer()
 connected_ids:list[int] = []
 
@@ -100,6 +99,8 @@ a_text:Text = Text(text='', position = (-.5*1.778, -.5), origin=(-0.5, -0.5))
 class ClientInformation():
     '''Information from the client'''
     state_dict = {}
+    name_dict = {}
+    in_game:bool  = False
 
 @register
 def on_exit() -> None:
@@ -126,7 +127,7 @@ def on_connect(connection, time_connected):
     On connect to server
     '''
     #Check how many people are already connected
-    if server_peer.connection_count() > 1:
+    if server_peer.connection_count() > 2:
         connection.disconnect()
         logger.info("Client attempted to join a full server")
     else:
@@ -151,13 +152,19 @@ def on_disconnect(connection, time_disconnected):
 @rpc(server_peer)
 def start_game(connection, time_received):
     '''Function to start the game'''
+    ClientInformation.in_game = True
     if server_peer.connection_count() == 2:
         for i in server_peer.get_connections():
             try:
-                server_peer.ingame(i, True)
+                server_peer.game_started_state(i, True)
             except Exception as err:
                 logger.error("Caught exception %s, disconnecting peer", err)
                 i.disconnect()
+
+@rpc(server_peer)
+def name_to_server(connection, time_received, name:str): 
+    '''Sets the name to the one sent by the client'''
+    ClientInformation.name_dict[id(connection)] = name
 
 def start_server(hostname, port):
     '''The function that starts the server'''
@@ -171,6 +178,15 @@ def update():
         status_text.text = START_TEXT
     else:
         #Only runs if the server is running
+        if ClientInformation.in_game:
+            for i in server_peer.get_connections():
+                for k,v in ClientInformation.state_dict.items():
+                    if k != id(i):
+                        server_peer.state_to_client(i, v)
+        else:
+            for i in server_peer.get_connections():
+                server_peer.names_to_client(i, "\n".join(list(ClientInformation.name_dict.values())))
+        
         #This is where server side verification happens... if it ever gets implemented
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":

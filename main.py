@@ -30,7 +30,7 @@ from scripts.game.start_game import start_game, destory_all_cameras, end_round, 
 
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
-from scripts.client.rpc_functions import GameState, peer, state_to_client, game, on_connect, on_disconnect #pylint: disable=unused-import
+from scripts.client.rpc_functions import * #pylint: disable=unused-import
 #pylint: enable=redefined-builtin, wildcard-import
 
 #Moving block for testing
@@ -79,6 +79,8 @@ audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
+GameState.set_ui_controller(ui_controller)
+laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
 laser(player)
 local_ip = gethostbyname(gethostname())
@@ -87,7 +89,6 @@ local_ip = gethostbyname(gethostname())
 @register
 def kill_server() -> None:
     '''Kills the server process if it's open'''
-    peer.disconnect_all()
     if server_process is not None:
         logger.info("Killing server...")
         server_process.kill()
@@ -137,29 +138,32 @@ main_menu = MainMenu(player,audio_controller,ui_controller)
 main_menu.open_main_menu()
 
 #Shop menu buttons
-ui_controller.upgrade_cams_button.on_click = shop_upgrades.cam_upgrade
-ui_controller.faster_reload_button.on_click = shop_upgrades.reload_upgrade
+ui_controller.upgrade_cams_button.on_click_setter(shop_upgrades.cam_upgrade)
+ui_controller.faster_reload_button.on_click_setter(shop_upgrades.reload_upgrade)
 
 #Escape menu buttons
-ui_controller.quit_button.on_click = main_menu.open_main_menu
-ui_controller.volume_button.on_click = ui_controller.open_volume_menu
-ui_controller.control_button.on_click = ui_controller.open_control_menu
-ui_controller.resume_button.on_click = ui_controller.close_all_uis
-
+ui_controller.quit_button.on_click_setter(main_menu.open_main_menu)
+ui_controller.volume_button.on_click_setter(ui_controller.open_volume_menu)
+ui_controller.control_button.on_click_setter(ui_controller.open_control_menu)
+ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
 
 #Main menu buttons
-ui_controller.exit_game_button.on_click = main_menu.normal_exit
-ui_controller.open_game_button.on_click = Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching))
-ui_controller.host_game_button.on_click = main_menu.open_host_game
-ui_controller.map_selector_button.on_click = main_menu.open_map_selector
-ui_controller.back_to_main_button.on_click = main_menu.exit_subscreen
-ui_controller.name_input.on_click = Func(ui_controller.reset_input_field, ui_controller.name_input)
+ui_controller.exit_game_button.on_click_setter(main_menu.normal_exit)
+ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching)))
+ui_controller.host_game_button.on_click_setter(main_menu.open_host_game)
+ui_controller.map_selector_button.on_click_setter(main_menu.open_map_selector)
+ui_controller.lobby_botton.on_click_setter(main_menu.open_lobby)
+ui_controller.back_to_main_button.on_click_setter(main_menu.exit_subscreen)
+ui_controller.name_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.name_input))
 
 #Host server
 def start_server() -> None:
     '''Start a local server'''
     #Removing the global would make the code more complicated
     global server_process #pylint: disable=global-statement
+    if server_process is not None:
+        #Should probably put a text box and kill the server but who cares
+        return
     port = ui_controller.port_input.text
     window_state_box_checked = ui_controller.has_window_checkbox.value
     if window_state_box_checked:
@@ -170,18 +174,19 @@ def start_server() -> None:
         #Code if compiled with nuitka
         #Assume multidist was used
         path = pathlib.Path(__file__).resolve()
-        server_process = subprocess.Popen([path, "server", "--port", port, window_state])
+        server_process = subprocess.Popen([path, "server", "--port", port, window_state],
+                                           stdout=subprocess.DEVNULL,
+                                           stderr=subprocess.DEVNULL
+                                           )
     else:
         #Ran from source
-        server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state])
+        server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state],
+                                           stdout=subprocess.DEVNULL,
+                                           stderr=subprocess.DEVNULL
+                                           )
     #Auto connect if box is checked
     if ui_controller.auto_join_checkbox.value:
         peer.start("localhost", port, is_host=False)
-        if not peer.is_running():
-            logger.info("Server connection unsucessful")
-        else:
-            logger.info("Server sucessfully joined")
-
 ui_controller.server_text.text = f"If you are connecting with someone on the same network, connect with hostname {local_ip}!"
 ui_controller.start_server_button.on_click_setter(start_server)
 
@@ -194,20 +199,26 @@ def join_game() -> None:
     try:
         logger.info("Attempted to join server")
         peer.start(host, port, is_host=False)
-        if not peer.is_running():
-            logger.info("Server connection unsucessful")
-        else:
-            logger.info("Server sucessfully joined")
     except Exception as err:
         logger.error(err)
 
-ui_controller.join_friend_button.on_click = main_menu.open_join_game
-ui_controller.port_input.on_click = Func(ui_controller.reset_input_field, ui_controller.port_input)
-ui_controller.host_input.on_click = Func(ui_controller.reset_input_field, ui_controller.host_input)
+ui_controller.join_friend_button.on_click_setter(main_menu.open_join_game)
+ui_controller.port_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.port_input))
+ui_controller.host_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.host_input))
 ui_controller.join_game_button.on_click_setter(join_game)
 
+#Lobby
+def start_multiplayer_game() -> None:
+    '''Tells the server to start the game'''
+    try:
+        peer.start_game(peer.get_connections()[0])
+    except Exception as err:
+        logger.error("%s when trying to start game", err)
+
+ui_controller.start_game_button.on_click_setter(start_multiplayer_game)
+
 #Control change buttons
-ui_controller.reset_controls_to_default_button.on_click = ui_controller.reset_and_update_controls
+ui_controller.reset_controls_to_default_button.on_click_setter(ui_controller.reset_and_update_controls)
 
 #Functions to change the volume
 def gun_change_volume():
@@ -225,6 +236,7 @@ def input(key):
     '''Input handler'''
     global test
      #Escape menu
+
     if player.in_main_menu:
         return
 
@@ -329,7 +341,6 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
-
     if key ==  "t":
         print(send_info(player))
         print(parse_state(send_info(player)))
@@ -347,7 +358,10 @@ def update():
         peer.update()
         if GameState.game_started:
             #In Game
-            pass
+            try:
+                peer.state_to_server(peer.get_connections()[0], send_info(player))
+            except Exception as err:
+                logger.error("%s: Error while trying to send state to server", err)
         else:
             #Before game start
             pass

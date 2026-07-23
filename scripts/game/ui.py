@@ -1,10 +1,12 @@
 from typing import TYPE_CHECKING
+from random import randint
+
 if TYPE_CHECKING:
     from scripts.game.player import _Player
 from ursina import *
 from scripts.game.controls import *
 from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
-
+from scripts.game.settings import DEFAULT_NAMES
 
 
 class UIController:
@@ -47,6 +49,8 @@ class UIController:
                                       scale=(0.3, 0.05), z = -5, color = color.white, enabled = False, text_color=color.black)
         self.exit_game_button = Button(model = "quad", scale = (0.6,0.075), position = (0,-0.4, -4),
                                           color=color.white, text = "Exit game", text_color=color.black)
+        self.lobby_botton = Button(model = "quad", scale = (0.2), position = (-1.778*.5,-0.5, -4), origin=(-.5, -.5),
+                                          color=color.white, text = "Lobby", text_color=color.black)
         self.name_input.highlight_color = color.white
         self.name_input.highlight_text_color = color.black
         self.name_input.text_color = color.black
@@ -85,6 +89,11 @@ class UIController:
                                        color=color.red, enabled = False)
         self.back_to_main_button = Button(model = "quad", scale = 0.2, position = (-0.8,-0.4,-4),
                                           text = "Back to \n main menu", color=color.orange, enabled = False)
+
+        #Lobby
+        self.lobby_text = Text(text = "Connected_Users:", origin = (0, 0.5), position = (0, .5, -4), enabled = False)
+        self.start_game_button = Button (model = "quad", scale = (0.6,0.075), position = (0, -.5, -4), origin=(0, -.5),
+                                          color=color.white, text = "Start game", text_color=color.black, enabled = False)
 
         #Buttons Inside the shop
         self.upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2,
@@ -235,3 +244,11 @@ class UIController:
         self.open_volume_menu(False)
         self.set_mouse_game_state()
         self.player.in_menu = False
+
+    def acquire_and_set_name(self) -> str:
+        '''Gets the player name from the input, sets it to the username, and returns it'''
+        if not self.name_input.text.strip() or self.name_input.text == self.name_input.default_value:
+            self.player.username = DEFAULT_NAMES[randint(0,29)]
+        else:
+            self.player.username = self.name_input.text
+        return self.player.username

@@ -1,12 +1,10 @@
 from __future__ import annotations
 from enum import Enum, auto
 from typing import TYPE_CHECKING
-from random import randint
 from sys import exit
 from logging import getLogger
 
 from ursina import *
-from scripts.game.settings import DEFAULT_NAMES
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -22,6 +20,7 @@ class _Screens(Enum):
     MAP_SELECTOR = auto()
     JOIN_GAME = auto()
     HOST_GAME = auto()
+    LOBBY = auto()
 
 class MainMenu:
     def __init__(self, player:_Player, audio: AudioController, ui: UIController):
@@ -38,6 +37,7 @@ class MainMenu:
         self.ui.name_input.enable()
         self.ui.exit_game_button.enable()
         self.ui.join_friend_button.enable()
+        self.ui.lobby_botton.enable()
 
     def _disable_main_menu_elements(self):
         '''Disables all elements in the main menu'''
@@ -47,6 +47,7 @@ class MainMenu:
         self.ui.name_input.disable()
         self.ui.exit_game_button.disable()
         self.ui.join_friend_button.disable()
+        self.ui.lobby_botton.disable()
 
     def _enter_subscreen(self):
         '''Disables all the elements shown on the main menu, and enables the back button'''
@@ -80,6 +81,9 @@ class MainMenu:
                 self.ui.has_window_text.disable()
                 self.ui.auto_join_checkbox.disable()
                 self.ui.auto_join_text.disable()
+            case _Screens.LOBBY:
+                self.ui.start_game_button.disable()
+                self.ui.lobby_text.disable()
             case _:
                 _logger.error("Current screen unknown, entering main menu")
 
@@ -94,10 +98,7 @@ class MainMenu:
         self.player.in_main_menu = False
         self.ui.background.disable()
         self.ui.set_mouse_game_state()
-        if self.ui.name_input.text.strip() == "" or self.ui.name_input.text == self.ui.name_input.default_value:
-            self.player.username = DEFAULT_NAMES[randint(0,29)]
-        else:
-            self.player.username = self.ui.name_input.text
+        self.ui.acquire_and_set_name()
         self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
 
     def _disable_player(self) -> None:
@@ -162,6 +163,13 @@ class MainMenu:
         #Switches back if to default if the text box is blank
         if self.ui.port_input.text.strip() == "":
             self.ui.port_input.text = self.ui.port_input.default_value
+
+    def open_lobby(self):
+        '''Opens the host game menu'''
+        self._enter_subscreen()
+        self.current_screen = _Screens.LOBBY
+        self.ui.start_game_button.enable()
+        self.ui.lobby_text.enable()
 
     def normal_exit(self):
         '''Exit with 0 host code'''
