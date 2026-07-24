@@ -120,5 +120,5 @@ Entity(model="cube", scale=(12.5, 10, 1), position=(8.75, 5, -15), texture='purg
 Entity(model="cube", scale=(12.5, 10, 1), position=(-8.75, 5, -15), texture='purg_wall', color=color.white, collider="box")'''
     #print(scaler(map_string, 2))
     f = open("output.txt", "w")
-    f.write(change_height(scaler(map_string, 10), 4))
+    f.write(scaler(map_string, 10))
     f.close()
