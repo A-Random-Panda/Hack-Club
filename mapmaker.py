@@ -34,6 +34,7 @@ line1 = Entity(model=Mesh(mode="line",vertices=((50,0,50),(50,100,50)), thicknes
 line2 = Entity(model=Mesh(mode="line",vertices=((-50,0,50),(-50,100,50)), thickness=3))
 line3 = Entity(model=Mesh(mode="line",vertices=((50,0,-50),(50,100,-50)), thickness=3))
 line4 = Entity(model=Mesh(mode="line",vertices=((-50,0,-50),(-50,100,-50)), thickness=3))
+wall1 = Entity(model="cube", scale=(50,12,0.3), color=color.red, collider = "box", x=0, z=-25)
 
 player_line.add_to_scene_entities = False
 player_shadow.add_to_scene_entities = False
