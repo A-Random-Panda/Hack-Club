@@ -34,6 +34,7 @@ class UIController:
         
         self.round_timer_text = Text("", position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
         self.shop_timer_text = Text("", position = (0,0.2), scale = 0.5, enabled = False, origin = (0,0))
+        self.kill_png = Entity(model = "quad", scale = 0.15, color = color.white, texture = "kill", enabled = False, parent = camera.ui, origin = (0,0), position = (0,.4))
 
         #Main menu
         self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)

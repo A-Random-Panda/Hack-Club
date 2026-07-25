@@ -50,6 +50,7 @@ app = Ursina(icon="assets/textures/ursina.ico")
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="Better_Tank", color=color.red,rotation_x=0, y=0, enabled = False, scale = 0.5)
+player_enemy = Entity(model="Better_Tank", color=color.blue,rotation_x=0, y=0, enabled = False, scale = 0.5)
 #cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
@@ -63,6 +64,7 @@ wall10 = Entity(model="cube", scale=(50,12,0.3), color=color.red, collider = "bo
 wall20 = Entity(model="cube", scale=(50,12,0.3), color=color.green, collider = "box", x=0, z=26)
 wall30 = Entity(model="cube", scale=(50,12,0.3), color=color.blue, collider = "box", x=-26, z=0, rotation_y=90)
 wall40 = Entity(model="cube", scale=(50,12,0.3), color=color.black, collider = "box", x=26, z=0, rotation_y=90)
+
 
 
 
@@ -90,14 +92,6 @@ def kill_server() -> None:
         logger.info("Killing server...")
         server_process.kill()
 
-
-    '''
-    if player.current_cam == len(player.perspective_list) and player.in_round:
-        player.current_cam = 1
-        #If the camera is on the player and there is at least one camera
-    elif player.current_cam == 0 and player.in_round:
-        player.current_cam += 1
-    '''
 
 def cam_switching():
     '''Function for camera switching'''
@@ -272,7 +266,6 @@ def input(key):
     if key == get_binding(Controls.OPEN_CHAT) and not player.in_chat:
         ui_controller.chat_field.enabled = True
         print(vars(ui_controller.chat_field))
-        print("hi")
         player.in_chat = True
         audio_controller.footsteps.stop()
         ui_controller.set_mouse_menu_state()
@@ -359,6 +352,21 @@ def update():
         #Conected to multiplayer
         peer.update()
         if GameState.game_started:
+            #Multiplayer code
+            
+            
+            #player_enemy.position = 
+
+            if player.bullet_trail is not None:
+                if player.bullet_trail.intersects(player_enemy):
+                    audio_controller.hit_conf.play()
+                    player.cash += 200
+                    player.shot_someone = True
+                    ui_controller.kill_png.enable()
+                    invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
+                
+
+
             #In Game
             try:
                 peer.state_to_server(peer.get_connections()[0], send_info(player))

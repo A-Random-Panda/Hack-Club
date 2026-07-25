@@ -15,7 +15,8 @@ class AudioController():
         self.success = Audio("success",autoplay = False, volume = PLAYER_VOLUME, spatial = True)
         self.footsteps = Audio("footsteps", autoplay = False, volume = PLAYER_VOLUME, spatial = True,parent = player)
         self.jump = Audio("jump", autoplay = False, volume = PLAYER_VOLUME, spatial = True, parent = player)
-        self.audiolist = [self.shooting, self.reload,self.death, self.success, self.footsteps, self.jump]
+        self.hit_conf = Audio("kill_conf", autoplay = False, volume = PLAYER_VOLUME)
+        self.audiolist = [self.shooting, self.reload,self.death, self.success, self.footsteps, self.jump, self.hit_conf]
 
     def stop_audio(self) -> None:
         for audio in self.audiolist:
@@ -24,9 +25,11 @@ class AudioController():
     def set_gun_volume(self, value:float) -> None:
         self.shooting.volume = value/100
         self.reload.volume = value/60
+        self.hit_conf.volume = value/50
 
     def set_player_volume(self, value:float) -> None:
         self.death.volume = value/50
         self.success.volume = value/50
         self.footsteps.volume = value/50
         self.jump.volume = value/50
+

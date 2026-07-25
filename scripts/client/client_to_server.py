@@ -33,7 +33,7 @@ def info_key():
     return  ("amount of player cams",
                "player cams position: list[vec3]", 
                "player cams rotation: list[vec3]", 
-               "shooting bullet: bool"
+               "shooting bullet: bool",
                "reload time: float",
                "player dead: bool",
                "player world position: vec3",
