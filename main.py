@@ -366,8 +366,9 @@ def update():
                     ui_controller.kill_png.enable()
                     invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
 
-            state = parse_state(GameState.state_string)
-            print(state)
+            if GameState.state_string:
+                state = parse_state(GameState.state_string)
+                player_enemy.world_position_setter(state["world_pos"])
                 
 
 
