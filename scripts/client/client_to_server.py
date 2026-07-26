@@ -19,8 +19,8 @@ def send_info(player:_Player):
 {player.points}
 {player.in_zone}
 {player.shot_someone}
-{player.bullet_trail.rotation}
-{player.bullet_trail.scale}
+{tuple(player.bullet_trail.rotation)}
+{tuple(player.bullet_trail.scale)}
 '''
 
     return f'''{len(player.perspective_list)}
@@ -36,7 +36,6 @@ def send_info(player:_Player):
 {player.shot_someone}
 {None}
 {None}
-
 '''
 
 def info_key():

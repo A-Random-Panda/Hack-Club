@@ -50,9 +50,12 @@ def parse_state(string:str):
         index +=1
         #In zone
         return_dict["in_zone"] = bool(state_list[index])
-
-
-
+        index += 1
+        #Bullet trail rotatation
+        return_dict["bullet_rotation"] = literal_eval(state_list[index]) #Could be None
+        index += 1
+        #Bullet scale length
+        return_dict["bullet_scale"] = literal_eval(state_list[index]) #Could be None
 
 
     except IndexError as err:
