@@ -26,7 +26,7 @@ from scripts.game.shop import ShopUpgrades
 from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
 from scripts.game.chat import ChatController
-from scripts.game.start_game import start_game, destory_all_cameras, end_round, buy_phase, start_round, end_game
+from scripts.game.start_game import reset_values, destory_all_cameras, end_round, buy_phase, start_round, end_game
 
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
@@ -230,6 +230,19 @@ def player_change_volume():
 ui_controller.gun_volume_slider.on_value_changed = gun_change_volume
 ui_controller.player_volume_slider.on_value_changed = player_change_volume
 
+#Starter Cam
+first_cam = Entity(model = 'cypher_cam',
+                                position = (5,3,5),
+                                texture = "cam",
+                                rotation = (180,90,180))
+cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
+                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+player.cam_icon_list.append(cam_icon)
+first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
+first_cam.original_rotation_y = first_cam.rotation_y
+first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
+player.perspective_list.append(first_cam)
+
 #Detect key inputs
 def input(key):
     '''Input handler'''
@@ -303,8 +316,19 @@ def input(key):
         print(info_key())
 
     #Reset cameras
-    if key == get_binding(Controls.RESET_CAMERAS) and player.in_shop:
+    if key == get_binding(Controls.RESET_CAMERAS) and player.in_buy_phase:
         destory_all_cameras(player,ui_controller)
+        first_cam = Entity(model = 'cypher_cam',
+                                position = (5,3,5),
+                                texture = "cam",
+                                rotation = (180,90,180))
+        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
+                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+        player.cam_icon_list.append(cam_icon)
+        first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
+        first_cam.original_rotation_y = first_cam.rotation_y
+        first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
+        player.perspective_list.append(first_cam)
 
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA) and not player.in_menu and not player.in_shop and not len(player.perspective_list) > player.max_cams:
@@ -357,6 +381,9 @@ def update():
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
+                if not player.game_begin:
+                    start_round(player,ui_controller)
+                    player.game_begin = True
                 state = parse_state(GameState.state_string)
                 player_enemy.world_position_setter(state["world_pos"])
                 if player.bullet_trail is not None:
@@ -365,8 +392,46 @@ def update():
                         player.cash += 200
                         player.shot_someone = True
                         ui_controller.kill_png.enable()
-                        invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
+                        print('why')
+                        invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
+    
+                if player.in_round:
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((30 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.enable()
+                    player.laser.enable()
 
+
+                if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
+                    buy_phase(player, ui_controller, True)
+                    ui_controller.round_timer_text.disable()
+                    player.laser.disable()
+                    end_round(player,ui_controller, state["points"])
+
+                if player.in_buy_phase:
+                    ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((10 -(abs(time.perf_counter() - player.shop_timer))),0))
+    
+                if player.in_buy_phase and 10 < abs(time.perf_counter() - player.shop_timer):
+                    start_round(player,ui_controller)
+                    buy_phase(player, ui_controller, False)
+                    cam_switching()
+
+                if state["shot_someone"]:
+                    death_manager.kill()
+                if state["is_dead"]:
+                    player_enemy.disable()
+                    player.shot_someone = False
+                if not state["is_dead"]:
+                    player_enemy.enable()
+                #Continuiesly runs when you are dead
+                if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
+                    death_manager.while_dead()
+                    #Runs once when you respawn
+                elif player.dead:
+                    death_manager.respawned()
+                print(f"state shot_someone, {state["shot_someone"]}\n state is dead, {state["is_dead"]} \n, {player.dead}")
+
+
+                
             #In Game
             try:
                 peer.state_to_server(peer.get_connections()[0], send_info(player))
@@ -383,39 +448,6 @@ def update():
         player.chat_opened = time.perf_counter()
     chat.chat()
 
-    if player.in_round:
-        ui_controller.round_timer_text.text = "Round ends in " + str (round((30 -(abs(time.perf_counter() - player.round_timer))),0))
-        ui_controller.round_timer_text.enable()
-        player.laser.enable()
-
-
-    if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
-        buy_phase(player, ui_controller, True)
-        ui_controller.round_timer_text.disable()
-        player.laser.disable()
-        end_round(player,ui_controller)
-
-    if player.in_buy_phase:
-        ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((10 -(abs(time.perf_counter() - player.shop_timer))),0))
-    
-    if player.in_buy_phase and 10 < abs(time.perf_counter() - player.shop_timer):
-        start_round(player,ui_controller)
-        buy_phase(player, ui_controller, False)
-        cam_switching()
-        print(player.cash)
-        
-        
-
-    #Runs once when you die
-    if test:
-        test = False
-        death_manager.kill()
-    #Continuiesly runs when you are dead
-    if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
-        death_manager.while_dead()
-    #Runs once when you respawn
-    elif player.dead:
-        death_manager.respawned()
     koth1.within_zone()
     koth1.gain_points()
 
@@ -453,12 +485,7 @@ def update():
     #some of this code is broken
     update_player_icon.minimap_update()
     minimap_icons.player_icon.rotation_z = player.rotation_y + 90
-    '''
-    minimap_icons.vision_cone_icon1.rotation_z = minimap_icons.player_icon.rotation_z - 135
-    minimap_icons.vision_cone_icon.rotation_z = minimap_icons.player_icon.rotation_z - 55
-    minimap_icons.vision_cone() 
-    minimap_icons.in_sight(moving_block, camera)
-    '''
+
     #moving block for testing
     if enable_moving_block:
         global speed123
@@ -492,4 +519,5 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
+    print(player.dead,)
 app.run()

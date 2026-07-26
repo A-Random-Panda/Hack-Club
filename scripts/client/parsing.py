@@ -31,13 +31,13 @@ def parse_state(string:str):
             index+=1
         return_dict["rotations"] = rotation_list
         #Whether player is shooting
-        return_dict["is_shooting"] = bool(state_list[index])
+        return_dict["is_shooting"] = literal_eval(state_list[index])
         index+=1
         #reload time
         return_dict["reload_time"] = float(state_list[index])
         index+=1
         #Whether it's dead
-        return_dict["is_dead"] = bool(state_list[index])
+        return_dict["is_dead"] = literal_eval(state_list[index])
         index+=1
         #World position
         return_dict["world_pos"] = literal_eval(state_list[index])
@@ -49,7 +49,10 @@ def parse_state(string:str):
         return_dict["points"] = int(state_list[index])
         index +=1
         #In zone
-        return_dict["in_zone"] = bool(state_list[index])
+        return_dict["in_zone"] = literal_eval(state_list[index])
+        index +=1
+        #shot someone
+        return_dict["shot_someone"] = literal_eval(state_list[index])
         index += 1
         #Bullet trail rotatation
         return_dict["bullet_rotation"] = literal_eval(state_list[index]) #Could be None

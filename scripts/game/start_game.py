@@ -20,7 +20,7 @@ def destory_all_cameras(player: "_Player", ui: "UIController"):
         player.perspective_list.clear()
         player.perspective_list.append(player)
 
-def start_game(player:"_Player",ui:"UIController"):
+def reset_values(player:"_Player",ui:"UIController"):
     player.position = player.respawn_point
     player.cash = 1000
     ui.close_all_uis()
@@ -35,19 +35,19 @@ def start_game(player:"_Player",ui:"UIController"):
 
     destory_all_cameras(player, ui)
 
-def end_round(player:"_Player", ui:"UIController"):
+def end_round(player:"_Player", ui:"UIController", points:int):
     ui.win_text.text = f'{player.username} WINS!!!'
     ui.lose_text.text =f'{player.username} LOSES!!!'
     ui.draw_text.text =f'{player.username} DRAWS!!!'
     player.rounds += 1
-    if player.points > 100:
+    if player.points > points:
         ui.win_text.enabled = True
         invoke(setattr, ui.win_text, "enabled", False, delay = 10)
         player.cash += WIN_BONUS * player.rounds
         player.round_wins += 1
         player.lose_streak = 0
 
-    elif player.points < 100:
+    elif player.points < points:
         player.cash += LOSS_BONUS[player.lose_streak] * player.rounds
         ui.lose_text.enabled = True
         invoke(setattr, ui.lose_text, "enabled", False, delay = 10)
