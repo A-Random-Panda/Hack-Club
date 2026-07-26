@@ -17,6 +17,7 @@ peer:RPCPeer = RPCPeer()
 class GameState():
     '''Variables relating to the game state'''
     game_started = False
+    opponent_disconnected = False
     state_string:str = ""
     game_state:dict[str, Any] = {}
 
@@ -43,12 +44,21 @@ def names_to_client(connection, time_received, name:str):
     GameState.ui_controller.lobby_text.text = f"Connected_Users:\n{name}"
 
 @rpc(peer)
-def game_started_state(connection, time_received, gamestate:bool):
+def game_started_state(connection, time_received, game_start:bool):
     '''Controls whether the game has started or not'''
     assert GameState.main_menu is not None
-    GameState.game_started = gamestate
-    GameState.main_menu.exit_subscreen()
-    GameState.main_menu.enter_game()
+    if game_start:
+        GameState.game_started = True
+        GameState.opponent_disconnected = False
+        GameState.main_menu.exit_subscreen()
+        GameState.main_menu.enter_game()
+    else:
+        pass
+
+@rpc(peer)
+def alert_opponent_disconnected(connection, time_received):
+    '''Alerts the client that the opponent disconnected'''
+    GameState.opponent_disconnected = True
 
 @rpc(peer)
 def on_connect(connection, time_connected):
