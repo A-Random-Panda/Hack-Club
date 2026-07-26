@@ -366,8 +366,6 @@ def update():
                         player.shot_someone = True
                         ui_controller.kill_png.enable()
                         invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
-                
-
 
             #In Game
             try:
