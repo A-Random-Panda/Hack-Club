@@ -52,7 +52,7 @@ app = Ursina(icon="assets/textures/ursina.ico")
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
 player_shadow = Entity(model="Better_Tank", color=color.red,rotation_x=0, y=0, enabled = False, scale = 0.5)
-player_enemy = Entity(model="Better_Tank", color=color.blue,rotation_x=0, y=0, enabled = True, scale = 0.5)
+player_enemy = Entity(model="Better_Tank", color=color.blue,rotation_x=0, y=1.5, enabled = True, scale = 0.5)
 #cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
@@ -74,6 +74,7 @@ wall40 = Entity(model="cube", scale=(50,12,0.3), color=color.black, collider = "
 #Setup
 player = get_player()
 player.collider = MeshCollider(player, mesh = player.model)
+player_enemy.collider = MeshCollider(player_enemy, mesh = player_enemy.model)
 player.cd = time.perf_counter()
 player.previous_x = player.x
 player.previous_y = player.y
@@ -307,7 +308,7 @@ def input(key):
 
     #Placing camera
     if key == get_binding(Controls.PLACE_CAMERA) and not player.in_menu and not player.in_shop and not len(player.perspective_list) > player.max_cams:
-        infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player, player.laser, player.bullet_trail] + player.perspective_list)
+        infront = raycast(camera.world_position, camera.forward, distance = 5, ignore = [player, player.laser, player.bullet_trail, player_enemy] + player.perspective_list)
         if infront.hit and not player.in_camera:
             dist = any(distance(infront.world_point, n.position) < 1 for n in player.perspective_list)
             if not dist:
@@ -355,20 +356,16 @@ def update():
         peer.update()
         if GameState.game_started:
             #Multiplayer code
-            
-            
-
-            if player.bullet_trail is not None:
-                if player.bullet_trail.intersects(player_enemy):
-                    audio_controller.hit_conf.play()
-                    player.cash += 200
-                    player.shot_someone = True
-                    ui_controller.kill_png.enable()
-                    invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
-
             if GameState.state_string:
                 state = parse_state(GameState.state_string)
                 player_enemy.world_position_setter(state["world_pos"])
+                if player.bullet_trail is not None:
+                    if player.bullet_trail.intersects(player_enemy):
+                        audio_controller.hit_conf.play()
+                        player.cash += 200
+                        player.shot_someone = True
+                        ui_controller.kill_png.enable()
+                        invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
                 
 
 
