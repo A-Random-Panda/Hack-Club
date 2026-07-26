@@ -6,6 +6,7 @@ _logger = logging.getLogger(__name__)
 
 def parse_state(string:str):
     '''
+    It parses the state string!
     I give up on the c implementation for now, just writing something fast in python for now
     Ideally this would be after serverside verification but uh, not happenning as of right now
     '''
