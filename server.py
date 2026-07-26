@@ -147,6 +147,8 @@ def on_disconnect(connection, time_disconnected):
         logging.info("%s, Someone may be trying to spam the server", err)
     if connection_id in ClientInformation.state_dict:
         del ClientInformation.state_dict[connection_id]
+    if connection_id in ClientInformation.name_dict:
+        del ClientInformation.name_dict[connection_id]
     logger.info("Client of id %d disconnected from the server!", connection_id)
 
 @rpc(server_peer)
