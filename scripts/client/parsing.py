@@ -50,6 +50,10 @@ def parse_state(string:str):
         #In zone
         return_dict["in_zone"] = bool(state_list[index])
 
+
+
+
+
     except IndexError as err:
         _logger.error("%s: String inputted %s is not correct", err, string)
     except ValueError as err:

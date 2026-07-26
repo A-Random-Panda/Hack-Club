@@ -17,7 +17,10 @@ def send_info(player:_Player):
 {tuple(player.world_position)}
 {tuple(player.rotation)}
 {player.points}
-{player.in_zone}'''
+{player.in_zone}
+
+'''
+
     return f'''{len(player.perspective_list)}
 {"\n".join([str(tuple(x)) for x in cam_position_list])}
 {"\n".join([str(tuple(x)) for x in cam_rotation_list])}
@@ -27,7 +30,9 @@ def send_info(player:_Player):
 {tuple(player.world_position)}
 {tuple(player.rotation)}
 {player.points}
-{player.in_zone}'''
+{player.in_zone}
+
+'''
 
 def info_key():
     return  ("amount of player cams",
