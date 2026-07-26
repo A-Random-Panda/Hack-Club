@@ -148,7 +148,12 @@ def on_disconnect(connection, time_disconnected):
     if connection_id in ClientInformation.state_dict:
         del ClientInformation.state_dict[connection_id]
     if connection_id in ClientInformation.name_dict:
+        #Name is given on join, so the 2 if statements are not the same
         del ClientInformation.name_dict[connection_id]
+
+    for i in server_peer.get_connections():
+        server_peer.alert_opponent_disconnected(i)
+    
     logger.info("Client of id %d disconnected from the server!", connection_id)
 
 @rpc(server_peer)
@@ -167,6 +172,13 @@ def start_game(connection, time_received):
 def name_to_server(connection, time_received, name:str): 
     '''Sets the name to the one sent by the client'''
     ClientInformation.name_dict[id(connection)] = name
+
+@rpc(server_peer)
+def restartGame(connection, time_received):
+    ClientInformation.state_dict.clear()
+    ClientInformation.in_game = False
+    for i in server_peer.get_connections():
+        server_peer.game_started_state(i, False)
 
 def start_server(hostname, port):
     '''The function that starts the server'''

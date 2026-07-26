@@ -354,6 +354,12 @@ def update():
     if peer.is_running():
         #Conected to multiplayer
         peer.update()
+        if GameState.opponent_disconnected:
+            GameState.game_started = False
+            temp_text = Text("Your opponent has disconnected", origin = (0, 0), position = (0, 0, -10), scale=2)
+            invoke(destroy, temp_text, delay = 5)
+            #Reset values
+            #Send back to main menu
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
@@ -366,8 +372,6 @@ def update():
                         player.shot_someone = True
                         ui_controller.kill_png.enable()
                         invoke(setattr, ui_controller.kill_png, "enabled", True, delay = 5)
-                
-
 
             #In Game
             try:
