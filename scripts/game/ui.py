@@ -30,7 +30,7 @@ class UIController:
         self.leaderboard_text = Text(f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}",
                                       origin = (0,0), position = (0,0.2), scale = 1.1, color=color.blue, enabled= False, z = -2)
         
-        self.enemy_leaderboard_text = Text(f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}",
+        self.enemy_leaderboard_text = Text(f"",
                                       origin = (0,0), position = (0,-0.2), scale = 1.1, color=color.red, enabled= False, z = -2)
         
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui,
@@ -125,6 +125,7 @@ class UIController:
         self.buy_text = Text("BUY PHASE",position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
         self.buy_overlay = Entity(scale = (0.3,0.15), parent = camera.ui, origin = (0,0), position = (0,0.3), model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 
+        self.contested_text = Text("CURRENTLY CONTESTED", position = (0,0.3), scale = 4, enabled = False, origin = (0,0))
 
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True,

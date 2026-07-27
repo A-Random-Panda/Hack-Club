@@ -403,20 +403,21 @@ def update():
                         invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
     
                 if player.in_round:
-                    ui_controller.round_timer_text.text = "Round ends in " + str (round((300 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((10 -(abs(time.perf_counter() - player.round_timer))),0))
                     ui_controller.round_timer_text.enable()
                     player.laser.enable()
+                    player_enemy.enabled = True
 
 
-                if player.in_round and 300 < abs(time.perf_counter() - player.round_timer):
+                if player.in_round and 10 < abs(time.perf_counter() - player.round_timer):
                     buy_phase(player, ui_controller, True)
                     ui_controller.round_timer_text.disable()
                     player.laser.disable()
                     end_round(player,ui_controller, state["points"])
-                    player_enemy.disable()
 
                 if player.in_buy_phase:
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
+                    player_enemy.enabled = False
                     
                 if player.in_buy_phase and 30 < abs(time.perf_counter() - player.shop_timer):
                     start_round(player,ui_controller)
@@ -438,12 +439,13 @@ def update():
                 if not state["in_zone"]:
                     koth1.within_zone()
                     koth1.gain_points()
-                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names} \n round wins: {state["round_wins"]}"
-                    
+                    ui_controller.contested_text.enabled = False
+                ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names.strip(player.username)} \n round wins: {state["round_wins"]}"
+                ui_controller.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"    
                 if state["in_zone"]:
-                    pass
+                    ui_controller.contested_text.enabled = True
                 
-                if state["shot_someone"]:
+                if state["shot_someone"] and not player.in_buy_phase:
                     death_manager.kill()
                 if state["is_dead"]:
                     player_enemy.disable()
