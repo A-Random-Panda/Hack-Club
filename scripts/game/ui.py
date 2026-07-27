@@ -8,6 +8,15 @@ from scripts.game.controls import *
 from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from scripts.game.settings import DEFAULT_NAMES
 
+def show_temp_text(text:str, scale:int = 2, delay:int=1):
+    '''
+    Shows text in the middle of the screen that gets deleted after delay seconds
+    Ensure that this function doesn't get looped
+    '''
+    temp_text = Text(text=text, origin = (0, 0), position = (0, 0, -10), scale=scale, color = color.white)
+    bg = Entity(model='quad', origin=temp_text.origin, parent=temp_text, scale=(temp_text.width, temp_text.height), color=color.black, z=0.1)
+    destroy(temp_text, delay = delay)
+    destroy(bg, delay = delay)
 
 class UIController:
     def __init__(self, player, mouse):

@@ -21,7 +21,7 @@ from scripts.game.minimap import UpdateMinimap, MinimapIcons
 from scripts.game.combat import shoot, reload_timer, laser, update_laser
 from scripts.game.audio_controller import AudioController
 from scripts.game.settings import *
-from scripts.game.ui import UIController
+from scripts.game.ui import UIController, show_temp_text
 from scripts.game.shop import ShopUpgrades
 from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
@@ -66,10 +66,6 @@ wall10 = Entity(model="cube", scale=(50,12,0.3), color=color.red, collider = "bo
 wall20 = Entity(model="cube", scale=(50,12,0.3), color=color.green, collider = "box", x=0, z=26)
 wall30 = Entity(model="cube", scale=(50,12,0.3), color=color.blue, collider = "box", x=-26, z=0, rotation_y=90)
 wall40 = Entity(model="cube", scale=(50,12,0.3), color=color.black, collider = "box", x=26, z=0, rotation_y=90)
-
-
-
-
 
 #Setup
 player = get_player()
@@ -186,20 +182,22 @@ def start_server() -> None:
     #Auto connect if box is checked
     if ui_controller.auto_join_checkbox.value:
         peer.start("localhost", port, is_host=False)
+
 ui_controller.server_text.text = f"If you are connecting with someone on the same network, connect with hostname {local_ip}!"
 ui_controller.start_server_button.on_click_setter(start_server)
 
 #Join Server
 def join_game() -> None:
-    '''Function that connects to the server in the text fields'''
+    '''Function that connects to the server in the UI'''
     host = ui_controller.host_input.text
     port = int(ui_controller.port_input.text)
     logger.debug("host: %s, port %d", host, port)
     try:
         logger.info("Attempted to join server")
         peer.start(host, port, is_host=False)
-    except Exception as err:
-        logger.error(err)
+        show_temp_text("Connecting... This may take a while")
+    except Exception:
+        show_temp_text("You failed to join the server")
 
 ui_controller.join_friend_button.on_click_setter(main_menu.open_join_game)
 ui_controller.port_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.port_input))
