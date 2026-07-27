@@ -109,17 +109,12 @@ def on_exit() -> None:
     server_peer.disconnect_all()
 
 @rpc(server_peer)
-def test(connection, time_received, your_mom:str):
-    '''Testing'''
-    a_text.text = (f"Received text: {your_mom} from {id(connection)}")
-
-@rpc(server_peer)
 def state_to_server(connection, time_connected, state:str):
     if len(state) > 1460:
         logger.error("Id of %d sent too much data!", id(connection))
         connection.disconnect()
     else:
-        ClientInformation.state_dict[id(connection)] = state
+        ClientInformation.state_dict[id(connection)] = state+f"\n{id(connection)}"
 
 @rpc(server_peer)
 def on_connect(connection, time_connected):
@@ -134,6 +129,7 @@ def on_connect(connection, time_connected):
         connection_id = id(connection)
         logger.info("Client of id %d connected to the server!", connection_id)
         connected_ids.append(connection_id)
+        server_peer.id_to_client(id(connection))
 
 @rpc(server_peer)
 def on_disconnect(connection, time_disconnected):

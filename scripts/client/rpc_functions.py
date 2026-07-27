@@ -21,6 +21,7 @@ class GameState():
     state_string:str = ""
     game_state:dict[str, Any] = {}
     names:str = ""
+    id:int = 0
 
     ui_controller:"UIController | None" = None
     main_menu:"MainMenu | None" = None
@@ -61,6 +62,11 @@ def game_started_state(connection, time_received, game_start:bool):
 def alert_opponent_disconnected(connection, time_received):
     '''Alerts the client that the opponent disconnected'''
     GameState.opponent_disconnected = True
+
+@rpc(peer)
+def id_to_client(connection, time_received, _id:int):
+    '''Gets your own id'''
+    GameState.id = _id
 
 @rpc(peer)
 def on_connect(connection, time_connected):

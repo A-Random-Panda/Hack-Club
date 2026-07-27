@@ -58,4 +58,5 @@ def info_key():
                "player bullet scale",
                "player bullet position",
                "player round wins"
+               "id"
                )
