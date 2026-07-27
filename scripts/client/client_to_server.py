@@ -22,6 +22,7 @@ def send_info(player:_Player):
 {tuple(player.bullet_trail.rotation)}
 {tuple(player.bullet_trail.scale)}
 {tuple(player.bullet_trail.position)}
+{player.round_wins}
 '''
 
     return f'''{len(player.perspective_list)}
@@ -38,6 +39,7 @@ def send_info(player:_Player):
 {None}
 {None}
 {None}
+{player.round_wins}
 '''
 
 def info_key():
@@ -54,5 +56,6 @@ def info_key():
                "player shot someone",
                "player bullet rotation",
                "player bullet scale",
-               "player bullet position"
+               "player bullet position",
+               "player round wins"
                )

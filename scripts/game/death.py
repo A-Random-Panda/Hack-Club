@@ -35,6 +35,7 @@ class DeathManager():
     def respawned(self) -> None:
         self.player.dead = False
         self.player.input_enabled = True
+        self.player_shadow.enabled = True
         self.player.enabled = True
         self.ui.respawn_text.enabled = False
         self.ui.menu_overlay.enabled = False
