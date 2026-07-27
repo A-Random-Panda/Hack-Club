@@ -51,8 +51,8 @@ app = Ursina(icon="assets/textures/ursina.ico")
 #Objects on the map
 grid = Entity(model=Grid(20,20), scale=50, color=color.white, rotation_x=90, y=1, collider ="box")
 yoru = Entity(model=Plane(subdivisions=[2,8]),scale= 50, color=color.white,texture="test123",rotation_x=0, y=0, collider = "box")
-player_shadow = Entity(model="Better_Tank", color=color.red,rotation_x=0, y=0, enabled = False, scale = 0.5)
-player_enemy = Entity(model="Better_Tank", color=color.blue,rotation_x=0, y=1.5, enabled = True, scale = 0.5)
+player_shadow = Entity(model="tank",rotation_x=0, y=0, enabled = False, scale = 0.5,texture="bluetest")
+player_enemy = Entity(model="tank",rotation_x=0, y=1.5, enabled = True, scale = 0.5,texture="dom")
 #cube = Entity(model='sphere', color=hsv(300,1,1), scale=5, collider='box')
 cube1 = Entity(model='cube',scale=1, collider='box',position= (10,10,10),texture='test123')
 center = Entity(model='cube',scale=1, collider='box',position= (0,0,0), texture = 'test123')
@@ -248,7 +248,8 @@ def input(key):
     '''Input handler'''
     global test
      #Escape menu
-
+    if key == 'o':
+        print(peer.is_running())
     if player.in_main_menu:
         return
 
