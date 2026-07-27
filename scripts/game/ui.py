@@ -101,7 +101,7 @@ class UIController:
         #Map selector
         self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,
                                        color=color.red, enabled = False)
-        self.back_to_main_button = Button(model = "quad", scale = 0.2, position = (-0.8,-0.4,-4),
+        self.back_to_main_button = Button(model = "quad", scale = (0.2), position = (-1.778*.5,-0.5, -4), origin=(-.5, -.5),
                                           text = "Back to \n main menu", color=color.orange, enabled = False)
 
         #Lobby
