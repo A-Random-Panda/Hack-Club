@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     coordinate_text = Text(scale=1, position = (-.5*1.778, .5), origin = (-.5, .5))
 
-    player_shadow = Entity(model="Better_Tank", color=color.red,scale = 0.5, collider="mesh", enabled=False)
+    player_shadow = Entity(model="tank", color=color.red,scale = 0.5, collider="mesh", enabled=False)
     player_line = Entity(model = Quad(radius=200, mode='line'), color=color.white, enabled=False)
 
     fpc = FirstPersonController(
