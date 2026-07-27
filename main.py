@@ -435,7 +435,13 @@ def update():
                     destroy(enemy_bullet_trail,delay = 0.1)
                     invoke(setattr, player, "enemy_shot", True, delay = 0.1)
 
+                if not state["in_zone"]:
+                    koth1.within_zone()
+                    koth1.gain_points()
+                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names} \n round wins: {state["round_wins"]}"
                     
+                if state["in_zone"]:
+                    pass
                 
                 if state["shot_someone"]:
                     death_manager.kill()
@@ -469,8 +475,6 @@ def update():
         player.chat_opened = time.perf_counter()
     chat.chat()
 
-    koth1.within_zone()
-    koth1.gain_points()
 
 
     if player.y < -2:

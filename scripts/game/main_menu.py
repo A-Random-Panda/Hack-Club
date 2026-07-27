@@ -100,6 +100,7 @@ class MainMenu:
         self.ui.set_mouse_game_state()
         self.ui.acquire_and_set_name()
         self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
+        self.ui.enemy_leaderboard_text.text = f""
 
     def _disable_player(self) -> None:
         '''

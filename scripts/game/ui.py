@@ -28,7 +28,11 @@ class UIController:
                                     color = color.rgba(0,0,0,0.6), z = -1, enabled = False, position = (0.95,-.275,-1), origin = (0.8,0))
 
         self.leaderboard_text = Text(f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}",
-                                      origin = (0,0), position = (0,0), scale = 1.1, color=color.white, enabled= False, z = -2)
+                                      origin = (0,0), position = (0,0.2), scale = 1.1, color=color.blue, enabled= False, z = -2)
+        
+        self.enemy_leaderboard_text = Text(f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}",
+                                      origin = (0,0), position = (0,-0.2), scale = 1.1, color=color.red, enabled= False, z = -2)
+        
         self.leaderboard_overlay = Entity(scale = (0.5,1) , parent = camera.ui,
                                            model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
         
@@ -229,6 +233,7 @@ class UIController:
     def toggle_leaderboard(self, enabled) -> None:
         '''If true: shows leaderboard, if false: hides leaderboard'''
         self.leaderboard_text.enabled = enabled
+        self.enemy_leaderboard_text.enabled = enabled
         self.leaderboard_overlay.enabled = enabled
 
     def reset_input_field(self, input_field:InputField):

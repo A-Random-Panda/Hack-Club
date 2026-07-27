@@ -62,6 +62,9 @@ def parse_state(string:str):
         index += 1
         #Bullet position
         return_dict["bullet_pos"] = literal_eval(state_list[index])
+        index += 1
+        #Player round wins
+        return_dict["round_wins"] = int(state_list[index])
 
 
     except IndexError as err:

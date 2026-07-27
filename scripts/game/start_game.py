@@ -31,6 +31,7 @@ def reset_values(player:"_Player",ui:"UIController"):
     ui.faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: $100"
     ui.upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: $100"
     ui.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"
+    ui.enemy_leaderboard_text.text = f""
     player.round_wins = 0
 
     destory_all_cameras(player, ui)

@@ -20,6 +20,7 @@ class GameState():
     opponent_disconnected = False
     state_string:str = ""
     game_state:dict[str, Any] = {}
+    names:str = ""
 
     ui_controller:"UIController | None" = None
     main_menu:"MainMenu | None" = None
@@ -42,6 +43,7 @@ def state_to_client(connection, time_received, state:str):
 def names_to_client(connection, time_received, name:str):
     assert GameState.ui_controller is not None
     GameState.ui_controller.lobby_text.text = f"Connected_Users:\n{name}"
+    GameState.names = name
 
 @rpc(peer)
 def game_started_state(connection, time_received, game_start:bool):
