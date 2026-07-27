@@ -344,8 +344,7 @@ def update():
         if GameState.opponent_disconnected:
             GameState.game_started = False
             GameState.opponent_disconnected = False
-            temp_text = Text("Your opponent has disconnected", origin = (0, 0), position = (0, 0, -10), scale=2)
-            destroy(temp_text, delay = 5)
+            show_temp_text("Your opponent has disconnected", delay=3)
             #Reset values
             #Send back to main menu
         if GameState.game_started:

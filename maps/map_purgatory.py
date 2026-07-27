@@ -83,7 +83,10 @@ if __name__ == "__main__":
         jump_height= 4,
         collider="box",
         gravity= 1,
-        enabled = True)
+        enabled = True,
+        position = (27, 0.5, 0),
+        rotation_y = 90
+        )
 
     editor_camera = EditorCamera(enabled=False, move_speed=50)
 
@@ -122,7 +125,7 @@ if __name__ == "__main__":
             player_line.rotation = editor_camera.rotation
             coordinate_text.text = editor_camera.position
         else:
-            coordinate_text.text = fpc.position
+            coordinate_text.text = f"position: {fpc.position} rotation: {fpc.rotation}"
         if fpc.y_getter() < -10:
             fpc.position_setter((0, 10, 0))
 
