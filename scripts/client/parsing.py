@@ -59,6 +59,9 @@ def parse_state(string:str):
         index += 1
         #Bullet scale length
         return_dict["bullet_scale"] = literal_eval(state_list[index]) #Could be None
+        index += 1
+        #Bullet position
+        return_dict["bullet_pos"] = literal_eval(state_list[index])
 
 
     except IndexError as err:

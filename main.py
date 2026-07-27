@@ -381,46 +381,62 @@ def update():
         if GameState.opponent_disconnected:
             GameState.game_started = False
             temp_text = Text("Your opponent has disconnected", origin = (0, 0), position = (0, 0, -10), scale=2)
-            invoke(destroy, temp_text, delay = 5)
+            destroy(temp_text, delay = 5)
             #Reset values
             #Send back to main menu
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
                 if not player.game_begin:
-                    start_round(player,ui_controller)
+                    buy_phase(player,ui_controller)
                     player.game_begin = True
+                    print("it begins")
                 state = parse_state(GameState.state_string)
                 player_enemy.world_position_setter(state["world_pos"])
+
                 if player.bullet_trail is not None:
                     if player.bullet_trail.intersects(player_enemy):
                         audio_controller.hit_conf.play()
                         player.cash += 200
                         player.shot_someone = True
                         ui_controller.kill_png.enable()
-                        print('why')
                         invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
     
                 if player.in_round:
-                    ui_controller.round_timer_text.text = "Round ends in " + str (round((30 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((300 -(abs(time.perf_counter() - player.round_timer))),0))
                     ui_controller.round_timer_text.enable()
                     player.laser.enable()
 
 
-                if player.in_round and 30 < abs(time.perf_counter() - player.round_timer):
+                if player.in_round and 300 < abs(time.perf_counter() - player.round_timer):
                     buy_phase(player, ui_controller, True)
                     ui_controller.round_timer_text.disable()
                     player.laser.disable()
                     end_round(player,ui_controller, state["points"])
+                    player_enemy.disable()
 
                 if player.in_buy_phase:
-                    ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((10 -(abs(time.perf_counter() - player.shop_timer))),0))
-    
-                if player.in_buy_phase and 10 < abs(time.perf_counter() - player.shop_timer):
+                    ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
+                    
+                if player.in_buy_phase and 30 < abs(time.perf_counter() - player.shop_timer):
                     start_round(player,ui_controller)
                     buy_phase(player, ui_controller, False)
                     cam_switching()
+                if state["is_shooting"] and player.enemy_shot:
+                    enemy_bullet_trail = Entity(model="cube",
+                                                        position= state["bullet_pos"],
+                                                        scale = state["bullet_scale"],
+                                                        color = color.white,parent = scene,
+                                                        rotation = state["player_rotation"],
+                                                        collider = "box"
+                                                        )
+                    audio_controller.shooting.play()
+                    player.enemy_shot = False
+                    destroy(enemy_bullet_trail,delay = 0.1)
+                    invoke(setattr, player, "enemy_shot", True, delay = 0.1)
 
+                    
+                
                 if state["shot_someone"]:
                     death_manager.kill()
                 if state["is_dead"]:
@@ -429,12 +445,11 @@ def update():
                 if not state["is_dead"]:
                     player_enemy.enable()
                 #Continuiesly runs when you are dead
-                if player.dead and not 5 < abs(time.perf_counter()-player.death_timer):
+                if player.dead and not 5 < abs(time.perf_counter()-player.death_timer) and not player.in_buy_phase:
                     death_manager.while_dead()
                     #Runs once when you respawn
                 elif player.dead:
                     death_manager.respawned()
-                print(f"state shot_someone, {state["shot_someone"]}\n state is dead, {state["is_dead"]} \n, {player.dead}")
 
 
                 
@@ -525,5 +540,4 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-    print(player.dead,)
 app.run()

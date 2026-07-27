@@ -55,7 +55,8 @@ class _Player(FirstPersonController):
         self.shop_timer: float = 0.0
         self.round_wins: int = 0
         self.shot_someone: bool = False
-        self.game_begin:bool = True
+        self.game_begin:bool = False
+        self.enemy_shot:bool = True
 
 
     @override
