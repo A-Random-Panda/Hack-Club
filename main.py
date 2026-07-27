@@ -381,6 +381,7 @@ def update():
         peer.update()
         if GameState.opponent_disconnected:
             GameState.game_started = False
+            GameState.opponent_disconnected = False
             temp_text = Text("Your opponent has disconnected", origin = (0, 0), position = (0, 0, -10), scale=2)
             destroy(temp_text, delay = 5)
             #Reset values
