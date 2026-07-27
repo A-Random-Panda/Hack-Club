@@ -8,6 +8,15 @@ from scripts.game.controls import *
 from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from scripts.game.settings import DEFAULT_NAMES
 
+def show_temp_text(text:str, scale:int = 2, delay:int=1):
+    '''
+    Shows text in the middle of the screen that gets deleted after delay seconds
+    Ensure that this function doesn't get looped
+    '''
+    temp_text = Text(text=text, origin = (0, 0), position = (0, 0, -10), scale=scale, color = color.white)
+    bg = Entity(model='quad', origin=temp_text.origin, parent=temp_text, scale=(temp_text.width, temp_text.height), color=color.black, z=0.1)
+    destroy(temp_text, delay = delay)
+    destroy(bg, delay = delay)
 
 class UIController:
     def __init__(self, player, mouse):
@@ -92,7 +101,7 @@ class UIController:
         #Map selector
         self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,
                                        color=color.red, enabled = False)
-        self.back_to_main_button = Button(model = "quad", scale = 0.2, position = (-0.8,-0.4,-4),
+        self.back_to_main_button = Button(model = "quad", scale = (0.2), position = (-1.778*.5,-0.5, -4), origin=(-.5, -.5),
                                           text = "Back to \n main menu", color=color.orange, enabled = False)
 
         #Lobby
