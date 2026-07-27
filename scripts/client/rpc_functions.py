@@ -15,22 +15,29 @@ _logger = getLogger(__name__)
 peer:RPCPeer = RPCPeer()
 
 class GameState():
-    '''Variables relating to the game state'''
-    game_started = False
-    opponent_disconnected = False
-    state_string:str = ""
-    game_state:dict[str, Any] = {}
-    names:str = ""
-    id:int = 0
+    '''Variables relating to the game state'''\
+
+    def __init__(self) -> None:
+        self.reset()
+
+    @classmethod
+    def reset(cls) -> None:
+        '''Resets the gamestate to default'''
+        cls.game_started = False
+        cls.opponent_disconnected = False
+        cls.state_string:str = ""
+        cls.game_state:dict[str, Any] = {}
+        cls.names:str = ""
+        cls.id:int = 0
 
     ui_controller:"UIController | None" = None
     main_menu:"MainMenu | None" = None
     @classmethod
-    def set_ui_controller(cls, controller:"UIController"):
+    def set_ui_controller(cls, controller:"UIController") -> None:
         '''Sets the ui controller, meant to be used in initialization'''
         cls.ui_controller = controller
     @classmethod
-    def set_main_menu(cls, menu:"MainMenu"):
+    def set_main_menu(cls, menu:"MainMenu") -> None:
         '''Sets the ui controller, meant to be used in initialization'''
         cls.main_menu = menu
 
