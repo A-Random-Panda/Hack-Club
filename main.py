@@ -50,6 +50,7 @@ player_enemy = Entity(model="tank",rotation_x=0, y=1.5, enabled = True, scale = 
 
 #Setup
 player = get_player()
+player.position = (7,1,7)
 player.collider = MeshCollider(player, mesh = player.model)
 player_enemy.collider = MeshCollider(player_enemy, mesh = player_enemy.model)
 player.cd = time.perf_counter()
@@ -58,7 +59,7 @@ player.previous_y = player.y
 ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
-koth1 = KOTH(player,10,10,10,ui_controller,audio_controller)
+koth1 = KOTH(player,10,0,0,ui_controller,audio_controller)
 chat = ChatController(player,ui_controller,audio_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
@@ -210,7 +211,7 @@ ui_controller.player_volume_slider.on_value_changed = player_change_volume
 
 #Starter Cam
 first_cam = Entity(model = 'cypher_cam',
-                                position = (5,3,5),
+                                position = (0,3,0),
                                 texture = "cam",
                                 rotation = (180,90,180))
 cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
@@ -357,8 +358,10 @@ def update():
                     player.game_begin = True
                     if state["opponent_id"] > GameState.id:
                         player.world_position = RESPAWN_POINTS[0]
+                        player.rotation_y = RESPAWN_ROTATION[0]
                     else:
                         player.world_position = RESPAWN_POINTS[1]
+                        player.rotation_y = RESPAWN_ROTATION[1]
                 player_enemy.world_position_setter(state["world_pos"])
 
                 if player.bullet_trail is not None and not player.in_buy_phase:
@@ -403,7 +406,7 @@ def update():
                     destroy(enemy_bullet_trail,delay = 0.1)
                     invoke(setattr, player, "enemy_shot", True, delay = 0.1)
 
-                if not state["in_zone"]:
+                if not state["in_zone"] and not player.in_buy_phase:
                     koth1.within_zone()
                     koth1.gain_points(state["points"],GameState.names,state["round_wins"])
                     ui_controller.contested_text.enabled = False
@@ -448,7 +451,7 @@ def update():
 
 
     if player.y < -2:
-        player.position = (0.5, 1.0,0.5)
+        player.position = (7, 1.0,7)
 
     if not player.in_camera:
         player_shadow.enabled = False

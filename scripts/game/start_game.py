@@ -23,8 +23,10 @@ def destory_all_cameras(player: "_Player", ui: "UIController"):
 def reset_values(player:"_Player",ui:"UIController", enemy_id:int, your_id:int):
     if enemy_id > your_id:
         player.respawn_point = RESPAWN_POINTS[0]
+        player.rotation_y = RESPAWN_ROTATION[0]
     else:
         player.respawn_point = RESPAWN_POINTS[1]
+        player.rotation_y = RESPAWN_ROTATION[1]
     player.position = player.respawn_point
     player.cash = 1000
     ui.close_all_uis()
@@ -78,8 +80,10 @@ def buy_phase(player:"_Player", ui:"UIController", state = True):
 def start_round(player:"_Player", ui:"UIController", enemy_id:int, your_id:int):
     if enemy_id > your_id:
         player.respawn_point = RESPAWN_POINTS[0]
+        player.rotation_y = RESPAWN_ROTATION[0]
     else:
         player.respawn_point = RESPAWN_POINTS[1]
+        player.rotation_y = RESPAWN_ROTATION[1]
     
     player.in_round = True
     player.round_timer = time.perf_counter()
