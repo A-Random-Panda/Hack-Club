@@ -29,6 +29,7 @@ class Purgatory():
         Entity(model="cube", scale=(5, 20, 1), position=(27.5, 10, -2.5), texture='purg_bound', color=color.white, collider="box"),
         Entity(model="cube", scale=(5, 20, 1), position=(-27.5, 10, 2.5), texture='purg_bound', color=color.white, collider="box"),
         Entity(model="cube", scale=(5, 20, 1), position=(-27.5, 10, -2.5), texture='purg_bound', color=color.white, collider="box"),
+        Entity(model="cube", scale = (0.3, 20, 0.3), position= (0,0,0), color = color.red, collider = "box"),
 
         #Walls across z axis
         Entity(model="cube", scale=(1, 20, 17.5), position=(25, 10, 11.25), texture='purg_bound', color=color.white, collider="box"),
