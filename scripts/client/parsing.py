@@ -65,6 +65,9 @@ def parse_state(string:str):
         index += 1
         #Player round wins
         return_dict["round_wins"] = int(state_list[index])
+        index += 1
+        #NOTE: SERVER SIDED: Opponent ID
+        return_dict["opponent_id"] = int(state_list[index])
 
 
     except IndexError as err:
