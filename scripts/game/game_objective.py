@@ -26,13 +26,15 @@ class KOTH:
             self.time_inside = time.perf_counter()
         elif not within_confines:
             self.player.in_zone = False
-    def gain_points(self) -> None:
+    def gain_points(self,points,names,round_wins) -> None:
         if self.player.in_zone:
             if 1.5 < abs(time.perf_counter()-self.time_inside):
                 self.time_inside = time.perf_counter()
                 self.player.points += 10
                 self.audio.success.play()
                 print(self.player.points)
+                self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
+                self.ui.enemy_leaderboard_text.text = f"{points} {names.strip(self.player.username)} \n round wins: {round_wins}"   
     def update_zone(self):
         destroy(self.obj_wall2)
         destroy(self.obj_wall3)

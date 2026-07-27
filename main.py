@@ -438,12 +438,14 @@ def update():
 
                 if not state["in_zone"]:
                     koth1.within_zone()
-                    koth1.gain_points()
+                    koth1.gain_points(state["points"],GameState.names,state["round_wins"])
                     ui_controller.contested_text.enabled = False
-                ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names.strip(player.username)} \n round wins: {state["round_wins"]}"
-                ui_controller.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"    
-                if state["in_zone"]:
-                    ui_controller.contested_text.enabled = True
+    
+                if state["in_zone"] and player.in_zone:
+                    if not ui_controller.contested_text.enabled:
+                        ui_controller.contested_text.enabled = True
+                elif state["in_zone"]:
+                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names.strip(player.username)} \n round wins: {state["round_wins"]}"
                 
                 if state["shot_someone"] and not player.in_buy_phase:
                     death_manager.kill()
