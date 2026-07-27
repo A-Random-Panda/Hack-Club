@@ -4,7 +4,7 @@ FASTER_RELOAD_COST:list[int] = [100,500,1500,4500,7000]
 WIN_BONUS = 1000
 LOSS_BONUS = [200, 400, 600]
 DRAW_BONUS = 500
-
+RESPAWN_POINTS = [(0,0,0),(10,3,10)]
 #Settings
 player_sensitivity:float = 150
 player_volume:float = 1.5

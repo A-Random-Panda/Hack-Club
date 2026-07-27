@@ -389,14 +389,18 @@ def update():
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
+                state = parse_state(GameState.state_string)
                 if not player.game_begin:
                     buy_phase(player,ui_controller)
                     player.game_begin = True
+                    if state["opponent_id"] > GameState.id:
+                        player.world_position = RESPAWN_POINTS[0]
+                    else:
+                        player.world_position = RESPAWN_POINTS[1]
                     print("it begins")
-                state = parse_state(GameState.state_string)
                 player_enemy.world_position_setter(state["world_pos"])
 
-                if player.bullet_trail is not None:
+                if player.bullet_trail is not None and not player.in_buy_phase:
                     if player.bullet_trail.intersects(player_enemy):
                         audio_controller.hit_conf.play()
                         player.cash += 200
@@ -422,10 +426,10 @@ def update():
                     player_enemy.enabled = False
                     
                 if player.in_buy_phase and 30 < abs(time.perf_counter() - player.shop_timer):
-                    start_round(player,ui_controller)
+                    start_round(player,ui_controller,state["opponent_id"],GameState.id)
                     buy_phase(player, ui_controller, False)
                     cam_switching()
-                if state["is_shooting"] and player.enemy_shot:
+                if state["is_shooting"] and player.enemy_shot and not player.in_buy_phase:
                     enemy_bullet_trail = Entity(model="cube",
                                                         position= state["bullet_pos"],
                                                         scale = state["bullet_scale"],
@@ -454,15 +458,14 @@ def update():
                 if state["is_dead"]:
                     player_enemy.disable()
                     player.shot_someone = False
-                if not state["is_dead"]:
-                    player_enemy.enable()
+                    invoke(setattr, player, "enabled", True, delay = 5)
                 #Continuiesly runs when you are dead
                 if player.dead and not 5 < abs(time.perf_counter()-player.death_timer) and not player.in_buy_phase:
                     death_manager.while_dead()
                     #Runs once when you respawn
                 elif player.dead:
                     death_manager.respawned()
-
+                
 
                 
             #In Game
@@ -551,5 +554,6 @@ def update():
     camera.rotation = (90, 0, 0) 
     '''
     print(f"{player.in_round} in round")
-    print(f"{player.in_buy_phase} in round")
+    print(f"{player.in_buy_phase} buy phase")
+    print(f"{player_enemy.enabled}")
 app.run()
