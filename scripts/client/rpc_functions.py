@@ -15,10 +15,13 @@ _logger = getLogger(__name__)
 peer:RPCPeer = RPCPeer()
 
 class GameState():
-    '''Variables relating to the game state'''\
-
-    def __init__(self) -> None:
-        self.reset()
+    '''Variables relating to the game state'''
+    game_started = False
+    opponent_disconnected = False
+    state_string:str = ""
+    game_state:dict[str, Any] = {}
+    names:str = ""
+    id:int = 0
 
     @classmethod
     def reset(cls) -> None:
