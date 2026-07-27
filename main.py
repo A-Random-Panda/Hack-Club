@@ -548,4 +548,6 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
+    print(f"{player.in_round} in round")
+    print(f"{player.in_buy_phase} in round")
 app.run()
