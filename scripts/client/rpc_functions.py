@@ -6,7 +6,6 @@ RPC basically is the call from a peer to run a rpc function on the other peer's 
 from logging import getLogger
 from typing import Any, TYPE_CHECKING
 from ursina.networking import *
-from scripts.game.ui import show_temp_text
 
 if TYPE_CHECKING:
     from scripts.game.ui import UIController
@@ -17,12 +16,6 @@ peer:RPCPeer = RPCPeer()
 
 class GameState():
     '''Variables relating to the game state'''
-    game_started = False
-    opponent_disconnected = False
-    state_string:str = ""
-    game_state:dict[str, Any] = {}
-    names:str = ""
-    id:int = 0
 
     @classmethod
     def reset(cls) -> None:
@@ -31,7 +24,7 @@ class GameState():
         cls.opponent_disconnected = False
         cls.state_string:str = ""
         cls.game_state:dict[str, Any] = {}
-        cls.names:str = ""
+        cls.opponent_name:str = ""
         cls.id:int = 0
 
     ui_controller:"UIController | None" = None
@@ -45,6 +38,8 @@ class GameState():
         '''Sets the ui controller, meant to be used in initialization'''
         cls.main_menu = menu
 
+GameState.reset()
+
 @rpc(peer)
 def state_to_client(connection, time_received, state:str):
     '''Receives the game state from the server'''
@@ -55,7 +50,7 @@ def state_to_client(connection, time_received, state:str):
 def names_to_client(connection, time_received, name:str):
     assert GameState.ui_controller is not None
     GameState.ui_controller.lobby_text.text = f"Connected_Users:\n{name}"
-    GameState.names = name
+    GameState.opponent_name = name
 
 @rpc(peer)
 def game_started_state(connection, time_received, game_start:bool):
@@ -85,7 +80,7 @@ def on_connect(connection, time_connected):
     On connection to the server
     Currently logs it to the console
     '''
-    show_temp_text("You were connected to a server!")
+    ui_controller.show_temp_text("You were connected to a server!")
     assert GameState.ui_controller is not None
     assert GameState.main_menu is not None
     peer.name_to_server(peer.get_connections()[0], GameState.ui_controller.acquire_and_set_name())
@@ -98,4 +93,4 @@ def on_disconnect(connection, time_disconnected):
     Runs on disconnection to the server
     Currently logs it to the console.
     '''
-    show_temp_text("You were disconnected from the server at %s!", time_disconnected)
+    ui_controller.show_temp_text("You were disconnected from the server at %s!", time_disconnected)

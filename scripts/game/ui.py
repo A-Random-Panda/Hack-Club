@@ -1,22 +1,19 @@
 from typing import TYPE_CHECKING
 from random import randint
 
-if TYPE_CHECKING:
-    from scripts.game.player import _Player
 from ursina import *
 from scripts.game.controls import *
 from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
 from scripts.game.settings import DEFAULT_NAMES
+if TYPE_CHECKING:
+    from scripts.game.player import _Player
 
-def show_temp_text(text:str, scale:int = 2, delay:int=1):
-    '''
-    Shows text in the middle of the screen that gets deleted after delay seconds
-    Ensure that this function doesn't get looped
-    '''
-    temp_text = Text(text=text, origin = (0, 0), position = (0, 0, -10), scale=scale, color = color.white)
-    bg = Entity(model='quad', origin=temp_text.origin, parent=temp_text, scale=(temp_text.width, temp_text.height), color=color.black, z=0.1)
-    destroy(temp_text, delay = delay)
-    destroy(bg, delay = delay)
+def _conditional_text_disable(count, text, bg):
+    '''Wrapper function used to disable the text and bg conditionally for the temporary text'''
+    if count[0] == 1:
+        text.disable()
+        bg.disable()
+    count[0]-=1
 
 class UIController:
     def __init__(self, player, mouse):
@@ -49,6 +46,10 @@ class UIController:
         self.shop_timer_text = Text("", position = (0,0.2), scale = 0.5, enabled = False, origin = (0,0))
         self.kill_png = Entity(model = "quad", scale = 0.15, color = color.white, texture = "kill", enabled = False, parent = camera.ui, origin = (0,0), position = (0,.4))
 
+        self.temp_text = Text(origin = (0, 0), position = (0, 0, -10), color = color.white, enabled=False)
+        self.temp_bg = Entity(model='quad', origin=self.temp_text.origin, parent=self.temp_text,
+                            scale=(self.temp_text.width, self.temp_text.height), color=color.black, z=0.1, enabled=False)
+        self.temp_text_count = [0]
         #Main menu
         self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0,0, -4),
@@ -108,6 +109,10 @@ class UIController:
         self.lobby_text = Text(text = "Connected_Users:", origin = (0, 0.5), position = (0, .5, -4), enabled = False)
         self.start_game_button = Button (model = "quad", scale = (0.6,0.075), position = (0, -.5, -4), origin=(0, -.5),
                                           color=color.white, text = "Start game", text_color=color.black, enabled = False)
+        self.disconnect_button = Button (model = "quad", scale = .2, position = (0.5*1.778, -0.5, -4), origin=(0.5, -.5),
+                                          color=color.white, text = "Disconnect from\nserver", text_color=color.black, enabled = False)
+        self.stop_server_button = Button (model = "quad", scale = .2, position = (-0.5*1.778, 0.5, -4), origin=(-0.5, .5),
+                                          color=color.white, text = "Stop\nserver", text_color=color.black, enabled = False)
 
         #Buttons Inside the shop
         self.upgrade_cams_button = Button(model = "quad", scale = 0.2, x = -0.1, z = -2,
@@ -268,3 +273,17 @@ class UIController:
         else:
             self.player.username = self.name_input.text
         return self.player.username
+
+    def show_temp_text(self, text:str, scale:int = 2, delay:int=1) -> None:
+        '''
+        Shows text in the middle of the screen that gets deleted after delay seconds
+        Ensure that this function doesn't get looped
+        '''
+        self.temp_text_count[0] += 1
+        self.temp_text.enable()
+        self.temp_bg.enable()
+        self.temp_text.text=text
+        self.temp_text.scale=scale
+        self.temp_bg.scale=(self.temp_text.width, self.temp_text.height)
+        #Not sure if this is proper coding practice but I don't care anymore-
+        invoke(_conditional_text_disable, self.temp_text_count, self.temp_text, self.temp_bg, delay=delay)

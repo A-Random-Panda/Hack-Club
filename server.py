@@ -196,7 +196,7 @@ def update():
         else:
             for i in server_peer.get_connections():
                 server_peer.names_to_client(i, "\n".join(list(ClientInformation.name_dict.values())))
-        
+
         #This is where server side verification happens... if it ever gets implemented
         #Doesn't update the text if there's no window
         if WINDOW_TYPE == "onscreen":
