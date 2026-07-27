@@ -33,12 +33,6 @@ from scripts.client.parsing import parse_state
 from scripts.client.rpc_functions import * #pylint: disable=unused-import
 #pylint: enable=redefined-builtin, wildcard-import
 
-#Moving block for testing
-moving_block = Entity(model="cube", color = color.yellow, position=(0,4,3),collider = "box", scale = (1,5,1))
-speed123 = 5*time.dt
-multi = 1
-enable_moving_block = True
-test = False
 #Declare logging
 logging.basicConfig(level=logging.DEBUG, format="(%(asctime)s) %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -123,7 +117,6 @@ player.perspective_list = [player]
 minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
 update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
-update_moving_square_icon = UpdateMinimap(minimap_icons.square_icon,moving_block,55)
 main_menu = MainMenu(player,audio_controller,ui_controller)
 
 #Sets ui controller and main menu in rpc functions
@@ -244,10 +237,7 @@ player.perspective_list.append(first_cam)
 #Detect key inputs
 def input(key):
     '''Input handler'''
-    global test
      #Escape menu
-    if key == 'o':
-        print(peer.is_running())
     if player.in_main_menu:
         return
 
@@ -280,7 +270,6 @@ def input(key):
     #Chat
     if key == get_binding(Controls.OPEN_CHAT) and not player.in_chat:
         ui_controller.chat_field.enabled = True
-        print(vars(ui_controller.chat_field))
         player.in_chat = True
         audio_controller.footsteps.stop()
         ui_controller.set_mouse_menu_state()
@@ -311,8 +300,6 @@ def input(key):
     #Shooting
     if key == get_binding(Controls.SHOOT):
         shoot(player,audio_controller.reload,audio_controller.shooting)
-        print(send_info(player))
-        print(info_key())
 
     #Reset cameras
     if key == get_binding(Controls.RESET_CAMERAS) and player.in_buy_phase:
@@ -362,18 +349,8 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
-    if key ==  "t":
-        print(send_info(player))
-        print(parse_state(send_info(player)))
-        print(info_key())
-        koth1.location_z = -10
-        koth1.objective_length = 3
-        koth1.update_zone()
-        start_round(player,ui_controller)
-        cam_switching()
 
 def update():
-    global test
     if peer.is_running():
         #Conected to multiplayer
         peer.update()
@@ -395,7 +372,6 @@ def update():
                         player.world_position = RESPAWN_POINTS[0]
                     else:
                         player.world_position = RESPAWN_POINTS[1]
-                    print("it begins")
                 player_enemy.world_position_setter(state["world_pos"])
 
                 if player.bullet_trail is not None and not player.in_buy_phase:
@@ -519,17 +495,7 @@ def update():
     minimap_icons.player_icon.rotation_z = player.rotation_y + 90
 
     #moving block for testing
-    if enable_moving_block:
-        global speed123
-        global multi
-        speed123 = 5 * time.dt * multi 
-        moving_block.position += Vec3(speed123,0,0)
-        if moving_block.intersects():
-            multi *= -1
-        if player.bullet_trail is not None:
-            if player.bullet_trail.intersects(moving_block):
-                audio_controller.success.play()
-        update_moving_square_icon.minimap_update()
+
 
     update_laser(player)
 
@@ -551,7 +517,4 @@ def update():
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
     '''
-    print(f"{player.in_round} in round")
-    print(f"{player.in_buy_phase} buy phase")
-    print(f"{player_enemy.enabled}")
 app.run()
