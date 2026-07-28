@@ -57,7 +57,7 @@ class UIController:
         self.game_lose = Text(f'GAME LOST', origin = (0,0), position = (0,0,-1.1),
                                       scale = 5, color=color.red,enabled = False)
         #Main menu
-        self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
+        self.background = Entity(model="quad", texture="menu_screen", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0,0, -4),
                                         color=color.white, text = "Open \nSingleplayer", text_color=color.black)
         self.host_game_button = Button(model = "quad", scale = 0.2, position =(0.25,0, -4),
