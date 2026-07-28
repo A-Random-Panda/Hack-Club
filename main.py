@@ -243,7 +243,7 @@ first_cam = Entity(model = 'cypher_cam',
                                 texture = "cam",
                                 rotation = (180,90,180))
 cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
-                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
 player.cam_icon_list.append(cam_icon)
 first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
 first_cam.original_rotation_y = first_cam.rotation_y
@@ -349,7 +349,7 @@ def input(key):
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
                 cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,
-                                  y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+                                  y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05, color = color.red)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode

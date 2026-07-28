@@ -52,3 +52,6 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 **No AI was directly used for the project's code and assets.**
 
 **Some AI was used to help explain some concepts and libraries and for debugging code snippits.**
+
+### Credits:
+**Brick wall image <a href="https://www.magnific.com/free-photo/weathered-brick-wall-texture_932618.htm">Image by kues on Magnific</a>**
