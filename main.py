@@ -229,9 +229,11 @@ ui_controller.reset_controls_to_default_button.on_click_setter(ui_controller.res
 #Functions to change the volume
 def gun_change_volume():
     audio_controller.set_gun_volume(ui_controller.gun_volume_slider.value)
+    ui_controller.save_settings()
 
 def player_change_volume():
     audio_controller.set_player_volume(ui_controller.player_volume_slider.value)
+    ui_controller.save_settings()
 
 #Sound sliders
 ui_controller.gun_volume_slider.on_value_changed = gun_change_volume

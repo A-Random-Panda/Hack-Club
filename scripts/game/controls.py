@@ -9,6 +9,8 @@ from copy import deepcopy
 import json as _json
 import logging as _logging
 
+from scripts.game.settings import SETTINGS_FOLDER
+
 _logger:_logging.Logger = _logging.getLogger(__name__)
 
 #Default controls
@@ -125,9 +127,7 @@ def _change_controls(changed_controls:dict) -> None:
 
 def _get_json_path() -> _Path:
     '''Returns the path of the controls.json file'''
-    script_path = str(_Path(__file__).resolve().parent)
-    last_slash_index = script_path.rfind("\\")
-    return _Path(script_path[0:last_slash_index+1] + "controls.json")
+    return SETTINGS_FOLDER / _Path("controls.json")
 
 def _load_controls() -> None:
     '''Changes controls to the controls found in the controls.JSON file'''
@@ -137,7 +137,7 @@ def _load_controls() -> None:
     #Ensures there is a control file
     if not _get_json_path().is_file():
         reset_controls_to_default()
-        _logger.info("Creating file %s", _get_json_path)
+        _logger.info("Creating file %s", _get_json_path())
 
     #Reads the changes
     with open(_get_json_path(), "r", encoding="utf-8") as json_file:
@@ -162,6 +162,7 @@ def _load_controls() -> None:
 
 def _save_controls(control_dictionary:dict) -> None:
     '''Save controls to controls.json'''
+    SETTINGS_FOLDER.mkdir(exist_ok=True, parents=True)
     with open(_get_json_path(), "w", encoding="utf-8") as json_file:
         _logger.info("Writing dictionary to file.")
         json_file.write(_json.dumps(control_dictionary))
@@ -192,6 +193,4 @@ _load_controls()
 
 if __name__ == "__main__":
     #For testing
-    _logger.info("Controls are set to %s.", _BINDINGS_DICT)
-    _save_controls(_BINDINGS_DICT)
-    print(get_changable_controls())
+    print(_get_json_path())

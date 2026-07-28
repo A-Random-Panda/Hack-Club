@@ -3,8 +3,8 @@ from random import randint
 
 from ursina import *
 from scripts.game.controls import *
-from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST
-from scripts.game.settings import DEFAULT_NAMES
+from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST, DEFAULT_NAMES, SETTINGS_FOLDER, SETTINGS_PATH
+import json
 if TYPE_CHECKING:
     from scripts.game.player import _Player
 
@@ -184,6 +184,8 @@ class UIController:
                                      text_size = 0.8, text_color = color.black, enabled = False)
         self.button_list = [self.volume_button,self.quit_button,self.control_button,self.resume_button]
 
+        self.load_settings()
+
     def control_changer(self,control,button) -> None:
         self.player.control_change_button_pressed = True
         self.player.control_change_key = control
@@ -289,3 +291,21 @@ class UIController:
         self.temp_bg.scale=(self.temp_text.width, self.temp_text.height)
         #Not sure if this is proper coding practice but I don't care anymore-
         invoke(_conditional_text_disable, self.temp_text_count, self.temp_text, self.temp_bg, delay=delay)
+
+    def save_settings(self) -> None:
+        '''Saves the volume to the appdata folder'''
+        SETTINGS_FOLDER.mkdir(parents=True, exist_ok=True)
+        with open(SETTINGS_PATH, "w", encoding="utf-8") as f:
+            f.write(json.dumps(
+                {"gun_volume":self.gun_volume_slider.value,
+                "player_volume": self.player_volume_slider.value}))
+
+    def load_settings(self) -> None:
+        '''Loads the settings to their saved values'''
+        if not SETTINGS_PATH.exists():
+            self.save_settings()
+            return
+        with open(SETTINGS_PATH, "r", encoding="utf-8") as f:
+            settings = json.loads(f.read())
+            self.gun_volume_slider.value_setter(settings["gun_volume"])
+            self.player_volume_slider.value_setter(settings["player_volume"])

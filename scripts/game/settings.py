@@ -1,4 +1,11 @@
 #Upgrade cost list (place holders)
+import pathlib
+import platformdirs
+import json
+
+SETTINGS_FOLDER:pathlib.Path = pathlib.Path(platformdirs.user_data_dir(
+    "CataclysmicTanks","ARandomPanda", roaming=True))
+SETTINGS_PATH = SETTINGS_FOLDER / "settings.json"
 MAX_CAM_COST:list[int] = [100,500,1500,4500,7000]
 FASTER_RELOAD_COST:list[int] = [100,500,1500,4500,7000]
 WIN_BONUS = 1000
