@@ -1,7 +1,6 @@
 #Upgrade cost list (place holders)
 import pathlib
 import platformdirs
-import json
 
 SETTINGS_FOLDER:pathlib.Path = pathlib.Path(platformdirs.user_data_dir(
     "CataclysmicTanks","ARandomPanda", roaming=True))
