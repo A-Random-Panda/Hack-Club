@@ -401,13 +401,13 @@ def update():
                         invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
     
                 if player.in_round:
-                    ui_controller.round_timer_text.text = "Round ends in " + str (round((10 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((300 -(abs(time.perf_counter() - player.round_timer))),0))
                     ui_controller.round_timer_text.enable()
                     player.laser.enable()
                     player_enemy.enabled = True
 
 
-                if player.in_round and 10 < abs(time.perf_counter() - player.round_timer):
+                if player.in_round and 300 < abs(time.perf_counter() - player.round_timer):
                     buy_phase(player, ui_controller, True)
                     ui_controller.round_timer_text.disable()
                     player.laser.disable()
