@@ -3,7 +3,7 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 
 ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
-**This is a bug with the engine and is urrently out of scope for us to fix**
+**This is a bug with the engine and is currently out of scope for us to fix**
 
 ## How the project was made
 This project was made in Python3 using the [Ursina](https://www.ursinaengine.org/) library.
