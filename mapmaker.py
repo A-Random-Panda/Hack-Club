@@ -1,5 +1,7 @@
-'''This hopefully will become a mapmaker for Ursina
-Currently very WIP while I learn the library
+'''
+This is an internal tool that is / will be used to make maps
+Currently, for time reasons, this is unfinished, and the only map in the game is hand coded
+But hopefully, if more maps are to be made in the future, they should be made using this tool
 '''
 
 import logging
