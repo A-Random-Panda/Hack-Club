@@ -3,7 +3,7 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 
 ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
-**This is a bug with the engine and is urrently out of scope for us to fix**
+**This is a bug with the engine and is currently out of scope for us to fix**
 
 ## How the project was made
 This project was made in Python3 using the [Ursina](https://www.ursinaengine.org/) library.
@@ -52,3 +52,6 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 **No AI was directly used for the project's code and assets.**
 
 **Some AI was used to help explain some concepts and libraries and for debugging code snippits.**
+
+### Credits:
+**Brick wall image <a href="https://www.magnific.com/free-photo/weathered-brick-wall-texture_932618.htm">Image by kues on Magnific</a>**

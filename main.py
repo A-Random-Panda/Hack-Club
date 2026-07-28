@@ -60,7 +60,7 @@ ui_controller = UIController(player,mouse)
 audio_controller = AudioController(player)
 shop_upgrades = ShopUpgrades(player,ui_controller,audio_controller)
 koth1 = KOTH(player,10,0,0,ui_controller,audio_controller)
-chat = ChatController(player,ui_controller,audio_controller)
+chat = ChatController(ui_controller,audio_controller)
 laser(player)
 server_process:None|subprocess.Popen = None #pylint: disable=invalid-name
 local_ip = gethostbyname(gethostname())
@@ -109,6 +109,7 @@ main_menu = MainMenu(player,audio_controller,ui_controller)
 #Sets ui controller and main menu in rpc functions
 GameState.set_ui_controller(ui_controller)
 GameState.set_main_menu(main_menu)
+GameState.set_chat(chat)
 
 main_menu.open_main_menu()
 
@@ -190,16 +191,12 @@ ui_controller.join_game_button.on_click_setter(join_game)
 #Lobby
 def start_multiplayer_game() -> None:
     '''Tells the server to start the game'''
-    print("button pressed")
     if not peer.is_running():
-        print("server not on")
         ui_controller.show_temp_text("You are not connected to a server.")
         return
-    if ui_controller.lobby_text.text.count("\n") < 3:
-        print("No id")
+    if ui_controller.lobby_text.text.count("\n") < 2:
         ui_controller.show_temp_text("There are not enough people in the server to start the game.")
         return
-    print("attempting to start")
     try:
         peer.start_game(peer.get_connections()[0])
     except Exception as err:
@@ -293,20 +290,22 @@ def input(key):
         audio_controller.footsteps.stop()
         ui_controller.set_mouse_menu_state()
         ui_controller.chat_field.text = ""
-        player.chat_opened = time.perf_counter()
-        invoke(setattr, ui_controller.chat_field, "text", "", delay=0.01)        
+        chat.start_chat_timer()
+        invoke(setattr, ui_controller.chat_field, "text", "", delay=0.01)
 
     if key == get_binding(Controls.SEND_MSG) and player.in_chat:
         ui_controller.set_mouse_game_state()
         player.in_chat = False
         ui_controller.chat_field.enabled = False
-        player.message = (Text(text = f"{player.username}: {ui_controller.chat_field.text}",
+        if peer.is_running():
+            peer.chat_to_server(peer.get_connections()[0], f"{player.username}: {ui_controller.chat_field.text}")
+        else:
+            chat.chat_list.append(Text(text = f"{player.username}: {ui_controller.chat_field.text}",
                               origin = (0.8,0),
                               position = (0.8,0,-2),
                               scale = 0.75,
                               color=color.white,
                               enabled = True))
-        chat.chat_list.append(player.message)
 
     if player.in_chat:
         return
@@ -482,7 +481,7 @@ def update():
         return
 
     if player.in_chat:
-        player.chat_opened = time.perf_counter()
+        chat.start_chat_timer()
     chat.chat()
 
 

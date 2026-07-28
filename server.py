@@ -109,7 +109,14 @@ def on_exit() -> None:
     server_peer.disconnect_all()
 
 @rpc(server_peer)
-def state_to_server(connection, time_connected, state:str):
+def chat_to_server(connection, time_received, message:str):
+    '''Server handling of chat messages'''
+    logger.info("%s", message)
+    for i in server_peer.get_connections():
+        server_peer.send_chat_message(i, message)
+
+@rpc(server_peer)
+def state_to_server(connection, time_received, state:str):
     if len(state) > 1460:
         logger.error("Id of %d sent too much data!", id(connection))
         connection.disconnect()
