@@ -6,10 +6,12 @@ RPC basically is the call from a peer to run a rpc function on the other peer's 
 from logging import getLogger
 from typing import Any, TYPE_CHECKING
 from ursina.networking import *
+from ursina.text import Text, color
 
 if TYPE_CHECKING:
     from scripts.game.ui import UIController
     from scripts.game.main_menu import MainMenu
+    from scripts.game.chat import ChatController
 
 _logger = getLogger(__name__)
 peer:RPCPeer = RPCPeer()
@@ -29,6 +31,7 @@ class GameState():
 
     ui_controller:"UIController | None" = None
     main_menu:"MainMenu | None" = None
+    chat:"ChatController | None" = None
     @classmethod
     def set_ui_controller(cls, controller:"UIController") -> None:
         '''Sets the ui controller, meant to be used in initialization'''
@@ -37,6 +40,10 @@ class GameState():
     def set_main_menu(cls, menu:"MainMenu") -> None:
         '''Sets the ui controller, meant to be used in initialization'''
         cls.main_menu = menu
+    @classmethod
+    def set_chat(cls, chat:"ChatController") -> None:
+        '''Sets the ui controller, meant to be used in initialization'''
+        cls.chat = chat
 
 GameState.reset()
 
@@ -44,7 +51,6 @@ GameState.reset()
 def state_to_client(connection, time_received, state:str):
     '''Receives the game state from the server'''
     GameState.state_string = state
-    print(f"state received:\n{state}")
 
 @rpc(peer)
 def names_to_client(connection, time_received, name:str):
@@ -75,14 +81,25 @@ def id_to_client(connection, time_received, _id:int):
     GameState.id = _id
 
 @rpc(peer)
+def send_chat_message(connection, time_received, message:str):
+    assert GameState.chat is not None
+    GameState.chat.chat_list.append(Text(text = message,
+                              origin = (0.8,0),
+                              position = (0.8,0,-2),
+                              scale = 0.75,
+                              color=color.white,
+                              enabled = True))
+    GameState.chat.start_chat_timer()
+
+@rpc(peer)
 def on_connect(connection, time_connected):
     '''
     On connection to the server
     Currently logs it to the console
     '''
-    ui_controller.show_temp_text("You were connected to a server!")
     assert GameState.ui_controller is not None
     assert GameState.main_menu is not None
+    GameState.ui_controller.show_temp_text("You were connected to a server!")
     peer.name_to_server(peer.get_connections()[0], GameState.ui_controller.acquire_and_set_name())
     GameState.main_menu.exit_subscreen()
     GameState.main_menu.open_lobby()
@@ -93,4 +110,5 @@ def on_disconnect(connection, time_disconnected):
     Runs on disconnection to the server
     Currently logs it to the console.
     '''
-    ui_controller.show_temp_text("You were disconnected from the server at %s!", time_disconnected)
+    assert GameState.ui_controller is not None
+    GameState.ui_controller.show_temp_text("You were disconnected from the server at %s!", time_disconnected)

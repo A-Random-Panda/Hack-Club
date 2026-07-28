@@ -129,8 +129,10 @@ class UIController:
         self.current_cash = Text(f"{player.cash} cash", origin = (0,0), position = (-.7,.4,-2), scale = 1, enabled = False)
         
         #Chat message
-        self.chat_field = InputField(position = (0.4, -0.45), scale = (0.65,0.03),
+        self.chat_field = InputField(position = (0.4, -0.45), scale = (0.65,0.03), active=True,
                                       color = color.white, enabled = False, text_color = color.black, character_limit = 32)
+        #print(self.chat_field.text_field.text_entity.size)
+        #self.chat_field.text_field.text_entity.size = 0.02
         self.chat_field.highlight_color = color.white  
         self.chat_field.highlight_text_color = color.black
         self.chat_field.text_color = color.black
