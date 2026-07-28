@@ -49,7 +49,7 @@ def scaler(string:str, scale_amount:int) -> str:
             string_list[i] = string_list[i][:scale_tuple_start_index]+new_tuple+string_list[i][scale_tuple_end_index+scale_tuple_start_index+1:]
     return "\n".join(string_list)
 
-def change_height(string:str, scale_amount:int) -> str:
+def scale_height(string:str, scale_amount:int) -> str:
     '''Scales the height of the map'''
     string_list = string.splitlines()
     for i in range(len(string_list)):
@@ -125,5 +125,5 @@ Entity(model="cube", scale=(12.5, 10, 1), position=(8.75, 5, -15), texture='purg
 Entity(model="cube", scale=(12.5, 10, 1), position=(-8.75, 5, -15), texture='purg_wall', color=color.white, collider="box")'''
     #print(scaler(map_string, 2))
     f = open("output.txt", "w")
-    f.write(change_height(map_string, 10))
+    f.write(scale_height(map_string, 10))
     f.close()
