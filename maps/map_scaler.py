@@ -1,6 +1,9 @@
 '''
-This file is not meant to be imported, 
-It is instead meant to be ran to help scale maps in python format
+This is a internal tool used to scale maps in size
+The map must have no in line comments and be in the format outputted by the despacer
+
+I quickly wrote this in a way that works but really really sucks
+So, the code quality sucks, and I copy and pasted from myself a lot
 '''
 # pylint: skip-file
 
@@ -46,8 +49,8 @@ def scaler(string:str, scale_amount:int) -> str:
             string_list[i] = string_list[i][:scale_tuple_start_index]+new_tuple+string_list[i][scale_tuple_end_index+scale_tuple_start_index+1:]
     return "\n".join(string_list)
 
-def change_height(string:str, height:int) -> str:
-    '''Sets the height of the obstacle to height'''
+def change_height(string:str, scale_amount:int) -> str:
+    '''Scales the height of the map'''
     string_list = string.splitlines()
     for i in range(len(string_list)):
         scale_tuple_start_index = string_list[i].find("scale=") + len("scale=")
@@ -58,7 +61,7 @@ def change_height(string:str, height:int) -> str:
             scale_tuple = literal_eval(tuple_section)
             assert isinstance(scale_tuple, tuple)
             if scale_tuple[1] != 1:
-                new_tuple = str((scale_tuple[0], height, scale_tuple[2]))
+                new_tuple = str((scale_tuple[0], scale_tuple[1]*scale_amount, scale_tuple[2]))
                 string_list[i] = string_list[i][:scale_tuple_start_index]+new_tuple+string_list[i][scale_tuple_end_index+scale_tuple_start_index+1:]
         #I somehow wrote modular code
         scale_tuple_start_index = string_list[i].find("position=") + len("position=")
@@ -68,15 +71,17 @@ def change_height(string:str, height:int) -> str:
             tuple_section = tuple_section[:scale_tuple_end_index+1]
             scale_tuple = literal_eval(tuple_section)
             assert isinstance(scale_tuple, tuple)
-            new_tuple = str((scale_tuple[0], height/2, scale_tuple[2]))
+            new_tuple = str((scale_tuple[0], scale_tuple[1]*scale_amount, scale_tuple[2]))
             string_list[i] = string_list[i][:scale_tuple_start_index]+new_tuple+string_list[i][scale_tuple_end_index+scale_tuple_start_index+1:]
         #yup amazing, the variables don't even make sense in the slightest anymore
         scale_tuple_start_index = string_list[i].find("y=") + len("y=")
         if scale_tuple_start_index != -1 + len("y="):
             tuple_section = string_list[i][scale_tuple_start_index:]
             scale_tuple_end_index = tuple_section.find(",")
-            tuple_section = tuple_section[:scale_tuple_end_index+1]
-            new_tuple = str(height*2)+","
+            tuple_section = tuple_section[:scale_tuple_end_index]
+            scale_tuple = literal_eval(tuple_section)
+            assert isinstance(scale_tuple, (int, float))
+            new_tuple = str(scale_tuple * scale_amount)+","
             string_list[i] = string_list[i][:scale_tuple_start_index]+new_tuple+string_list[i][scale_tuple_end_index+scale_tuple_start_index+1:]
     return "\n".join(string_list)
 
@@ -120,5 +125,5 @@ Entity(model="cube", scale=(12.5, 10, 1), position=(8.75, 5, -15), texture='purg
 Entity(model="cube", scale=(12.5, 10, 1), position=(-8.75, 5, -15), texture='purg_wall', color=color.white, collider="box")'''
     #print(scaler(map_string, 2))
     f = open("output.txt", "w")
-    f.write(scaler(map_string, 10))
+    f.write(change_height(map_string, 10))
     f.close()
