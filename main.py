@@ -21,7 +21,7 @@ from scripts.game.minimap import UpdateMinimap, MinimapIcons
 from scripts.game.combat import shoot, reload_timer, laser, update_laser
 from scripts.game.audio_controller import AudioController
 from scripts.game.settings import *
-from scripts.game.ui import UIController, show_temp_text
+from scripts.game.ui import UIController
 from scripts.game.shop import ShopUpgrades
 from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
@@ -72,7 +72,6 @@ def kill_server() -> None:
     if server_process is not None:
         logger.info("Killing server...")
         server_process.kill()
-
 
 def cam_switching():
     '''Function for camera switching'''
@@ -139,7 +138,10 @@ def start_server() -> None:
     global server_process #pylint: disable=global-statement
     if server_process is not None:
         #Should probably put a text box and kill the server but who cares
+        ui_controller.show_temp_text("""A server has already been started.
+        If you want to restart the server, stop the server than start it again""", delay=3)
         return
+    ui_controller.show_temp_text("Starting server...")
     port = ui_controller.port_input.text
     window_state_box_checked = ui_controller.has_window_checkbox.value
     if window_state_box_checked:
@@ -176,9 +178,9 @@ def join_game() -> None:
     try:
         logger.info("Attempted to join server")
         peer.start(host, port, is_host=False)
-        show_temp_text("Connecting... This may take a while")
+        ui_controller.show_temp_text("Connecting... This may take a while")
     except Exception:
-        show_temp_text("You failed to join the server")
+        ui_controller.show_temp_text("You failed to join the server")
 
 ui_controller.join_friend_button.on_click_setter(main_menu.open_join_game)
 ui_controller.port_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.port_input))
@@ -188,12 +190,41 @@ ui_controller.join_game_button.on_click_setter(join_game)
 #Lobby
 def start_multiplayer_game() -> None:
     '''Tells the server to start the game'''
+    print("button pressed")
+    if not peer.is_running():
+        print("server not on")
+        ui_controller.show_temp_text("You are not connected to a server.")
+        return
+    if ui_controller.lobby_text.text.count("\n") < 3:
+        print("No id")
+        ui_controller.show_temp_text("There are not enough people in the server to start the game.")
+        return
+    print("attempting to start")
     try:
         peer.start_game(peer.get_connections()[0])
     except Exception as err:
         logger.error("%s when trying to start game", err)
 
+def disconnect_from_server() -> None:
+    '''Disconnects from the server if connected'''
+    if peer.is_running():
+        peer.disconnect_all()
+        ui_controller.show_temp_text("You left the server")
+    else:
+        ui_controller.show_temp_text("You were not connected to a server")
+
+def stop_server() -> None:
+    global server_process #pylint: disable=global-statement
+    if server_process is not None:
+        kill_server()
+        server_process = None
+        ui_controller.show_temp_text("The server was stopped.")
+    else:
+        ui_controller.show_temp_text("A server was not already started.")
+
 ui_controller.start_game_button.on_click_setter(start_multiplayer_game)
+ui_controller.disconnect_button.on_click_setter(disconnect_from_server)
+ui_controller.stop_server_button.on_click_setter(stop_server)
 
 #Control change buttons
 ui_controller.reset_controls_to_default_button.on_click_setter(ui_controller.reset_and_update_controls)
@@ -337,7 +368,6 @@ def input(key):
         else:
             ui_controller.open_shop_menu(False)
 
-
 def update():
     if peer.is_running():
         #Conected to multiplayer
@@ -345,8 +375,7 @@ def update():
         if GameState.opponent_disconnected:
             GameState.game_started = False
             GameState.opponent_disconnected = False
-            temp_text = Text("Your opponent has disconnected", origin = (0, 0), position = (0, 0, -10), scale=2)
-            destroy(temp_text, delay = 5)
+            ui_controller.show_temp_text("Your opponent has disconnected", delay=3)
             #Reset values
             #Send back to main menu
         if GameState.game_started:
@@ -408,14 +437,14 @@ def update():
 
                 if not state["in_zone"] and not player.in_buy_phase:
                     koth1.within_zone()
-                    koth1.gain_points(state["points"],GameState.names,state["round_wins"])
+                    koth1.gain_points(state["points"],GameState.opponent_name,state["round_wins"])
                     ui_controller.contested_text.enabled = False
     
                 if state["in_zone"] and player.in_zone:
                     if not ui_controller.contested_text.enabled:
                         ui_controller.contested_text.enabled = True
                 elif state["in_zone"]:
-                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.names.strip(player.username)} \n round wins: {state["round_wins"]}"
+                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.opponent_name.strip(player.username)} \n round wins: {state["round_wins"]}"
                 
                 if state["shot_someone"] and not player.in_buy_phase:
                     death_manager.kill()
