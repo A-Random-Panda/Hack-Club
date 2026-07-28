@@ -103,7 +103,7 @@ def cam_switching():
 player.perspective_list = [player]
 minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
-update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,55)
+update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,70)
 main_menu = MainMenu(player,audio_controller,ui_controller)
 
 #Sets ui controller and main menu in rpc functions
@@ -244,8 +244,8 @@ first_cam = Entity(model = 'cypher_cam',
                                 position = (0,3,0),
                                 texture = "cam",
                                 rotation = (180,90,180))
-cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
-                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
+cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
+                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
 player.cam_icon_list.append(cam_icon)
 first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
 first_cam.original_rotation_y = first_cam.rotation_y
@@ -328,8 +328,8 @@ def input(key):
                                 position = (5,3,5),
                                 texture = "cam",
                                 rotation = (180,90,180))
-        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/55,
-                                  y= first_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05)
+        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
+                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
         player.cam_icon_list.append(cam_icon)
         first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
         first_cam.original_rotation_y = first_cam.rotation_y
@@ -350,8 +350,8 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/55,
-                                  y= temp_cam.z/55, model = "quad", texture = "camera_icon", scale = 0.05, color = color.red)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/70,
+                                  y= temp_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
@@ -403,17 +403,25 @@ def update():
                         invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
     
                 if player.in_round:
-                    ui_controller.round_timer_text.text = "Round ends in " + str (round((10 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((180 -(abs(time.perf_counter() - player.round_timer))),0))
                     ui_controller.round_timer_text.enable()
                     player.laser.enable()
                     player_enemy.enabled = True
 
 
-                if player.in_round and 10 < abs(time.perf_counter() - player.round_timer):
+                if player.in_round and 180 < abs(time.perf_counter() - player.round_timer):
                     buy_phase(player, ui_controller, True)
                     ui_controller.round_timer_text.disable()
                     player.laser.disable()
                     end_round(player,ui_controller, state["points"])
+                    if player.round_wins == 7:
+                        ui_controller.menu_overlay.enabled
+                        ui_controller.game_win.enabled
+                        invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
+                    elif state["round_wins"] == 7:
+                        ui_controller.menu_overlay.enabled
+                        ui_controller.game_lose.enabled
+                        invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
 
                 if player.in_buy_phase:
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
@@ -532,9 +540,12 @@ def update():
 
     if held_keys[get_binding(Controls.CAMERA_RIGHT)]:
         player_shadow.rotation_y += player_sensitivity * time.dt
-    #use this for taking a overview screenshot
+    #use this for taking a overview screenshot for the minimap
     '''
     camera.position = (0, 100, 0)
     camera.rotation = (90, 0, 0) 
+    player_enemy.disable()
+    if held_keys["t"]:
+        player.cursor.enabled = False
     '''
 app.run()

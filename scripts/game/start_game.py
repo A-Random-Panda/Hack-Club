@@ -39,6 +39,8 @@ def reset_values(player:"_Player",ui:"UIController", enemy_id:int, your_id:int):
     ui.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"
     ui.enemy_leaderboard_text.text = f""
     player.round_wins = 0
+    ui.game_lose.enabled = False
+    ui.game_win.enabled = False
 
     destory_all_cameras(player, ui)
 
