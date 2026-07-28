@@ -50,6 +50,12 @@ class UIController:
         self.temp_bg = Entity(model='quad', origin=self.temp_text.origin, parent=self.temp_text,
                             scale=(self.temp_text.width, self.temp_text.height), color=color.black, z=0.1, enabled=False)
         self.temp_text_count = [0]
+
+        self.game_win = Text(f'GAME WON', origin = (0,0), position = (0,0,-1.1),
+                                      scale = 5, color=color.green,enabled = False)
+
+        self.game_lose = Text(f'GAME LOST', origin = (0,0), position = (0,0,-1.1),
+                                      scale = 5, color=color.red,enabled = False)
         #Main menu
         self.background = Entity(model="quad", texture="hair", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0,0, -4),
