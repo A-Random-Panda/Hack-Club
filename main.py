@@ -26,7 +26,7 @@ from scripts.game.shop import ShopUpgrades
 from scripts.game.game_objective import KOTH
 from scripts.game.main_menu import MainMenu
 from scripts.game.chat import ChatController
-from scripts.game.start_game import reset_values, destory_all_cameras, end_round, buy_phase, start_round, end_game
+from scripts.game.start_game import reset_values, destory_all_cameras, end_round, buy_phase, start_round, end_game, set_spawn
 
 from scripts.client.client_to_server import send_info, info_key
 from scripts.client.parsing import parse_state
@@ -418,10 +418,12 @@ def update():
                         ui_controller.menu_overlay.enabled
                         ui_controller.game_win.enabled
                         invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
+                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                     elif state["round_wins"] == 7:
                         ui_controller.menu_overlay.enabled
                         ui_controller.game_lose.enabled
                         invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
+                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
 
                 if player.in_buy_phase:
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
