@@ -49,7 +49,7 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 .\build-linux.sh
 ```
 
--**How to Play**
+### How to Play
 Goal of the game is to win 7 rounds.
 It's a 1 v 1 KOTH (KING OF THE HILL) gamemode where the main objective is to contest the "hill" to gain points, the person with the most points at the end of the round wins.
 The twist is instead of shooting people through your own perspective you shoot people through the perspective of cameras you place around the map.
