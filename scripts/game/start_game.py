@@ -28,7 +28,7 @@ def set_spawn(player:"_Player", enemy_id:int, your_id:int):
         player.respawn_point = RESPAWN_POINTS[1]
         player.rotation_y = RESPAWN_ROTATION[1]
 def reset_values(player:"_Player",ui:"UIController", enemy_id:int, your_id:int):
-    player.position = player.respawn_point
+    player.world_position = player.respawn_point
     player.cash = 1000
     ui.close_all_uis()
     player.points = 0
@@ -92,7 +92,7 @@ def start_round(player:"_Player", ui:"UIController", enemy_id:int, your_id:int):
     player.round_timer = time.perf_counter()
     buy_phase(player, ui, False)
     ui.round_timer_text.enabled = True
-    player.position = player.respawn_point
+    player.world_position = player.respawn_point
     
 def end_game(player:"_Player", ui:"UIController"):
     pass

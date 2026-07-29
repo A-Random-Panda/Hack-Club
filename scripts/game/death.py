@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 RESPAWN_TIME = 5
-RESPAWN_POSITION = (0.5, 1.0,0.5)
 
 class DeathManager():
     def __init__(self, player, audio, ui, player_shadow, cam_switching):
@@ -40,5 +39,5 @@ class DeathManager():
         self.ui.respawn_text.enabled = False
         self.ui.menu_overlay.enabled = False
         self.cam_switching()
-        self.player.position = RESPAWN_POSITION
+        self.player.position = self.player.respawn_point
         self.ui.close_all_uis()

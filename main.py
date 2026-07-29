@@ -73,9 +73,9 @@ def kill_server() -> None:
         logger.info("Killing server...")
         server_process.kill()
 
-def cam_switching():
+def cam_switching(in_buy = False):
     '''Function for camera switching'''
-    if player.current_cam == len(player.perspective_list):
+    if player.current_cam == len(player.perspective_list) or in_buy:
         player.current_cam = 0
         #If the camera is on the player and there is at least one camera
 
@@ -85,7 +85,7 @@ def cam_switching():
     elif player.current_cam == 0 and player.in_round:
             player.current_cam += 1
 
-    if player.current_cam == 0 and len(player.perspective_list) > 1: #player
+    if (player.current_cam == 0 and len(player.perspective_list) > 1) or in_buy: #player
         player.in_camera = False
         ui_controller.camoverlay.disable()
         player.perspective_list[-1].visible = True
@@ -402,27 +402,30 @@ def update():
                         invoke(setattr, ui_controller.kill_png, "enabled", False, delay = 5)
     
                 if player.in_round:
-                    ui_controller.round_timer_text.text = "Round ends in " + str (round((180 -(abs(time.perf_counter() - player.round_timer))),0))
+                    ui_controller.round_timer_text.text = "Round ends in " + str (round((180 -(time.perf_counter() - player.round_timer)),0))
                     ui_controller.round_timer_text.enable()
                     player.laser.enable()
                     player_enemy.enabled = True
 
 
-                if player.in_round and 180 < abs(time.perf_counter() - player.round_timer):
+                if player.in_round and 180 < (time.perf_counter() - player.round_timer):
                     buy_phase(player, ui_controller, True)
                     ui_controller.round_timer_text.disable()
                     player.laser.disable()
+                    cam_switching(True)
                     end_round(player,ui_controller, state["points"])
-                    if player.round_wins == 7:
-                        ui_controller.menu_overlay.enabled
-                        ui_controller.game_win.enabled
+                    if player.round_wins == 7 and not player.game_over:
+                        ui_controller.menu_overlay.enable()
+                        ui_controller.game_win.enable()
                         invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
-                    elif state["round_wins"] == 7:
-                        ui_controller.menu_overlay.enabled
-                        ui_controller.game_lose.enabled
+                        player.game_over == True
+                    elif state["round_wins"] == 7 and not player.game_over:
+                        ui_controller.menu_overlay.enable()
+                        ui_controller.game_lose.enable()
                         invoke(reset_values, player, ui_controller, state["opponent_id"], GameState.id, delay = 10)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
+                        player.game_over == True
 
                 if player.in_buy_phase:
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
@@ -444,9 +447,8 @@ def update():
                     player.enemy_shot = False
                     destroy(enemy_bullet_trail,delay = 0.1)
                     invoke(setattr, player, "enemy_shot", True, delay = 0.1)
-
-                if not state["in_zone"] and not player.in_buy_phase:
-                    koth1.within_zone()
+                koth1.within_zone()
+                if not state["in_zone"] and not player.in_buy_phase and player.in_zone:
                     koth1.gain_points(state["points"],GameState.opponent_name,state["round_wins"])
                     ui_controller.contested_text.enabled = False
     
@@ -454,7 +456,7 @@ def update():
                     if not ui_controller.contested_text.enabled:
                         ui_controller.contested_text.enabled = True
                 elif state["in_zone"]:
-                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.opponent_name.strip(player.username)} \n round wins: {state["round_wins"]}"
+                    ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.opponent_name.replace(player.username, "")} \n round wins: {state["round_wins"]}"
                 
                 if state["shot_someone"] and not player.in_buy_phase:
                     death_manager.kill()
@@ -525,10 +527,9 @@ def update():
 
     #moving block for testing
 
-
     update_laser(player)
 
-    if player.in_chat == True:
+    if player.in_chat:
         return
 
     if held_keys[get_binding(Controls.CHECK_LEADERBOARD)] and not player.in_menu and not player.in_shop:
