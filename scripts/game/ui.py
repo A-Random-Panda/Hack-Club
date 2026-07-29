@@ -64,6 +64,7 @@ class UIController:
                                         color=color.white, text = "Host game", text_color=color.black)
         self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.25, 0, -4),
                                            color=color.white, text = "Map Selector", text_color=color.black) 
+        
         self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                           color=color.white, text = "Join Friend", text_color=color.black)
         self.name_input = InputField(default_value= "Username Here",character_limit = 15, position=(0, -0.15),
