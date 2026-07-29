@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 application.asset_folder = Path(__file__).parent / "assets"
 
 #Create app
-app = Ursina(icon="assets/textures/ursina.ico", development_mode=False)
+app = Ursina(icon="assets/textures/ursina.ico", development_mode=False, borderless=True, fullscreen=True, forced_aspect_ratio = 16/9)
 
 Purgatory.load_map()
 player_shadow = Entity(model="tank",rotation_x=0, y=0, enabled = False, scale = 0.5,texture="bluetest")
@@ -377,6 +377,7 @@ def update():
             GameState.opponent_disconnected = False
             ui_controller.show_temp_text("Your opponent has disconnected", delay=3)
             #Reset values
+            #reset_values(player, ui_controller, state["opponent_id"], GameState.id)
             #Send back to main menu
         if GameState.game_started:
             #Multiplayer code
