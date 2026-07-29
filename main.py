@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 application.asset_folder = Path(__file__).parent / "assets"
 
 #Create app
-app = Ursina(icon="assets/textures/ursina.ico")
+app = Ursina(icon="assets/textures/ursina.ico", development_mode=False)
 
 Purgatory.load_map()
 player_shadow = Entity(model="tank",rotation_x=0, y=0, enabled = False, scale = 0.5,texture="bluetest")
@@ -152,8 +152,7 @@ def start_server() -> None:
     if "__compiled__" in globals():
         #Code if compiled with nuitka
         #Assume multidist was used
-        path = pathlib.Path(__file__).resolve()
-        server_process = subprocess.Popen([path, "server", "--port", port, window_state],
+        server_process = subprocess.Popen(["server.exe", "--port", port, window_state],
                                            stdout=subprocess.DEVNULL,
                                            stderr=subprocess.DEVNULL
                                            )
