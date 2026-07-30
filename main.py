@@ -401,6 +401,7 @@ def update():
                         player.world_position = RESPAWN_POINTS[1]
                         player.rotation_y = RESPAWN_ROTATION[1]
                 player_enemy.world_position_setter(state["world_pos"])
+                player_enemy.rotation_setter(state["player_rotation"])
 
                 if player.bullet_trail is not None and not player.in_buy_phase:
                     if player.bullet_trail.intersects(player_enemy):
