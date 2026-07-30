@@ -197,11 +197,11 @@ class UIController:
 
         #Escape menu buttons
         self.quit_button = Button(model = "quad", scale = 0.2, x = 0, y=-.2, z = -2, color=color.gray,
-                                   text = "Exit to menu", text_size = 0.8, text_color = color.black, enabled = False)
+                                   text = "Quit Game", text_size = 0.8, text_color = color.black, enabled = False)
         self.volume_button = Button(model = "quad", scale = 0.2, x = 0.2, z = -2, color = color.gray,
-                                     text = "Volume controls", text_size = 0.8, text_color = color.black, enabled = False)
+                                     text = "volume controls", text_size = 0.8, text_color = color.black, enabled = False)
         self.control_button = Button(model = "quad", scale = 0.2, x = -0.2, z = -2, color = color.gray,
-                                      text = "Controls", text_size = 0.8, text_color = color.black, enabled = False)
+                                      text = "controls", text_size = 0.8, text_color = color.black, enabled = False)
         self.resume_button = Button(model = "quad", scale = 0.2, z = -2, color=color.gray, text = "Resume",
                                      text_size = 0.8, text_color = color.black, enabled = False)
         self.button_list = [self.volume_button,self.quit_button,self.control_button,self.resume_button]
