@@ -27,6 +27,7 @@ def shoot(player:"_Player", reload:Audio, shooting:Audio):
                                     collider = "box"
                                     )
         destroy(player.bullet_trail,delay = 0.1)
+        invoke(setattr, player, "bullet_trail", None, delay=0.1)
 
 #function for the reload timer
 def reload_timer(player:"_Player",cooldown_text:Text):
