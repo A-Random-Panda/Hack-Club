@@ -108,7 +108,7 @@ def on_connect(connection, time_connected):
     assert GameState.main_menu is not None
     GameState.ui_controller.show_temp_text("You were connected to a server!")
     peer.name_to_server(peer.get_connections()[0], GameState.ui_controller.acquire_and_set_name())
-    GameState.main_menu.exit_subscreen()
+    GameState.reset_function()
     GameState.main_menu.open_lobby()
 
 @rpc(peer)
@@ -120,7 +120,7 @@ def on_disconnect(connection, time_disconnected):
     assert GameState.ui_controller is not None
     assert GameState.main_menu is not None
     GameState.ui_controller.show_temp_text(f"You were disconnected from the server at {datetime.fromtimestamp(time_disconnected)}!", delay=3)
-    GameState.main_menu.open_main_menu()
     peer.peer.running = False
     GameState.reset()
+    GameState.reset_function()
     GameState.ui_controller.lobby_text.text = ""

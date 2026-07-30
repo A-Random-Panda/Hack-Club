@@ -106,6 +106,8 @@ def cam_switching(in_buy = False):
         ui_controller.camoverlay.text= f'cam {player.current_cam}'
 
 def complete_reset():
+    print("Current screen: ", main_menu.current_screen)
+    main_menu.exit_subscreen()
     main_menu.open_main_menu()
     reset_values(player,ui_controller)
     first_cam = Entity(model = 'cypher_cam',

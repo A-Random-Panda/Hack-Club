@@ -62,10 +62,9 @@ class MainMenu:
         self.ui.background.texture = "menu_screen"
         match self.current_screen:
             case _Screens.MAIN_MENU:
-                _logger.error("Current screen detected as main menu while attempting to exit subscreen")
+                _logger.info("Current screen detected as main menu while attempting to exit subscreen")
             case _Screens.GAME:
-                _logger.error("Current screen detected as in game while attempting to exit subscreen")
-                return
+                _logger.info("Current screen detected as in game while attempting to exit subscreen")
             case _Screens.MAP_SELECTOR:
                 self.ui.rules_button.disable()
                 self.ui.map_selector_text.disable()
