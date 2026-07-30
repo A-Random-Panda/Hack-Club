@@ -107,8 +107,20 @@ class UIController:
 
 
         #Map selector
-        self.map_selector_text = Text("Maps", origin = (0,0),position = (0,0.4,-4), scale = 3,
-                                       color=color.red, enabled = False)
+        rules_str = ("Goal of the game is to win 7 rounds. "
+        "\n It's a 1 v 1 KOTH (KING OF THE HILL) gamemode where "
+        "\nthe main objective is to contest the 'hill' to gain points, "
+        "\nthe person with the most points at the end of the round wins. "
+        "\nThe twist is instead of shooting people through your own perspective "
+        "\nyou shoot people through the perspective of cameras you place around the map. "
+        "\nEach round last 3 minutes and is followed by a buy / setup phase"
+        "\n where you can buy player upgrades and place / reset cameras."
+        "\n All hot keys for controls are inside the escape menu when you load into the game"
+        "\n and can be changed inside said menu")
+
+
+        self.map_selector_text = Text(rules_str, origin = (0,0),position = (0,0.1,-4), scale = 1.3,
+                                       color=color.black, enabled = False)
         self.back_to_main_button = Button(model = "quad", scale = (0.2), position = (-1.778*.5,-0.5, -4), origin=(-.5, -.5),
                                           text = "Back to \n main menu", color=color.orange, enabled = False)
 
