@@ -110,7 +110,7 @@ def cam_switching(in_buy = False):
 player.perspective_list = [player]
 minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
-update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,70)
+update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,MINIMAP_X,MINIMAP_Y)
 main_menu = MainMenu(player,audio_controller,ui_controller)
 
 #Sets ui controller and main menu in rpc functions
@@ -134,7 +134,7 @@ ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
 ui_controller.exit_game_button.on_click_setter(main_menu.normal_exit)
 ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching)))
 ui_controller.host_game_button.on_click_setter(main_menu.open_host_game)
-ui_controller.map_selector_button.on_click_setter(main_menu.open_map_selector)
+ui_controller.rules_button.on_click_setter(main_menu.open_rules_menu)
 ui_controller.lobby_botton.on_click_setter(main_menu.open_lobby)
 ui_controller.back_to_main_button.on_click_setter(main_menu.exit_subscreen)
 ui_controller.name_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.name_input))
@@ -253,8 +253,8 @@ first_cam = Entity(model = 'cypher_cam',
                                 position = (0,3,0),
                                 texture = "cam",
                                 rotation = (180,90,180))
-cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
-                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
+cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
+                                  y= first_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
 player.cam_icon_list.append(cam_icon)
 first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
 first_cam.original_rotation_y = first_cam.rotation_y
@@ -339,8 +339,8 @@ def input(key):
                                 position = (5,3,5),
                                 texture = "cam",
                                 rotation = (180,90,180))
-        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
-                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
+        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
+                                  y= first_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
         player.cam_icon_list.append(cam_icon)
         first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
         first_cam.original_rotation_y = first_cam.rotation_y
@@ -361,8 +361,8 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/70,
-                                  y= temp_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/MINIMAP_X,
+                                  y= temp_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
@@ -405,6 +405,7 @@ def update():
                         player.world_position = RESPAWN_POINTS[1]
                         player.rotation_y = RESPAWN_ROTATION[1]
                 player_enemy.world_position_setter(state["world_pos"])
+                player_enemy.rotation_setter(state["player_rotation"])
 
                 if player.bullet_trail is not None and not player.in_buy_phase:
                     if player.bullet_trail.intersects(player_enemy):
