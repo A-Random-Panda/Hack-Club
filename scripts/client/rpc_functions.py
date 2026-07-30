@@ -5,6 +5,7 @@ RPC basically is the call from a peer to run a rpc function on the other peer's 
 '''
 from logging import getLogger
 from typing import Any, TYPE_CHECKING
+from datetime import datetime
 from ursina.networking import *
 from ursina.text import Text, color
 
@@ -111,4 +112,7 @@ def on_disconnect(connection, time_disconnected):
     Currently logs it to the console.
     '''
     assert GameState.ui_controller is not None
-    GameState.ui_controller.show_temp_text("You were disconnected from the server at %s!", time_disconnected)
+    GameState.ui_controller.show_temp_text(f"You were disconnected from the server at {datetime.fromtimestamp(time_disconnected)}!", delay=3)
+    peer.peer.running = False
+    GameState.reset()
+    GameState.ui_controller.lobby_text.text = ""

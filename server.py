@@ -221,6 +221,9 @@ def input(key):# pylint: disable=function-redefined
     '''Input handler'''
     if key == "q":
         logger.warning("Test warning")
+    if key == "r":
+        logger.info("Disconnecting all...")
+        server_peer.disconnect_all()
 
 if __name__ == "__main__":
     start_server(args.hostname, args.port)

@@ -205,7 +205,7 @@ def disconnect_from_server() -> None:
     '''Disconnects from the server if connected'''
     if peer.is_running():
         peer.disconnect_all()
-        ui_controller.show_temp_text("You left the server")
+        #ui_controller.show_temp_text("You left the server")
     else:
         ui_controller.show_temp_text("You were not connected to a server")
 
@@ -254,6 +254,8 @@ player.perspective_list.append(first_cam)
 #Detect key inputs
 def input(key):
     '''Input handler'''
+    if key == '0':
+        print(ui_controller.temp_text.text)
      #Escape menu
     if player.in_main_menu:
         return
