@@ -16,7 +16,7 @@ if ($reply -eq "y") {
         pause
     }
     if ($reply -eq "y") {
-        python -m nuitka --standalone --windows-console-mode=disable --deployment --include-data-dir=assets=assets --python-flag=isolated,no_asserts,no_docstrings,no_warnings --main=main.py
+        python -m nuitka --standalone --windows-console-mode=disable --deployment --include-data-dir=assets=assets --python-flag=isolated,no_asserts,no_docstrings,no_warnings --windows-icon-from-ico=assets/textures/ursina.ico --main=main.py
         pause
     }
     $reply = Read-Host "Server build (y/n)"
