@@ -42,4 +42,4 @@ class DeathManager():
         self.cam_switching()
         self.player.position = self.player.respawn_point
         self.ui.close_all_uis()
-        self.ui.contested_text = False
+        self.ui.contested_text.enabled = False
