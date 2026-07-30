@@ -75,7 +75,7 @@ control_button_data_list = [
     ("Reset All Cameras", Controls.RESET_CAMERAS, -0.4, 0.4),
     ("Shoot", Controls.SHOOT, -0.4, 0.2),
     ("Player Camera Left", Controls.CAMERA_LEFT, -0.4, -0.4),
-    ("Player Camera Right", Controls.CAMERA_RIGHT, -0.4, -0.6),
+    ("Player Camera Right", Controls.CAMERA_RIGHT, -0, 0.2),
     ("Open Shop", Controls.OPEN_SHOP, 0,0),
     ("Check Leaderboard", Controls.CHECK_LEADERBOARD, 0,-0.2),
     ("Open Chat", Controls.OPEN_CHAT, 0,-0.4),

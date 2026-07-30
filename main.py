@@ -124,8 +124,24 @@ main_menu.open_main_menu()
 ui_controller.upgrade_cams_button.on_click_setter(shop_upgrades.cam_upgrade)
 ui_controller.faster_reload_button.on_click_setter(shop_upgrades.reload_upgrade)
 
+def complete_reset():
+    main_menu.open_main_menu()
+    reset_values(player,ui_controller)
+    first_cam = Entity(model = 'cypher_cam',
+                                    position = (0,3,0),
+                                    texture = "cam",
+                                    rotation = (180,90,180))
+    cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
+                                      y= first_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
+    player.cam_icon_list.append(cam_icon)
+    first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
+    first_cam.original_rotation_y = first_cam.rotation_y
+    first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
+    player.perspective_list.append(first_cam)
+    ui_controller.set_mouse_menu_state()
+
 #Escape menu buttons
-ui_controller.quit_button.on_click_setter(main_menu.open_main_menu)
+ui_controller.quit_button.on_click_setter(complete_reset)
 ui_controller.volume_button.on_click_setter(ui_controller.open_volume_menu)
 ui_controller.control_button.on_click_setter(ui_controller.open_control_menu)
 ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
@@ -336,7 +352,7 @@ def input(key):
     if key == get_binding(Controls.RESET_CAMERAS) and player.in_buy_phase:
         destory_all_cameras(player,ui_controller)
         first_cam = Entity(model = 'cypher_cam',
-                                position = (5,3,5),
+                                position = (0,3,0),
                                 texture = "cam",
                                 rotation = (180,90,180))
         cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
@@ -388,9 +404,6 @@ def update():
             GameState.game_started = False
             GameState.opponent_disconnected = False
             ui_controller.show_temp_text("Your opponent has disconnected", delay=3)
-            #Reset values
-            #reset_values(player, ui_controller, state["opponent_id"], GameState.id)
-            #Send back to main menu
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
@@ -465,8 +478,10 @@ def update():
                 if not state["in_zone"] and not player.in_buy_phase and player.in_zone:
                     koth1.gain_points(state["points"],GameState.opponent_name,state["round_wins"])
                     ui_controller.contested_text.enabled = False
+                elif not state["in_zone"] and player.in_zone:
+                    ui_controller.contested_text.enabled = False
     
-                if state["in_zone"] and player.in_zone:
+                if state["in_zone"] and player.in_zone and not player.in_buy_phase:
                     if not ui_controller.contested_text.enabled:
                         ui_controller.contested_text.enabled = True
                 elif state["in_zone"]:
