@@ -24,13 +24,17 @@ Attempt to:
 import argparse
 import logging
 from atexit import register
-from sys import exit #pylint: disable=redefined-builtin
+from sys import exit, argv #pylint: disable=redefined-builtin
 
 from pygame.time import Clock
 from ursina import *
 from ursina.networking import *
 
 from scripts.server.log_to_variable_handler import LatestLogHandler
+
+print("PID:", os.getpid())
+print("__name__:", __name__)
+print("argv:", sys.argv)
 
 #Constants
 DATA_RATE = 32 #Times data is sent to the client per second
@@ -63,6 +67,7 @@ if args.window:
 else:
     WINDOW_TYPE = 'none'
 
+print("Creating Ursina")
 app = Ursina(vsync=False, window_type=WINDOW_TYPE)
 #If the screen is showing, disable debug options
 if WINDOW_TYPE == "onscreen":
