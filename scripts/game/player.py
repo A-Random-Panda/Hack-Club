@@ -46,7 +46,7 @@ class _Player(FirstPersonController):
         self.chat_opened:float = 0.0
         self.message:Entity = None
         self.laser:Entity = None
-        self.respawn_point:Vec3 = (0,2,0)
+        self.respawn_point:Vec3 = (3,2,0)
         self.rounds:int = 0
         self.lose_streak: int = 0
         self.in_buy_phase: bool  = False

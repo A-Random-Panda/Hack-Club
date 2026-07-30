@@ -25,6 +25,7 @@ class DeathManager():
         self.player.death_timer = time.perf_counter()
         self.player.input_enabled = False
         self.ui.respawn_text.enabled = True
+        self.player.position = self.player.respawn_point
     def while_dead(self) -> None:
         timer = "Respawning in " + str(round(RESPAWN_TIME - time.perf_counter() + self.player.death_timer, 1))
         self.ui.respawn_text.text = timer

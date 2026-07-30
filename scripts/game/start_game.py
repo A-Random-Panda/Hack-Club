@@ -27,13 +27,14 @@ def set_spawn(player:"_Player", enemy_id:int, your_id:int):
     else:
         player.respawn_point = RESPAWN_POINTS[1]
         player.rotation_y = RESPAWN_ROTATION[1]
-def reset_values(player:"_Player",ui:"UIController", enemy_id:int, your_id:int):
+def reset_values(player:"_Player",ui:"UIController"):
     player.world_position = player.respawn_point
     player.cash = 1000
     ui.close_all_uis()
     player.points = 0
     player.max_cams = 6
     player.reload_time = 5
+    player.in_buy_phase = False
     ui.current_cash.text = f"{player.cash} cash"
     ui.faster_reload_button.text = f"-0.5 sec reload time \n reload time: {player.reload_time} sec \n cost: $100"
     ui.upgrade_cams_button.text = f"+1 Max cam \n current cams: {player.max_cams} \n cost: $100"
@@ -44,6 +45,7 @@ def reset_values(player:"_Player",ui:"UIController", enemy_id:int, your_id:int):
     ui.game_win.enabled = False
 
     destory_all_cameras(player, ui)
+    
 
 def end_round(player:"_Player", ui:"UIController", points:int):
     ui.win_text.text = f'{player.username} WINS!!!'
