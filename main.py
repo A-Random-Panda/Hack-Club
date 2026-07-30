@@ -155,7 +155,7 @@ def start_server() -> None:
     if "__compiled__" in globals():
         #Code if compiled with nuitka
         logger.info("Server started")
-        with open ("latest_server.log", "w", encoding="utf-8") as log:
+        with open ("latest-server.log", "w", encoding="utf-8") as log:
             server_process = subprocess.Popen(["server.exe", "--port", port, window_state],
                                             stdout=log,
                                             stderr=subprocess.DEVNULL,

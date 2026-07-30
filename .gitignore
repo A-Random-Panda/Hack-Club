@@ -3,6 +3,7 @@ models_compressed/
 **/__pycache__/
 .vscode/
 .venv/
+#Build
 main.build/
 main.dist/
 server.build/
@@ -12,5 +13,6 @@ server.exe
 
 #Config files
 maps/saved maps/
-controls.json
+latest.log
+latest-server.log
 output.txt
