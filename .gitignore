@@ -5,6 +5,10 @@ models_compressed/
 .venv/
 main.build/
 main.dist/
+server.build/
+server.dist/
+server.onefile-build/
+server.exe
 
 #Config files
 maps/saved maps/
