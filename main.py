@@ -5,8 +5,8 @@ This is the main file that will run the game
 
 import logging
 import time
-import pathlib
 import subprocess
+import os
 from socket import gethostname, gethostbyname
 from sys import executable
 from atexit import register
@@ -71,7 +71,11 @@ def kill_server() -> None:
     '''Kills the server process if it's open'''
     if server_process is not None:
         logger.info("Killing server...")
-        server_process.kill()
+        if os.name == "nt":
+            print("taskkill", "/F", "/T", "PID", str(server_process.pid))
+            subprocess.Popen(["taskkill", "/F", "/T", "/PID", str(server_process.pid)])
+        elif os.name == "posix":
+            os.killpg(os.getpgid(server_process.pid), signal.SIGTERM)
 
 def cam_switching(in_buy = False):
     '''Function for camera switching'''
@@ -97,7 +101,6 @@ def cam_switching(in_buy = False):
         player.in_camera = True
         ui_controller.camoverlay.enable()
         ui_controller.camoverlay.text= f'cam {player.current_cam}'
-
 
 #Variable declarations
 player.perspective_list = [player]
@@ -151,16 +154,19 @@ def start_server() -> None:
         window_state = "--no-window"
     if "__compiled__" in globals():
         #Code if compiled with nuitka
-        #Assume multidist was used
-        server_process = subprocess.Popen(["server.exe", "--port", port, window_state],
-                                           stdout=subprocess.DEVNULL,
-                                           stderr=subprocess.DEVNULL
-                                           )
+        logger.info("Server started")
+        with open ("log", "a", encoding="utf-8") as log:
+            server_process = subprocess.Popen(["server.exe", "--port", port, window_state],
+                                            stdout=log,
+                                            stderr=subprocess.DEVNULL,
+                                            start_new_session=True
+                                            )
     else:
         #Ran from source
         server_process = subprocess.Popen([executable, "server.py", "--port", port, window_state],
                                            stdout=subprocess.DEVNULL,
-                                           stderr=subprocess.DEVNULL
+                                           stderr=subprocess.DEVNULL,
+                                           start_new_session=True
                                            )
     #Auto connect if box is checked
     if ui_controller.auto_join_checkbox.value:
