@@ -22,7 +22,7 @@ For connecting with computers on the same IP address, the other player must conn
 ## Online multiplayer
 For online multiplayer, you must set up port forwarding.
 
-Instead of connecting via your local ip address, your friends must connect via your public ip which can be found with websites like [whatismyipaddress.com](https://whatismyipaddress.com/)
+Instead of connecting with your local ip address, your friends must connect via your public ip which can be found with websites like [whatismyipaddress.com](https://whatismyipaddress.com/)
 
 An online guide for port forwarding can be [found here](https://www.noip.com/support/knowledgebase/general-port-forwarding-guide)
 
@@ -35,7 +35,11 @@ The game uses **TCP**, the default port for the game is **port 1983** but it can
 2. Unzip the file
 3. Run main.exe (Note: you may have to unblock the .exe file)
 
-*Note:* The server.exe may be blocked by antivirus software, you may have to override the antivirus.
+**Note:** The server.exe file may get flagged by some antivirus software ([virustotal of current build as of writing this](https://www.virustotal.com/gui/file/d26d25a339c8bbe1550e66b6ce5854a6807f1fcdc52abeb86e04781849fea882))
+
+I can only promise you that **it's not.**
+
+You may have to override said antivirus, there are different steps depending on which antivirus
 
 ### Run from source
 ***Requirement: Python 3.12+***
@@ -75,12 +79,18 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 
 **The build script is no longer supported**
 
-**Building on Linux/Mac should work using the same Nuitka commands as in the windows build script without the --windows-console-mode flag, but this is untested!**
+Building on Linux/Mac should work using the same Nuitka commands as in the windows build script without the --windows-console-mode flag, but this is untested!
 
 ### AI DISCLOSURE:
 **No AI was directly used for the project's code and assets.**
 
-**Some AI was used to help explain some concepts and libraries and for debugging code snippits.**
+**Some AI was used to help explain some concepts and libraries ([Ursina's documentation](https://www.ursinaengine.org/documentation.html) sucks!) and for debugging code snippits... ~~like a lot of them; the code broke a lot~~.**
 
-### Credits:
-**Brick wall image <a href="https://www.magnific.com/free-photo/weathered-brick-wall-texture_932618.htm">Image by kues on Magnific</a>**
+## Credits:
+**Thank you for making this project possible!**
+
+Playtesters - [Ivan](https://github.com/ivanding3) and Alec
+
+Tank model - [ProbablyaDoor](https://github.com/ProbablyaDoor)
+
+Brick wall image <a href="https://www.magnific.com/free-photo/weathered-brick-wall-texture_932618.htm">Image by kues on Magnific</a>
