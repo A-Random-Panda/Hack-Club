@@ -105,25 +105,6 @@ def cam_switching(in_buy = False):
         ui_controller.camoverlay.enable()
         ui_controller.camoverlay.text= f'cam {player.current_cam}'
 
-#Variable declarations
-player.perspective_list = [player]
-minimap_icons = MinimapIcons(player)
-death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
-update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,MINIMAP_X,MINIMAP_Y)
-main_menu = MainMenu(player,audio_controller,ui_controller)
-
-#Sets ui controller and main menu in rpc functions
-GameState.set_ui_controller(ui_controller)
-GameState.set_main_menu(main_menu)
-GameState.set_chat(chat)
-#GameState.set_reset_function(res)
-
-main_menu.open_main_menu()
-
-#Shop menu buttons
-ui_controller.upgrade_cams_button.on_click_setter(shop_upgrades.cam_upgrade)
-ui_controller.faster_reload_button.on_click_setter(shop_upgrades.reload_upgrade)
-
 def complete_reset():
     main_menu.open_main_menu()
     reset_values(player,ui_controller)
@@ -139,6 +120,25 @@ def complete_reset():
     first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
     player.perspective_list.append(first_cam)
     ui_controller.set_mouse_menu_state()
+
+#Variable declarations
+player.perspective_list = [player]
+minimap_icons = MinimapIcons(player)
+death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
+update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,MINIMAP_X,MINIMAP_Y)
+main_menu = MainMenu(player,audio_controller,ui_controller)
+
+#Sets ui controller and main menu in rpc functions
+GameState.set_ui_controller(ui_controller)
+GameState.set_main_menu(main_menu)
+GameState.set_chat(chat)
+GameState.set_reset_function(complete_reset)
+
+main_menu.open_main_menu()
+
+#Shop menu buttons
+ui_controller.upgrade_cams_button.on_click_setter(shop_upgrades.cam_upgrade)
+ui_controller.faster_reload_button.on_click_setter(shop_upgrades.reload_upgrade)
 
 #Escape menu buttons
 ui_controller.quit_button.on_click_setter(complete_reset)

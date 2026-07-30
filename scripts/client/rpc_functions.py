@@ -33,7 +33,7 @@ class GameState():
     ui_controller:"UIController | None" = None
     main_menu:"MainMenu | None" = None
     chat:"ChatController | None" = None
-    reset_function:function | None = None
+    reset_function = None
 
     @classmethod
     def set_ui_controller(cls, controller:"UIController") -> None:
@@ -48,7 +48,7 @@ class GameState():
         '''Sets the ui controller, meant to be used in initialization'''
         cls.chat = chat
     @classmethod
-    def set_reset_function(cls, reset:"function") -> None:
+    def set_reset_function(cls, reset) -> None:
         '''Sets the ui controller, meant to be used in initialization'''
         cls.reset_function = reset
 
