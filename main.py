@@ -77,6 +77,10 @@ def kill_server() -> None:
         elif os.name == "posix":
             os.killpg(os.getpgid(server_process.pid), signal.SIGTERM)
 
+@register
+def disconnect() -> None:
+    peer.disconnect_all()
+
 def cam_switching(in_buy = False):
     '''Function for camera switching'''
     if player.current_cam == len(player.perspective_list) or in_buy:
