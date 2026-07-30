@@ -112,7 +112,9 @@ def on_disconnect(connection, time_disconnected):
     Currently logs it to the console.
     '''
     assert GameState.ui_controller is not None
+    assert GameState.main_menu is not None
     GameState.ui_controller.show_temp_text(f"You were disconnected from the server at {datetime.fromtimestamp(time_disconnected)}!", delay=3)
+    GameState.main_menu.open_main_menu()
     peer.peer.running = False
     GameState.reset()
     GameState.ui_controller.lobby_text.text = ""
