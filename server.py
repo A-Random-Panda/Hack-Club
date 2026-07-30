@@ -149,6 +149,7 @@ def on_disconnect(connection, time_disconnected):
     On disconnect from server
     '''
     connection_id = id(connection)
+    ClientInformation.in_game = False
     try:
         connected_ids.remove(connection_id)
     except Exception as err:
