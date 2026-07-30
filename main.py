@@ -47,7 +47,6 @@ Purgatory.load_map()
 player_shadow = Entity(model="tank",rotation_x=0, y=0, enabled = False, scale = 0.5,texture="bluetest")
 player_enemy = Entity(model="tank",rotation_x=0, y=1.5, enabled = True, scale = 0.5,texture="dom")
 
-
 #Setup
 player = get_player()
 player.position = (7,1,7)
@@ -117,6 +116,7 @@ main_menu = MainMenu(player,audio_controller,ui_controller)
 GameState.set_ui_controller(ui_controller)
 GameState.set_main_menu(main_menu)
 GameState.set_chat(chat)
+#GameState.set_reset_function(res)
 
 main_menu.open_main_menu()
 
