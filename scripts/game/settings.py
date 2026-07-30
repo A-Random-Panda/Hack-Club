@@ -16,6 +16,9 @@ RESPAWN_ROTATION = [270,90]
 player_sensitivity:float = 150
 player_volume:float = 1.5
 
+MINIMAP_X = 70
+MINIMAP_Y = 47
+
 DEFAULT_NAMES:list[str] = [
     "Cotton Mather",
     "Deodat Lawson",

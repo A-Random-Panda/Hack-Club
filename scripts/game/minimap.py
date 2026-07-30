@@ -5,14 +5,15 @@ if TYPE_CHECKING:
     from scripts.game.player import _Player
 
 class UpdateMinimap():
-    def __init__(self,map_icon,real_entity,map_size):
+    def __init__(self,map_icon,real_entity,map_sizex, map_sizey):
         self.map_icon:Entity = map_icon
         self.real_entity:Entity = real_entity
-        self.map_size:int = map_size
+        self.map_sizex:int = map_sizex
+        self.map_sizey:int = map_sizey
         #icons on the minimap
     def minimap_update(self) -> None:
-        self.map_icon.x = self.real_entity.x / self.map_size
-        self.map_icon.y = self.real_entity.z / self.map_size
+        self.map_icon.x = self.real_entity.x / self.map_sizex
+        self.map_icon.y = self.real_entity.z / self.map_sizey
 class MinimapIcons:
     def __init__(self, player:"_Player"):
         self.minimap:Entity = Entity(scale=(0.3048,0.204), x = 0.7, y= 0.4, model = "quad", texture="map_1", parent = camera.ui)

@@ -106,7 +106,7 @@ def cam_switching(in_buy = False):
 player.perspective_list = [player]
 minimap_icons = MinimapIcons(player)
 death_manager = DeathManager(player, audio_controller, ui_controller, player_shadow,cam_switching)
-update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,70)
+update_player_icon = UpdateMinimap(minimap_icons.player_icon,player,MINIMAP_X,MINIMAP_Y)
 main_menu = MainMenu(player,audio_controller,ui_controller)
 
 #Sets ui controller and main menu in rpc functions
@@ -249,8 +249,8 @@ first_cam = Entity(model = 'cypher_cam',
                                 position = (0,3,0),
                                 texture = "cam",
                                 rotation = (180,90,180))
-cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
-                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
+cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
+                                  y= first_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color=color.blue)
 player.cam_icon_list.append(cam_icon)
 first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
 first_cam.original_rotation_y = first_cam.rotation_y
@@ -335,8 +335,8 @@ def input(key):
                                 position = (5,3,5),
                                 texture = "cam",
                                 rotation = (180,90,180))
-        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/70,
-                                  y= first_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
+        cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = first_cam.x/MINIMAP_X,
+                                  y= first_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
         player.cam_icon_list.append(cam_icon)
         first_cam.camera_pivot = Entity(parent=first_cam, y = 1.6)
         first_cam.original_rotation_y = first_cam.rotation_y
@@ -357,8 +357,8 @@ def input(key):
                 player.perspective_list.append(temp_cam)
                 temp_cam.original_rotation_y = temp_cam.rotation_y
                 temp_cam.collider = MeshCollider(temp_cam, mesh = temp_cam.model)
-                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/70,
-                                  y= temp_cam.z/70, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
+                cam_icon = Entity(parent = minimap_icons.minimap, z = -.4, x = temp_cam.x/MINIMAP_X,
+                                  y= temp_cam.z/MINIMAP_Y, model = "quad", texture = "camera_icon", scale = 0.05, color = color.blue)
                 player.cam_icon_list.append(cam_icon)
         
     if key == get_binding(Controls.FREECAM_MODE): #freecam mode
