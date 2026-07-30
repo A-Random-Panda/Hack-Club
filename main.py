@@ -178,7 +178,7 @@ def start_server() -> None:
         If you want to restart the server, stop the server than start it again""", delay=3)
         return
     ui_controller.show_temp_text("Starting server...")
-    port = ui_controller.port_input.text
+    port = "0.0.0.0"
     window_state_box_checked = ui_controller.has_window_checkbox.value
     if window_state_box_checked:
         window_state = "--window"

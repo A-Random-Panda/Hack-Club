@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING
 from random import randint
+import json
 
 from ursina import *
 from scripts.game.controls import *
 from scripts.game.settings import MAX_CAM_COST, FASTER_RELOAD_COST, DEFAULT_NAMES, SETTINGS_FOLDER, SETTINGS_PATH
-import json
+
 if TYPE_CHECKING:
     from scripts.game.player import _Player
 
@@ -81,7 +82,7 @@ class UIController:
         #Join friend:
         self.join_game_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                         color=color.white, text = "Join Game", text_color=color.black, enabled = False)
-        self.host_input = InputField(default_value= "0.0.0.0", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
+        self.host_input = InputField(default_value = "", position=(0, 0.15), scale=(0.5, 0.05), z = -5,
                                       color = color.white, enabled = False, text_color=color.black)
         self.host_input.highlight_color = color.white  
         self.host_input.highlight_text_color = color.black
@@ -92,6 +93,7 @@ class UIController:
         self.port_input.highlight_color = color.white  
         self.port_input.highlight_text_color = color.black
         self.port_input.text_color = color.black
+        self.port_input.on_value_changed = self.save_settings
         self.port_text = Text(text = "port", position=(0, -0.05), origin = (0, 0), text_size = 0.4 , z = -5, color = color.white, enabled = False)
         self.hostname_text = Text(text = "hostname", position=(0, .10), origin = (0, 0), text_size = 0.4 , z = -5, color = color.white, enabled = False)
 
@@ -317,8 +319,9 @@ class UIController:
         SETTINGS_FOLDER.mkdir(parents=True, exist_ok=True)
         with open(SETTINGS_PATH, "w", encoding="utf-8") as f:
             f.write(json.dumps(
-                {"gun_volume":self.gun_volume_slider.value,
-                "player_volume": self.player_volume_slider.value}))
+                {"gun_volume" : self.gun_volume_slider.value,
+                "player_volume" : self.player_volume_slider.value,
+                "last_port" : self.port_input.text}))
 
     def load_settings(self) -> None:
         '''Loads the settings to their saved values'''
@@ -326,6 +329,7 @@ class UIController:
             self.save_settings()
             return
         with open(SETTINGS_PATH, "r", encoding="utf-8") as f:
-            settings = json.loads(f.read())
-            self.gun_volume_slider.value_setter(settings["gun_volume"])
-            self.player_volume_slider.value_setter(settings["player_volume"])
+            settings:dict = json.loads(f.read())
+            self.gun_volume_slider.value_setter(settings.get("gun_volume", 50))
+            self.player_volume_slider.value_setter(settings.get("player_volume", 50))
+            self.port_input.default_value = settings.get("last_port", "")
