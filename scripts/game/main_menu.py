@@ -38,6 +38,7 @@ class MainMenu:
         self.ui.exit_game_button.enable()
         self.ui.join_friend_button.enable()
         self.ui.lobby_botton.enable()
+        self.ui.title.enable()
 
     def _disable_main_menu_elements(self):
         '''Disables all elements in the main menu'''
@@ -48,6 +49,7 @@ class MainMenu:
         self.ui.exit_game_button.disable()
         self.ui.join_friend_button.disable()
         self.ui.lobby_botton.disable()
+        self.ui.title.disable()
 
     def _enter_subscreen(self):
         '''Disables all the elements shown on the main menu, and enables the back button'''
@@ -103,6 +105,7 @@ class MainMenu:
         self.player.enable()
         self.player.in_main_menu = False
         self.ui.background.disable()
+        self.ui.title.disable()
         self.ui.set_mouse_game_state()
         self.ui.acquire_and_set_name()
         self.ui.leaderboard_text.text = f"{self.player.points} {self.player.username} \n round wins: {self.player.round_wins}"
@@ -116,6 +119,7 @@ class MainMenu:
         '''
         self.player.disable()
         self.ui.background.enable()
+        self.ui.title.enable()
         self.ui.set_mouse_menu_state()
         self.player.in_main_menu = True
         if self.player.username:
