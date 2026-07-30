@@ -35,7 +35,7 @@ from maps.map_purgatory import Purgatory
 #pylint: enable=redefined-builtin, wildcard-import
 
 #Declare logging
-logging.basicConfig(level=logging.DEBUG, format="(%(asctime)s) %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s - %(message)s", filemode='w', filename="latest.log", encoding="utf-8")
 logger = logging.getLogger(__name__)
 
 application.asset_folder = Path(__file__).parent / "assets"
@@ -155,7 +155,7 @@ def start_server() -> None:
     if "__compiled__" in globals():
         #Code if compiled with nuitka
         logger.info("Server started")
-        with open ("log", "a", encoding="utf-8") as log:
+        with open ("latest_server.log", "w", encoding="utf-8") as log:
             server_process = subprocess.Popen(["server.exe", "--port", port, window_state],
                                             stdout=log,
                                             stderr=subprocess.DEVNULL,
