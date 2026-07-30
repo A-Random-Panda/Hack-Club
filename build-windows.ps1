@@ -1,4 +1,4 @@
-echo "Note, this probably only works with the exact y/n because I could not be bothered to implement proper full case checking."
+echo "Note, this probably only works with the exact y/n because I could not be bothered to implement checking cases."
 $reply = Read-Host "Do you want to build the project (y/n)"
 
 if ($reply -eq "y") {
