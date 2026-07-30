@@ -33,7 +33,7 @@ class MainMenu:
         '''Enables all elements that are a part of the main menu'''
         self.ui.host_game_button.enable()
         self.ui.open_game_button.enable()
-        self.ui.map_selector_button.enable()
+        self.ui.rules_button.enable()
         self.ui.name_input.enable()
         self.ui.exit_game_button.enable()
         self.ui.join_friend_button.enable()
@@ -43,7 +43,7 @@ class MainMenu:
         '''Disables all elements in the main menu'''
         self.ui.host_game_button.disable()
         self.ui.open_game_button.disable()
-        self.ui.map_selector_button.disable()
+        self.ui.rules_button.disable()
         self.ui.name_input.disable()
         self.ui.exit_game_button.disable()
         self.ui.join_friend_button.disable()
@@ -57,6 +57,7 @@ class MainMenu:
     def exit_subscreen(self):
         '''Disables the elements in the current subscreen, and returns to the main menu'''
         #Disables elements depending on current open screen
+        self.ui.background.texture = "menu_screen"
         match self.current_screen:
             case _Screens.MAIN_MENU:
                 _logger.error("Current screen detected as main menu while attempting to exit subscreen")
@@ -64,7 +65,7 @@ class MainMenu:
                 _logger.error("Current screen detected as in game while attempting to exit subscreen")
                 return
             case _Screens.MAP_SELECTOR:
-                self.ui.map_selector_button.disable()
+                self.ui.rules_button.disable()
                 self.ui.map_selector_text.disable()
             case _Screens.JOIN_GAME:
                 self.ui.host_input.disable()
@@ -132,11 +133,13 @@ class MainMenu:
         self._enable_main_menu_elements()
         self.current_screen = _Screens.MAIN_MENU
 
-    def open_map_selector(self):
+    def open_rules_menu(self):
         '''Opens the map selector menu'''
         self._enter_subscreen()
+        self.ui.background.texture = ""
+        self.ui.background.color = color.white
         self.current_screen = _Screens.MAP_SELECTOR
-        self.ui.map_selector_button.disable()
+        self.ui.rules_button.disable()
         self.ui.map_selector_text.enable()
 
     def open_join_game(self):

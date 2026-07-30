@@ -62,7 +62,7 @@ class UIController:
                                         color=color.white, text = "Open \ntest world", text_color=color.black)
         self.host_game_button = Button(model = "quad", scale = 0.2, position =(0.25,0, -4),
                                         color=color.white, text = "Host game", text_color=color.black)
-        self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.25, 0, -4),
+        self.rules_button = Button(model = "quad", scale = 0.2, position = (-0.25, 0, -4),
                                            color=color.white, text = "Rules", text_color=color.black) 
         
         self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
