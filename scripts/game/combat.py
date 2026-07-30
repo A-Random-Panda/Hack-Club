@@ -58,4 +58,5 @@ def update_laser(player: "_Player"):
     player.laser.position = ((end + player.world_position+player.forward)/2) + Vec3(0,1.7,0)
     player.laser.rotation = player.rotation
     player.laser.scale = (0.1,0.1,distance(end,player.world_position))
+    
 
