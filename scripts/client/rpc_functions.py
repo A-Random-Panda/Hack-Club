@@ -123,4 +123,4 @@ def on_disconnect(connection, time_disconnected):
     peer.peer.running = False
     GameState.reset()
     GameState.reset_function()
-    GameState.ui_controller.lobby_text.text = ""
+    GameState.ui_controller.lobby_text.text = "Connected_Users:"
