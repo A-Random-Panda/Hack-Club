@@ -59,11 +59,11 @@ class UIController:
         #Main menu
         self.background = Entity(model="quad", texture="menu_screen", scale = (2,2), enabled = False, parent=camera.ui, z = -3)
         self.open_game_button = Button(model = "quad", scale = 0.2, position =(0,0, -4),
-                                        color=color.white, text = "Open \nSingleplayer", text_color=color.black)
+                                        color=color.white, text = "Open \ntest world", text_color=color.black)
         self.host_game_button = Button(model = "quad", scale = 0.2, position =(0.25,0, -4),
                                         color=color.white, text = "Host game", text_color=color.black)
         self.map_selector_button = Button(model = "quad", scale = 0.2, position = (-0.25, 0, -4),
-                                           color=color.white, text = "Map Selector", text_color=color.black) 
+                                           color=color.white, text = "Rules &\n Controls", text_color=color.black) 
         
         self.join_friend_button = Button(model = "quad", scale = (0.6,0.1), position = (0,-0.25, -4),
                                           color=color.white, text = "Join Friend", text_color=color.black)
@@ -148,7 +148,7 @@ class UIController:
         self.buy_text = Text("BUY PHASE",position = (0,0.3), scale = 2, enabled = False, origin = (0,0))
         self.buy_overlay = Entity(scale = (0.3,0.15), parent = camera.ui, origin = (0,0), position = (0,0.3), model = 'quad', color = color.rgba(0,0,0,0.6), z = -1, enabled = False)
 
-        self.contested_text = Text("CURRENTLY CONTESTED", position = (0,0.3), scale = 4, enabled = False, origin = (0,0))
+        self.contested_text = Text("CURRENTLY CONTESTED", position = (0,-0.2), scale = 4, enabled = False, origin = (0,0))
 
         #Volume sliders
         self.gun_volume_slider = ThinSlider(text='Gun Volume', dynamic=True,
