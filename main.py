@@ -78,6 +78,7 @@ def kill_server() -> None:
 
 @register
 def disconnect() -> None:
+    '''Ensures that the server gets the disconnect symbol when the game closes'''
     peer.disconnect_all()
 
 def cam_switching(in_buy = False):
@@ -106,6 +107,7 @@ def cam_switching(in_buy = False):
         ui_controller.camoverlay.text= f'cam {player.current_cam}'
 
 def complete_reset():
+    '''Completely resets the game'''
     print("Current screen: ", main_menu.current_screen)
     main_menu.exit_subscreen()
     main_menu.open_main_menu()
@@ -122,6 +124,14 @@ def complete_reset():
     first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
     player.perspective_list.append(first_cam)
     ui_controller.set_mouse_menu_state()
+
+def multiplayer_leave_wrapper():
+    '''
+    Wrapper to check if you're connected to a server when you go to the main menu,
+    and disconnect if you are
+    '''
+    if peer.is_running():
+        peer.disconnect_all()
 
 #Variable declarations
 player.perspective_list = [player]
@@ -143,7 +153,7 @@ ui_controller.upgrade_cams_button.on_click_setter(shop_upgrades.cam_upgrade)
 ui_controller.faster_reload_button.on_click_setter(shop_upgrades.reload_upgrade)
 
 #Escape menu buttons
-ui_controller.quit_button.on_click_setter(complete_reset)
+ui_controller.quit_button.on_click_setter(Sequence(complete_reset, multiplayer_leave_wrapper))
 ui_controller.volume_button.on_click_setter(ui_controller.open_volume_menu)
 ui_controller.control_button.on_click_setter(ui_controller.open_control_menu)
 ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
