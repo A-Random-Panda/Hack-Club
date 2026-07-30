@@ -1,12 +1,15 @@
 # Cataclysmic Tanks!
 This project is a 2nd person shooter. There's third person shooters and first person shooters but no second person shooters.
 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/aa1f2e93-97db-46fe-a70f-1837d2edbf06" />
+
 #### ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
 **This is a bug with the engine and is currently out of scope for us to fix**
 
 # How to Play
 The goal of the game is to win 7 rounds.
+
 
 It's a **1v1 KOTH (KING OF THE HILL)** gamemode where the main objective is to contest the "hill" to gain points, the person with the most points at the end of the round wins.
 
@@ -82,9 +85,9 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 Building on Linux/Mac should work using the same Nuitka commands as in the windows build script without the --windows-console-mode flag, but this is untested!
 
 ### AI DISCLOSURE:
-**No AI was directly used for the project's code and assets.**
+**No AI was directly used for the project's code or assets.**
 
-**Some AI was used to help explain some concepts and libraries ([Ursina's documentation](https://www.ursinaengine.org/documentation.html) sucks!) and for debugging code snippits... ~~like a lot of them; the code broke a lot~~.**
+Some AI was used to help explain some concepts and libraries ([Ursina's documentation](https://www.ursinaengine.org/documentation.html) sucks!) and for debugging code snippits... ~~like a lot of them; the code broke a lot~~.
 
 ## Credits:
 **Thank you for making this project possible!**
