@@ -138,6 +138,10 @@ def multiplayer_leave_wrapper():
     if peer.is_running():
         peer.disconnect_all()
 
+def change_name_conditional_wrapper():
+    if peer.is_running:
+        peer.name_to_server(peer.get_connections()[0], ui_controller.name_input.text)
+
 #Variable declarations
 player.perspective_list = [player]
 minimap_icons = MinimapIcons(player)
@@ -168,7 +172,7 @@ ui_controller.exit_game_button.on_click_setter(main_menu.normal_exit)
 ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching)))
 ui_controller.host_game_button.on_click_setter(main_menu.open_host_game)
 ui_controller.rules_button.on_click_setter(main_menu.open_rules_menu)
-ui_controller.lobby_botton.on_click_setter(main_menu.open_lobby)
+ui_controller.lobby_botton.on_click_setter(Sequence(main_menu.open_lobby, change_name_conditional_wrapper))
 ui_controller.back_to_main_button.on_click_setter(main_menu.exit_subscreen)
 ui_controller.name_input.on_click_setter(Func(ui_controller.reset_input_field, ui_controller.name_input))
 
@@ -463,13 +467,13 @@ def update():
                     if player.round_wins == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_win.enable()
-                        invoke(reset_values, player, ui_controller, state["opponent_id"])
+                        invoke(reset_values, player, ui_controller)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                         player.game_over = True
                     elif state["round_wins"] == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_lose.enable()
-                        invoke(reset_values, player, ui_controller, state["opponent_id"])
+                        invoke(reset_values, player, ui_controller)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                         player.game_over = True
 

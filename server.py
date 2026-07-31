@@ -182,13 +182,6 @@ def name_to_server(connection, time_received, name:str):
     '''Sets the name to the one sent by the client'''
     ClientInformation.name_dict[id(connection)] = name
 
-@rpc(server_peer)
-def restartGame(connection, time_received):
-    ClientInformation.state_dict.clear()
-    ClientInformation.in_game = False
-    for i in server_peer.get_connections():
-        server_peer.game_started_state(i, False)
-
 def start_server(hostname, port):
     '''The function that starts the server'''
     logger.info("Starting server on port %d.", port)

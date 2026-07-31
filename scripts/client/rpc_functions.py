@@ -110,7 +110,8 @@ def on_connect(connection, time_connected):
     peer.name_to_server(peer.get_connections()[0], GameState.ui_controller.acquire_and_set_name())
     GameState.reset_function()
     GameState.main_menu.open_lobby()
-
+    if peer.is_running:
+        peer.name_to_server(peer.get_connections()[0], GameState.ui_controller.name_input.text)
 @rpc(peer)
 def on_disconnect(connection, time_disconnected):
     '''
