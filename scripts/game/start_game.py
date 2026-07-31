@@ -50,6 +50,7 @@ def reset_values(player:"_Player",ui:"UIController"):
     ui.contested_text.enabled = False
     ui.respawn_text.enabled = False
     ui.menu_overlay.enabled = False
+    player.in_round = False
 
     ui.game_lose.enabled = False
 
