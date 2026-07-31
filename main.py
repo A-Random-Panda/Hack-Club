@@ -435,7 +435,7 @@ def update():
                     player.game_begin = True
                     if state["opponent_id"] > GameState.id:
                         player.world_position = RESPAWN_POINTS[0]
-                        player.rotation_y = RESPAWN_ROTATION[0]
+                        player.rotation_y = RESPAWN_ROTATION[0]+180
                     else:
                         player.world_position = RESPAWN_POINTS[1]
                         player.rotation_y = RESPAWN_ROTATION[1]
