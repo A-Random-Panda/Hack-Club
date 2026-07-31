@@ -129,6 +129,7 @@ def complete_reset():
     player.shop_timer = now
     player.death_timer = now
     player.cd = now
+    player.in_test_world = False
 
 def multiplayer_leave_wrapper():
     '''
@@ -137,10 +138,15 @@ def multiplayer_leave_wrapper():
     '''
     if peer.is_running():
         peer.disconnect_all()
+    elif player.in_test_world:
+        player.in_test_world = False
 
 def change_name_conditional_wrapper():
     if peer.is_running():
         peer.name_to_server(peer.get_connections()[0], ui_controller.name_input.text)
+
+def test_world_setter():
+    player.in_test_world = True
 
 #Variable declarations
 player.perspective_list = [player]
@@ -169,7 +175,7 @@ ui_controller.resume_button.on_click_setter(ui_controller.close_all_uis)
 
 #Main menu buttons
 ui_controller.exit_game_button.on_click_setter(main_menu.normal_exit)
-ui_controller.open_game_button.on_click_setter(Sequence(Func(main_menu.enter_game), Wait(0.01), Func(cam_switching)))
+ui_controller.open_game_button.on_click_setter(Sequence(main_menu.enter_game, test_world_setter, Wait(0.01), Func(cam_switching)))
 ui_controller.host_game_button.on_click_setter(main_menu.open_host_game)
 ui_controller.rules_button.on_click_setter(main_menu.open_rules_menu)
 ui_controller.lobby_botton.on_click_setter(Sequence(main_menu.open_lobby, change_name_conditional_wrapper))

@@ -58,6 +58,7 @@ class _Player(FirstPersonController):
         self.game_begin:bool = False
         self.enemy_shot:bool = True
         self.game_over:bool = False
+        self.in_test_world:bool = False
 
 
     @override
