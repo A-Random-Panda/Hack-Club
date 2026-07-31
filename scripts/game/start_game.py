@@ -43,6 +43,16 @@ def reset_values(player:"_Player",ui:"UIController"):
     player.round_wins = 0
     ui.game_lose.enabled = False
     ui.game_win.enabled = False
+    ui.buy_overlay.enabled = False
+    ui.buy_text.enabled = False
+    ui.shop_timer_text.enabled = False
+    ui.round_timer_text.enabled = False
+    ui.contested_text.enabled = False
+    ui.respawn_text.enabled = False
+    ui.menu_overlay.enabled = False
+
+    ui.game_lose.enabled = False
+
 
     destory_all_cameras(player, ui)
     

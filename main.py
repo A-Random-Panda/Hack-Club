@@ -124,6 +124,11 @@ def complete_reset():
     first_cam.collider = MeshCollider(first_cam, mesh = first_cam.model)
     player.perspective_list.append(first_cam)
     ui_controller.set_mouse_menu_state()
+    now = time.perf_counter()
+    player.round_timer = now
+    player.shop_timer = now
+    player.death_timer = now
+    player.cd = now
 
 def multiplayer_leave_wrapper():
     '''
