@@ -3,6 +3,8 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/aa1f2e93-97db-46fe-a70f-1837d2edbf06" />
 
+[Demo Video!](youtube.com/video/K4NxdbXOgME/)
+
 #### ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
 **This is a bug with the engine and is currently out of scope for us to fix**
