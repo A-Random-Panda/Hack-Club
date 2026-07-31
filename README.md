@@ -95,7 +95,7 @@ Building on Linux/Mac should work using the same Nuitka commands as in the windo
 
 - Harry 
 1. I learned a lot about how to use github, and Ursina
-2. I got a lot more experience with using classes and splitting python files into different lines
+2. I got a lot more experience with using classes and splitting code into different files for readability
 3. Learning to work with some else on a coding project and trying to make my work readable was a new experience
 ### AI DISCLOSURE:
 **No AI was directly used for the project's code or assets.**
