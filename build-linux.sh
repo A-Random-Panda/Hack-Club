@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "This script is not supported anymore, and does not have the same features as the windows script"
 read -r -p "Do you want to build the project: (y/n)"
 
 if  [ $INPUT = "y" ]; then
