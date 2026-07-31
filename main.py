@@ -473,17 +473,17 @@ def update():
                     if player.round_wins == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_win.enable()
-                        complete_reset()
-                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
-                        player.game_over = True
-                    elif state["round_wins"] == 1 and not player.game_over:
-                        ui_controller.menu_overlay.enable()
-                        ui_controller.game_lose.enable()
-                        complete_reset()
-                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
+                        invoke(complete_reset, delay = 5)
+                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 5)
                         player.game_over = True
 
                 if player.in_buy_phase:
+                    if state["round_wins"] == 1 and not player.game_over:
+                        ui_controller.menu_overlay.enable()
+                        ui_controller.game_lose.enable()
+                        invoke(complete_reset, delay = 5)
+                        invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 5)
+                        player.game_over = True
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
                     player_enemy.enabled = False
                     
