@@ -470,20 +470,22 @@ def update():
                     end_round(player,ui_controller, state["points"])
                     ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.opponent_name.replace(player.username, "")} \n round wins: {state["round_wins"]}"
                     ui_controller.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"
-                    if player.round_wins == 1 and not player.game_over:
+                    if player.round_wins == 3 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_win.enable()
                         invoke(complete_reset, delay = 5)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 5)
                         player.game_over = True
+                        ui_controller.win_text.enabled = False
 
                 if player.in_buy_phase:
-                    if state["round_wins"] == 1 and not player.game_over:
+                    if state["round_wins"] == 3 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_lose.enable()
                         invoke(complete_reset, delay = 5)
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 5)
                         player.game_over = True
+                        ui_controller.lose_text.enabled = False
                     ui_controller.shop_timer_text.text = "Buy phase ends in " + str (round((30 -(abs(time.perf_counter() - player.shop_timer))),0))
                     player_enemy.enabled = False
                     

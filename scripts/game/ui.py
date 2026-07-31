@@ -108,7 +108,7 @@ class UIController:
 
 
         #Map selector
-        rules_str = ("Goal of the game is to win 7 rounds. "
+        rules_str = ("Goal of the game is to win 3 rounds. "
         "\n It's a 1 v 1 KOTH (KING OF THE HILL) gamemode where "
         "\nthe main objective is to contest the 'hill' to gain points, "
         "\nthe person with the most points at the end of the round wins. "
@@ -117,7 +117,10 @@ class UIController:
         "\nEach round last 3 minutes and is followed by a buy / setup phase"
         "\n where you can buy player upgrades and place / reset cameras."
         "\n All hot keys for controls are inside the escape menu when you load into the game"
-        "\n and can be changed inside said menu")
+        "\n and can be changed inside said menu"
+        "\n **IMPORTANT** there is a bug where one side of the walls are 'sticky'"
+        "\n this is a problem with the library, just be aware of this and try not hugging the walls"
+        "\n Have Fun!")
 
 
         self.map_selector_text = Text(rules_str, origin = (0,0),position = (0,0.1,-4), scale = 1.3,
