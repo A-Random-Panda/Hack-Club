@@ -8,6 +8,8 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 #### ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
 **This is a bug with the engine and is currently out of scope for us to fix**
+#### ***Note:*** *There is also a known bug where if you load it into the test world and then play multiplayer there are potential problems 
+
 
 Also, there is *ANOTHER* engine bug where it just breaks and gets really laggy if you screenshare your whole screen with something like discord
 
