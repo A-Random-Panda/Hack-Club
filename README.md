@@ -12,7 +12,7 @@ Also, there is *ANOTHER* engine bug where it just breaks and gets really laggy i
 If you want to screenshare or record your screen, choose the game instead of screencapture.
 
 # How to Play
-The goal of the game is to win 7 rounds.
+The goal of the game is to win 3 rounds.
 
 
 It's a **1v1 KOTH (KING OF THE HILL)** gamemode where the main objective is to contest the "hill" to gain points, the person with the most points at the end of the round wins.
