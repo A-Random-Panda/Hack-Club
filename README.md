@@ -8,7 +8,7 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 #### ***Note:*** *There is a known bug where the player gets stuck some walls depending on direction*
 
 **This is a bug with the engine and is currently out of scope for us to fix**
-#### ***Note:*** *There is also a known bug where if you load it into the test world and then play multiplayer there are potential problems 
+#### ***Note:*** There is also a known bug where if you load it into the test world and then play multiplayer there are potential problems 
 
 
 Also, there is *ANOTHER* engine bug where it just breaks and gets really laggy if you screenshare your whole screen with something like discord
@@ -101,7 +101,7 @@ Building on Linux/Mac should work using the same Nuitka commands as in the windo
 2. Speaking of lines of code, this is the largest project that either of us has ever worked on, to the point of knowing what is already added, and knowing what is redundant code was a lot.
 3. NOT wanting to rewrite whatever I perceive as sphaghetti code was also tough, because some of the code was bad (literally used boolean as a function argument and a function called open_main_menu that doesn't open main menu), but some of it is also just because I am unfamiliar with the other person's code.
 4. Personally, being the person to write server code for the first time was an interesting experience, because of how different having to send infomation through packets is. Making it a server instead of peer to peer was a choice made to have to ability to have dedicated servers (me because hack club nest is in Oslo), and making my playtesters NOT have to make them set up port forwarding.
-
+5. Scope is another thing that I learned from this project. For example, I figured that it would be nice to write the parsing in C for speed as it would be running every frame and a mapmaker would also be cool to make us not have to manually make the map by hand. However, those things weren't strictly necessary, and only affected the framerate/development qol. So, those things ended unused for (slower) python parsing and a map I made by hand which were in scope!
 - Harry 
 1. I learned a lot about how to use github, and Ursina
 2. I got a lot more experience with using classes and splitting code into different files for readability
