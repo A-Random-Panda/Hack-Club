@@ -40,7 +40,7 @@ The game uses **TCP**, the default port for the game is **port 1983** but it can
 
 **Note:** The server.exe file may get flagged by some antivirus software ([virustotal of current build as of writing this](https://www.virustotal.com/gui/file/d26d25a339c8bbe1550e66b6ce5854a6807f1fcdc52abeb86e04781849fea882))
 
-I can only promise you that **it's not.**
+I can only pull a trust me bro and say that **it's not.**
 
 You may have to override said antivirus, there are different steps depending on which antivirus
 
@@ -84,6 +84,14 @@ git clone https://github.com/A-Random-Panda/Hack-Club
 
 Building on Linux/Mac should work using the same Nuitka commands as in the windows build script without the --windows-console-mode flag, but this is untested!
 
+## Development issues
+~~Because this is in the hack club readme guide for whatever reason~~
+
+- Shu Ning
+1. Collaboration as a whole was a huge issue in development. This project was a 2 person project between new developers so tech debt added up really fast. Keeping some sort of orgaization and NOT having a single 4000 line python file was a challenge as well.
+2. Speaking of lines of code, this is the largest project that either of us has ever worked on, to the point of knowing what is already added, and knowing what is redundant code was a lot.
+3. NOT wanting to rewrite whatever I perceive as sphaghetti code was also tough, because some of the code was bad (literally used boolean as a function argument and a function called open_main_menu that doesn't open main menu), but some of it is also just because I am unfamiliar with the other person's code.
+4. Personally, being the person to write server code for the first time was an interesting experience, because of how different having to send infomation through packets is. Making it a server instead of peer to peer was a choice made to have to ability to have dedicated servers (me because hack club nest is in Oslo), and making my playtesters NOT have to make them set up port forwarding.
 ### AI DISCLOSURE:
 **No AI was directly used for the project's code or assets.**
 
