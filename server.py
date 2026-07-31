@@ -68,7 +68,7 @@ else:
     WINDOW_TYPE = 'none'
 
 print("Creating Ursina")
-app = Ursina(vsync=False, window_type=WINDOW_TYPE)
+app = Ursina(vsync=False, window_type=WINDOW_TYPE, title = "Cataclysmic Tanks Server")
 #If the screen is showing, disable debug options
 if WINDOW_TYPE == "onscreen":
     window.entity_counter.disable()
