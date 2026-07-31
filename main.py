@@ -139,7 +139,7 @@ def multiplayer_leave_wrapper():
         peer.disconnect_all()
 
 def change_name_conditional_wrapper():
-    if peer.is_running:
+    if peer.is_running():
         peer.name_to_server(peer.get_connections()[0], ui_controller.name_input.text)
 
 #Variable declarations
