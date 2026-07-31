@@ -9,7 +9,7 @@ This project is a 2nd person shooter. There's third person shooters and first pe
 
 Also, there is *ANOTHER* engine bug where it just breaks and gets really laggy if you screenshare your whole screen with something like discord
 
-If you want to screenshare or record your screen, choose the game instead of something else.
+If you want to screenshare or record your screen, choose the game instead of screencapture.
 
 # How to Play
 The goal of the game is to win 7 rounds.
