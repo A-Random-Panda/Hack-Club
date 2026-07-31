@@ -460,13 +460,13 @@ def update():
                     end_round(player,ui_controller, state["points"])
                     ui_controller.enemy_leaderboard_text.text = f"{state["points"]} {GameState.opponent_name.replace(player.username, "")} \n round wins: {state["round_wins"]}"
                     ui_controller.leaderboard_text.text = f"{player.points} {player.username} \n round wins: {player.round_wins}"
-                    if player.round_wins == 2 and not player.game_over:
+                    if player.round_wins == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_win.enable()
                         invoke(reset_values, player, ui_controller, state["opponent_id"])
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                         player.game_over = True
-                    elif state["round_wins"] == 2 and not player.game_over:
+                    elif state["round_wins"] == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_lose.enable()
                         invoke(reset_values, player, ui_controller, state["opponent_id"])
