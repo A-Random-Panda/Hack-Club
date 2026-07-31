@@ -422,9 +422,9 @@ def update():
         #Conected to multiplayer
         peer.update()
         if GameState.opponent_disconnected:
-            GameState.game_started = False
-            GameState.opponent_disconnected = False
             ui_controller.show_temp_text("Your opponent has disconnected", delay=3)
+            GameState.reset()
+            complete_reset()
         if GameState.game_started:
             #Multiplayer code
             if GameState.state_string:
