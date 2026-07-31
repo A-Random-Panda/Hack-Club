@@ -25,6 +25,7 @@ All hotkeys for controls are inside the escape menu when you load into the game.
 
 ## Local multiplayer
 For connecting with computers on the same IP address, the other player must connect using the local address shown on the hosting computer's screen in the host game menu.
+If your computer is hosting, then localhost will work as well.
 
 ## Online multiplayer
 For online multiplayer, you must set up port forwarding.
