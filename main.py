@@ -468,13 +468,13 @@ def update():
                     if player.round_wins == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_win.enable()
-                        invoke(reset_values, player, ui_controller)
+                        complete_reset()
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                         player.game_over = True
                     elif state["round_wins"] == 1 and not player.game_over:
                         ui_controller.menu_overlay.enable()
                         ui_controller.game_lose.enable()
-                        invoke(reset_values, player, ui_controller)
+                        complete_reset()
                         invoke(set_spawn, player, state["opponent_id"], GameState.id, delay = 10)
                         player.game_over = True
 
